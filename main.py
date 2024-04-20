@@ -9,7 +9,26 @@ if __name__ == "__main__":
                             "username TEXT",
                             "password TEXT"]
         sample_db.create_table("SystemAdmins", system_admin_col)
-        #TODO: Populating the System Admins table with 100 entries of data
+
+        ## Real Estate Agent Tables
+        rea_col = ["id INTEGER PRIMARY KEY",
+                            "username TEXT",
+                            "password TEXT"]
+        sample_db.create_table("RealEstateAgent", rea_col)
+
+        ## Buyer Tables
+        buyer_col = ["id INTEGER PRIMARY KEY",
+                            "username TEXT",
+                            "password TEXT"]
+        sample_db.create_table("Buyer", buyer_col)
+
+        ## Seller Tables
+        seller_col = ["id INTEGER PRIMARY KEY",
+                            "username TEXT",
+                            "password TEXT"]
+        sample_db.create_table("Seller", seller_col)
+
+        #TODO: Populating the each table with at least 100 rows to each data type
         
 
     # TODO: Main Function Logic
