@@ -45,3 +45,5 @@ if __name__ == "__main__":
 
     # Cursor to navigate connection
     cursor = connection.cursor()
+
+    # Read all the tables, and create relevant objects for each row
