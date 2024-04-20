@@ -7,19 +7,24 @@ class Database:
         self.connection = sqlite3.connect('SampleDatabase.db')
         self.cursor = self.connection.cursor()
     
-    def  create_table(self, table_name, columns):
+    def create_table(self, table_name, columns):
         query = f"CREATE TABLE IF NOT EXISTS {table_name} "
         column_text = ", ".join(columns)
         query += f"({column_text})"
-        self.cursor.execute()
+        self.cursor.execute(query)
         self.connection.commit()
         
     def insert_into_table(self, table_name, values):
         query = f"INSERT INTO {table_name} VALUES"
         value_q = ", ".join(values)
         query += f"({value_q})"
-        self.cursor.execute()
+        self.cursor.execute(query)
         self.connection.commit()
+
+    def view_table(self, table_name):
+        self.cursor.execute(f"SELECT * FROM {table_name}")
+        rows = self.cursor.fetchall()
+        print(rows)
 
 # TODO: Code to populate the SystemAdmins table
 #cursor.execute("""
