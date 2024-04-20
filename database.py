@@ -1,20 +1,25 @@
 import sqlite3
-# Code to initialise database
 
-# Establish connection to database
-connection = sqlite3.connect('sampleDatabase.db')
+class Database:
 
-# Cursor to navigate connection
-cursor = connection.cursor()
-
-# Create Table
-cursor.execute("""
-CREATE TABLE IF NOT EXISTS SystemAdmins (
-    id INTEGER PRIMARY KEY,
-    first_name TEXT,
-    last_name TEXT
-)
-""")
+    def __init__(self, db_name):
+        self.db_name = db_name
+        self.connection = sqlite3.connect('SampleDatabase.db')
+        self.cursor = self.connection.cursor()
+    
+    def  create_table(self, table_name, columns):
+        query = f"CREATE TABLE IF NOT EXISTS {table_name} "
+        column_text = ", ".join(columns)
+        query += f"({column_text})"
+        self.cursor.execute()
+        self.connection.commit()
+        
+    def insert_into_table(self, table_name, values):
+        query = f"INSERT INTO {table_name} VALUES"
+        value_q = ", ".join(values)
+        query += f"({value_q})"
+        self.cursor.execute()
+        self.connection.commit()
 
 # TODO: Code to populate the SystemAdmins table
 #cursor.execute("""
@@ -24,5 +29,3 @@ CREATE TABLE IF NOT EXISTS SystemAdmins (
 #(3, 'Anna', 'Smith')
 #""")
 
-connection.commit()
-connection.close()
