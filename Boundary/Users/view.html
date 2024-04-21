@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+
+
+<head>
+    <title>View user page</title>
+    <link rel="stylesheet"
+        href="../style.css">
+</head>
+
+<!-- check if user is system admin, and to populate with data from db -->
+<body>
+    <div class="main">
+        <h3>View User account</h3>
+        <!-- to populate with this user data from db, below is just example of what it would look like -->
+        <div class="view-account" style="text-align: left; margin: 20px;">
+            <p>User id: <span>1</span></p>
+            <p>Username: <span>johnny123</span></p>
+            <p>Email: <span>johnny123@gmail.com</span></p>
+            <p>Profile: <span>System Admin</span></p>
+            <p>Created on: <span>22/04/2024 12:42AM</span></p>
+        </div>
+    </div>
+</body>
+</html>
+<script>
+    function check() {
+        var input = document.getElementById('confirm-password');
+        var error = document.getElementById('confirm-password-error');
+        if (input.value != document.getElementById('password').value) {
+            error.innerHTML = 'Password does not match';
+        } else {
+            // input is valid -- reset the error message
+            error.innerHTML = '';
+        }
+    }
+</script>
