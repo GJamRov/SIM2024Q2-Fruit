@@ -4,8 +4,8 @@ from user import User
 
 class SystemAdmin(User):
     
-    def __init__(self, userID, username, password):
-        super().__init__(userID, username, password)
+    def __init__(self, userID, username, password, email):
+        super().__init__(userID, username, password, email)
 
     #TODO: 3. Create user accounts
     def create_account(self):

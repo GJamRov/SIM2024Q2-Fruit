@@ -5,6 +5,7 @@ import string
 from database import Database
 
 import app
+from admin import SystemAdmin
 
 def generate_random_string(length=8):
     """Generate a random string of specified length."""
@@ -37,7 +38,7 @@ if __name__ == "__main__":
             username = f"user{i+1}"  # Generate usernames like user1, user2, ...
             password = generate_random_string(10)  # Generate random password
             email = generate_random_email()
-            role = random.randint(1, 3)  # Assign a random role (1, 2, or 3)
+            role = random.randint(1, 4)  # 1 = admin, 2 = rea, 3 = buyer, 4 = seller
             sample_db.insert_into_table("User", [f"{i+1}, '{username}', '{password}',  '{email}', {role}"])
         sample_db.view_table("User")
 
@@ -53,6 +54,21 @@ if __name__ == "__main__":
     # Read all the tables, and create relevant objects for each row
     cursor.execute("SELECT * FROM User")
     rows = cursor.fetchall()
+    admins = []
+    reas = []
+    buyers = []
+    sellers = []
+    for u in rows:
+        if u[4] == 1:
+            admins.append(SystemAdmin(u[0], u[1], u[2], u[3]))
+        elif u[4] == 2:
+            pass
+        elif u[4] == 3:
+            pass
+        elif u[4] == 4:
+            pass
+    
+    # print(admins)    
     # print(rows)
 
     main_app = app.WebApp(8000)
