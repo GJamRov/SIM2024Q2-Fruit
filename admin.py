@@ -1,7 +1,6 @@
 from user import User
 
 # System Admins Class inherits from User Class
-# TODO: What are the new  attributes and methods for system admins?
 
 class SystemAdmin(User):
     

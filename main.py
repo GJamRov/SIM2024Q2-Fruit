@@ -4,10 +4,19 @@ import random
 import string
 from database import Database
 
+import app
+
 def generate_random_string(length=8):
     """Generate a random string of specified length."""
     letters_and_digits = string.ascii_letters + string.digits
     return ''.join(random.choice(letters_and_digits) for _ in range(length))
+
+def generate_random_email(domain="example.com"):
+    """Generate a random email address."""
+    username = generate_random_string(8)  # Generate random username
+    email = f"{username}@{domain}"
+    return email
+
 
 if __name__ == "__main__":
     if not os.path.exists('SampleDatabase.db'):
@@ -18,6 +27,7 @@ if __name__ == "__main__":
         user_col = ["id INTEGER PRIMARY KEY",
                             "username TEXT",
                             "password TEXT",
+                            "email TEXT",
                             "role INTEGER"]
         sample_db.create_table("User", user_col)
         
@@ -26,8 +36,9 @@ if __name__ == "__main__":
         for i in range(100):
             username = f"user{i+1}"  # Generate usernames like user1, user2, ...
             password = generate_random_string(10)  # Generate random password
+            email = generate_random_email()
             role = random.randint(1, 3)  # Assign a random role (1, 2, or 3)
-            sample_db.insert_into_table("User", [f"{i+1}, '{username}', '{password}', {role}"])
+            sample_db.insert_into_table("User", [f"{i+1}, '{username}', '{password}',  '{email}', {role}"])
         sample_db.view_table("User")
 
 
@@ -42,4 +53,7 @@ if __name__ == "__main__":
     # Read all the tables, and create relevant objects for each row
     cursor.execute("SELECT * FROM User")
     rows = cursor.fetchall()
-    print(rows)
+    # print(rows)
+
+    main_app = app.WebApp(8000)
+    main_app.run_app()
