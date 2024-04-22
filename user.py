@@ -2,11 +2,10 @@
 
 class User:
 
-    def __init__(self, userID, username, password, role, email):
+    def __init__(self, userID, username, password, email):
         self.userID = userID
         self.username = username
         self.password = password
-        self.role = role
         self.email = email
         self.logged_in = False
 
