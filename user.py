@@ -1,17 +1,21 @@
 # User Parent Class
-# TODO: What are the shared attributes between all users of the system?
+
 class User:
 
-    def __init__(self, userID, username, password):
+    def __init__(self, userID, username, password, role, email):
         self.userID = userID
         self.username = username
         self.password = password
+        self.role = role
+        self.email = email
+        self.logged_in = False
 
     #TODO: User Story 1
-    def login(self):
-        # User Authentication
-        pass
+    def login(self, username, password, database):
+        #  User Authentication
+        return True
     
     #TODO: User Story 2
     def logout(self):
-        pass
+        """Logout the user"""
+        self.logged_in = False
