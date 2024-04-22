@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Users</title>
+    <!-- <link rel="stylesheet"
+        href="../style.css"> -->
+        <link href="../output.css" rel="stylesheet">
+        <link rel="stylesheet" href="../template.css">
+</head>
+
+<body>
+
+    <!-- Header Section -->
+    <header>
+        <div class="head1">
+            FruitRealEstate
+        </div>
+    </header>
+
+    <!-- Menu Navigation Bar -->
+    <nav class="menu">
+        <a href="/src/Users/index.html">USERS</a>
+        <a href="#news">test1</a>
+        <a href="#notification">
+            test2
+        </a>
+        <div class="menu-log">
+            <a href="/src/Login.html">LOGOUT</a>
+        </div>
+    </nav>
+
+    <!-- Body section -->
+    <main class="body_sec p-4">
+        <section id="Content">
+            <!-- <h3>Content section</h3> -->
+            <h3 class="text-3xl font-bold underline">Users</h3>
+            <div class="flex flex-row">
+                <form class="mt-4" role="search-role" id="form">
+                    <input class="border" type="search" id="query-details" name="h" placeholder="Search username ..." aria-label="Search through content of the site">
+                    <!-- <button class="h-5 w-5">
+                        <svg viewBox="0 0 1024 1024"><path class="path1" d="M848.471 928l-263.059-264.059c-48.941 37.707-111.120 56.060-178.412 55.060-172.296 0-315-145.708-315-314s145.708-315 315-314c173.298 0 315 144.708 314 314 0 69.296-28.474 129.475-58.060 179.414l276.060 265.060-80.529 80.530zM190.625 409.079c0 125.365 99.092 220.458 220.458 219.456s220.456-98.092 220.456-220.456c0-123.365-105.160-220.458-220.458-220.458-124.366 0-220.457 98.093-220.455 220.454z"></path></svg>
+                    </button> -->
+                </form>
+                <a href="create.html" class="flex self-center ml-auto mx-4 bg-transparent hover:bg-indigo-900 text-indigo-700 font-semibold hover:text-white py-2 px-4 border border-indigo-500 hover:border-transparent rounded">
+                    Create User +
+                </a>
+            </div>
+    <table class="my-4 w-full min-w-max table-auto text-left">
+        <thead>
+            <tr class="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4">
+                <th>
+                    userid
+                </th>
+                <th>
+                    username
+                </th>
+                <th>
+                    email
+                </th>
+                <!-- <th>
+                    created_on
+                </th> -->
+                <th>
+                    actions
+                </th>
+            </tr>
+        </thead>
+        <tbody class="p-4 border-b border-blue-gray-50">
+            <tr class="">
+                <td>
+                    1
+                </td>
+                <td>
+                    johnny123
+                </td>
+                <td>
+                    johnny123@gmail.com
+                </td>
+                <!-- <td>
+                    22/04/24 12:57AM
+                </td> -->
+                <td class="">
+                    <a href="view.html" class="button bg-transparent hover:bg-indigo-900 text-indigo-700 font-semibold hover:text-white px-2 border border-indigo-500 hover:border-transparent rounded">view</a>
+                    <a href="update.html" class="button bg-transparent hover:bg-indigo-900 text-indigo-700 font-semibold hover:text-white px-2 border border-indigo-500 hover:border-transparent rounded">edit</a>
+                    <a href="" class="button bg-transparent hover:bg-indigo-900 text-indigo-700 font-semibold hover:text-white px-2 border border-indigo-500 hover:border-transparent rounded">delete</a>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    2
+                </td>
+                <td>
+                    maryhadalittlelamb
+                </td>
+                <td>
+                    maryhadalittlelamb@gmail.com
+                </td>
+                <!-- <td>
+                    22/04/24 12:57AM
+                </td> -->
+                <td>
+                    <a href="view.html" class="button bg-transparent hover:bg-indigo-900 text-indigo-700 font-semibold hover:text-white px-2 border border-indigo-500 hover:border-transparent rounded">view</a>
+                    <a href="update.html" class="button bg-transparent hover:bg-indigo-900 text-indigo-700 font-semibold hover:text-white px-2 border border-indigo-500 hover:border-transparent rounded">edit</a>
+                    <a href="" class="button bg-transparent hover:bg-indigo-900 text-indigo-700 font-semibold hover:text-white px-2 border border-indigo-500 hover:border-transparent rounded">delete</a>
+                </td>
+            </tr>
+        </tbody>
+        
+    </table>
+        </section>
+    </main>
+
+    <!-- Footer Section -->
+    <footer>Footer Section</footer>
+</body>
+
+<script>
+      const g = document.getElementById('form');
+      const h = document.getElementById('query-details');
+      const google = 'https://www.google.com/search?h=site%3A+';
+      const site = 'twitter.com';
+
+      function submitted(event) {
+        event.preventDefault();
+        const url = google + site + '+' + h.value;
+        const win = window.open(url, '_blank');
+        win.focus();
+      }
+g.addEventListener('submit', submitted);
+    </script>
+
+
+
+</html>
