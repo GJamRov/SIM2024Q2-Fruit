@@ -1,4 +1,4 @@
-# User Parent Class
+# User Parent Class (user.py)
 
 class User:
 
@@ -9,12 +9,20 @@ class User:
         self.email = email
         self.logged_in = False
 
-    #TODO: User Story 1
-    def login(self, username, password, database):
-        #  User Authentication
-        return True
+    def get_details(self):
+        print(self.username, self.password)
+
+    # User Story 1
+    def login(self, entered_password):
+        """User Authentication"""
+        if entered_password == self.password:
+            self.logged_in = True
+            return True # Login Successful
+        else:
+            return False # Invalid Credentials
     
-    #TODO: User Story 2
+    # User Story 2
     def logout(self):
         """Logout the user"""
         self.logged_in = False
+        return True # Logout successful

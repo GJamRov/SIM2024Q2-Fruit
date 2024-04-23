@@ -1,3 +1,5 @@
+# Database Class (database.py)
+
 import sqlite3
 
 class Database:
@@ -25,12 +27,3 @@ class Database:
         self.cursor.execute(f"SELECT * FROM {table_name}")
         rows = self.cursor.fetchall()
         print(rows)
-
-# TODO: Code to populate the SystemAdmins table
-#cursor.execute("""
-#INSERT INTO SystemAdmins VALUES
-#(1, 'Paul', 'Smith'),
-#(2, 'Mark', 'Jacobs'),
-#(3, 'Anna', 'Smith')
-#""")
-
