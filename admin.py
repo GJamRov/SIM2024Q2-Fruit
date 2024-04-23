@@ -1,3 +1,5 @@
+# System Admin Class (admin.py)
+
 from user import User
 
 # System Admins Class inherits from User Class

@@ -1,3 +1,5 @@
+# Main Program (main.py)
+
 import os.path
 import sqlite3
 import random
@@ -40,10 +42,12 @@ if __name__ == "__main__":
             email = generate_random_email()
             role = random.randint(1, 4)  # 1 = admin, 2 = rea, 3 = buyer, 4 = seller
             sample_db.insert_into_table("User", [f"{i+1}, '{username}', '{password}',  '{email}', {role}"])
+        sample_db.insert_into_table("User", ["0, 'admin', '123', 'admin@example.com', 1"])
+        sample_db.insert_into_table("User", ["101, 'admin1', '123', 'admin1@example.com', 1"]) 
         sample_db.view_table("User")
 
 
-    # TODO: Main Function Logic
+    # Main Function Logic
 
     # Establish connection to Sample Database
     connection = sqlite3.connect('SampleDatabase.db')
@@ -54,22 +58,19 @@ if __name__ == "__main__":
     # Read all the tables, and create relevant objects for each row
     cursor.execute("SELECT * FROM User")
     rows = cursor.fetchall()
-    admins = []
-    reas = []
-    buyers = []
-    sellers = []
+    user_lst= []
     for u in rows:
         if u[4] == 1:
-            admins.append(SystemAdmin(u[0], u[1], u[2], u[3]))
+            user_lst.append(SystemAdmin(u[0], u[1], u[2], u[3]))
         elif u[4] == 2:
             pass
         elif u[4] == 3:
             pass
         elif u[4] == 4:
             pass
-    
-    # print(admins)    
-    # print(rows)
 
-    main_app = app.WebApp(8000)
+    for i in user_lst:
+        print(i.get_details())
+
+    main_app = app.WebApp(8000, user_lst)
     main_app.run_app()
