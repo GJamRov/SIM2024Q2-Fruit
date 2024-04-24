@@ -13,9 +13,9 @@ class User:
         print(self.username, self.password)
 
     # User Story 1
-    def login(self, entered_password):
+    def login(self, entered_username, entered_password):
         """User Authentication"""
-        if entered_password == self.password:
+        if entered_username == self.username and entered_password == self.password:
             self.logged_in = True
             return True # Login Successful
         else:
