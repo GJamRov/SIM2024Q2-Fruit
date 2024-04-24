@@ -10,20 +10,39 @@ class SystemAdmin(User):
         super().__init__(userID, username, password, email)
 
     #TODO: 3. Create user accounts
-    def create_account(self):
-        pass
+    def create_account(self, userAcc):
+        if userAcc.username in self.username:
+            return False 
+        elif userAcc.password != userAcc.confirm_password:
+            return False 
+        else:
+            self.username = userAcc.username
+            self.password = userAcc.password
+            self.email = userAcc.email
+            return True #Account created
 
     #TODO: 4. View user accounts
-    def view_account(self):
-        pass
+    def view_account(self, entered_username):
+        if entered_username == self.username:
+            return [self.userID, self.username, self.email]
+        else:
+            return
 
     #TODO: 5. Update user accounts
     def update_account(self):
-        pass
+        
 
     #TODO: 6. Suspend user account
-    def suspend_account(self):
-        pass
+    def suspend_account(self, entered_username):
+        # Suspend user in database (add is_active column to table)
+        query = "UPDATE sample_db SET is_active = FALSE WHERE username = %s"
+        cursor.execute(query, (entered_username,))
+        connection.commit()
+        # Check if the update affected any rows
+        if cursor.rowcount > 0:
+            return True  # Suspend successful
+        else:
+            return False  # User not found or already suspended
 
     #TODO: 8. Create user profiles
     def create_profile(self):
