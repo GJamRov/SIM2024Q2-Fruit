@@ -1,14 +1,16 @@
 # User Parent Class (user.py)
+import database
 
 class User:
 
-    def __init__(self, userID, username, password, email, active):
+    def __init__(self, userID, username, password, email, role, active, logged_in):
         self.userID = userID
         self.username = username
         self.password = password
         self.email = email
+        self.role = role
         self.active = active
-        self.logged_in = False
+        self.logged_in = 0
 
     ## Getter & Setter
     def get_id(self):
@@ -46,16 +48,33 @@ class User:
         self.logged_in = new_login_status
 
     # User Story 1
-    def login(self, entered_username, entered_password):
+    def login(entered_username, entered_password):
         """User Authentication"""
-        if entered_username == self.username and entered_password == self.password:
-            self.logged_in = True
-            return True # Login Successful
-        else:
-            return False # Invalid Credentials
+        db =  database.Database("SampleDatabase")
+        db.cursor.execute("SELECT * FROM User WHERE username = ?", (entered_username,))
+        user_data = db.cursor.fetchone()
+
+        if user_data:
+            self = User(*user_data)
+            if entered_username == self.username and entered_password == self.password:
+                db.cursor.execute("UPDATE User SET logged_in = 1 WHERE username = ?", (entered_username,))
+                db.connection.commit()
+                db.cursor.close()
+                return self.role # Login Successful
+            else:
+                return 0 # Invalid Credentials
     
     # User Story 2
-    def logout(self):
+    def logout(username):
         """Logout the user"""
-        self.logged_in = False
+        db =  database.Database("SampleDatabase")
+        db.cursor.execute("SELECT * FROM User WHERE username = ?", (username,))
+        user_data = db.cursor.fetchone()
+
+        if user_data:
+            self = User(*user_data)
+            if username == self.username:
+                db.cursor.execute("UPDATE User SET logged_in = 0 WHERE username = ?", (username,))
+                db.connection.commit()
+                db.cursor.close()
         return True # Logout successful
