@@ -31,7 +31,8 @@ if __name__ == "__main__":
                             "password TEXT",
                             "email TEXT",
                             "role INTEGER",
-                            "active INTEGER"]
+                            "active INTEGER",
+                            "logged_in BOOL"]
         sample_db.create_table("User", user_col)
         
 
@@ -42,15 +43,22 @@ if __name__ == "__main__":
             email = generate_random_email()
             role = random.randint(1, 4)  # 1 = admin, 2 = rea, 3 = buyer, 4 = seller
             active = random.randint(1, 2) # 1 = active, 2 = suspended
-            sample_db.insert_into_table("User", [f"{i+1}, '{username}', '{password}',  '{email}', {role}, {active}"])
-        sample_db.insert_into_table("User", ["0, 'admin', '123', 'admin@example.com', 1, 1"])
-        sample_db.insert_into_table("User", ["101, 'admin1', '123', 'admin1@example.com', 1, 1"]) 
+            logged_in = 0
+            sample_db.insert_into_table("User", [f"{i+1}, '{username}', '{password}',  '{email}', {role}, {active}, {logged_in}"])
+        # Actor accounts for test case use
+        sample_db.insert_into_table("User", ["0, 'admin', '123', 'admin@example.com', 1, 1, 0"])
+        sample_db.insert_into_table("User", ["101, 'admin1', '123', 'admin1@example.com', 1, 1, 0"])
+        sample_db.insert_into_table("User", ["102, 'rea', '123', 'rea@example.com', 2, 1, 0"])
+        sample_db.insert_into_table("User", ["103, 'buyer', '123', 'buyer@example.com', 3, 1, 0"])
+        sample_db.insert_into_table("User", ["104, 'seller', '123', 'seller@example.com', 4, 1, 0"])
         sample_db.view_table("User")
 
     ## When database is already populated
     db =  database.Database("SampleDatabase")
     print("Database Initliaised!")
+    #db.view_table("User")
+    db.connection.close()
     
     # Initialise Web App
-    main_app = app.WebApp(8000, db)
+    main_app = app.WebApp(8000)
     main_app.run_app()
