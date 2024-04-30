@@ -3,6 +3,9 @@ import database
 
 class User:
 
+    # Static Variable
+    db =  database.Database("SampleDatabase")
+
     def __init__(self, userID, username, password, email, role, active):
         self.userID = userID
         self.username = username
@@ -40,13 +43,11 @@ class User:
     def set_status(self, new_status):
         self.active = new_status
 
+    ## Static Methods
     # User Story 1
     def login(entered_username, entered_password) -> int:
-        """User Authentication"""
-        db =  database.Database("SampleDatabase")
-        db.cursor.execute("SELECT * FROM User WHERE username = ?", (entered_username,))
-        user_data = db.cursor.fetchone()
-        db.cursor.close()
+        """Authenticates user to log them in"""
+        user_data = User.db.search_one("User", f"username = '{entered_username}'")
 
         if user_data:
             self = User(*user_data)
@@ -59,11 +60,8 @@ class User:
 
     # User Story 2
     def logout(username):
-        """Logout the user"""
-        db =  database.Database("SampleDatabase")
-        db.cursor.execute("SELECT * FROM User WHERE username = ?", (username,))
-        user_data = db.cursor.fetchone()
-        db.cursor.close()
+        """Log the User out"""
+        user_data = User.db.search_one("User", f"username = '{username}'")
 
         if user_data:
             self = User(*user_data)

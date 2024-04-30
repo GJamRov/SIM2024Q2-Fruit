@@ -50,12 +50,14 @@ if __name__ == "__main__":
         sample_db.insert_into_table("User", ["103, 'buyer', '123', 'buyer@example.com', 3, 1"])
         sample_db.insert_into_table("User", ["104, 'seller', '123', 'seller@example.com', 4, 1"])
         sample_db.view_table("User")
+        #print(sample_db.search_one("User", "username = 'admin'"))
 
     ## When database is already populated
-    db =  database.Database("SampleDatabase")
-    print("Database Initliaised!")
-    #db.view_table("User")
-    db.connection.close()
+    # db =  database.Database("SampleDatabase")
+    # print(type(db.search_one("User", "username = 'admin'")))
+    # print("Database Initliaised!")
+    # db.view_table("User")
+    # db.connection.close()
     
     # Initialise Web App
     main_app = app.WebApp(8000)
