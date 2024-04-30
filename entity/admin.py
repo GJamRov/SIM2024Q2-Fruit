@@ -8,7 +8,7 @@ class SystemAdmin(User):
         super().__init__(userID, username, password, email, active)
 
     #TODO: 3. Create user accounts
-    def create_account(self, userAcc, db):
+    def create_account(self, userAcc):
         if userAcc.username in self.username:
             return False 
         elif userAcc.password != userAcc.confirm_password:

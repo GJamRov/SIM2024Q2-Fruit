@@ -1,16 +1,11 @@
 # Database Class (database.py)
 import sqlite3
-from entity.user import User
-from entity.admin import SystemAdmin
-from entity.rea import REA
-from entity.buyer import Buyer
-from entity.seller import Seller
 
 class Database:
 
     def __init__(self, db_name):
         self.db_name = db_name
-        self.connection = sqlite3.connect('SampleDatabase.db')
+        self.connection = sqlite3.connect(f'{db_name}.db', check_same_thread=False)
         self.cursor = self.connection.cursor()
         self.users = []
         self.listings = []
@@ -39,16 +34,8 @@ class Database:
         self.cursor.execute(query)
         self.connection.commit()
 
-    def init_users(self):
-        # Read all the tables, and create relevant objects for each row
-        self.cursor.execute("SELECT * FROM User")
-        rows = self.cursor.fetchall()
-        for u in rows:
-            if u[4] == 1: # System Admin
-                self.users.append(SystemAdmin(u[0], u[1], u[2], u[3], u[4]))
-            elif u[4] == 2: # REA
-                self.users.append(REA(u[0], u[1], u[2], u[3], u[4]))
-            elif u[4] == 3: # Buyer
-                self.users.append(Buyer(u[0], u[1], u[2], u[3], u[4]))
-            elif u[4] == 4: # Seller
-                self.users.append(Seller(u[0], u[1], u[2], u[3], u[4]))
+    def search_one(self, table_name,  search_param):
+        query = f"SELECT * FROM {table_name} WHERE {search_param}"
+        print(query)
+        self.cursor.execute(query)
+        return self.cursor.fetchone()
