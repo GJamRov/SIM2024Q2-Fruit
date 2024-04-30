@@ -16,7 +16,6 @@ class WebApp:
         self.port = port
         self.app.secret_key = 'super secret key'  # for sessions
         self.blueprint = Blueprint('web_app', __name__)
-        #self.database = db
 
     def set_port(self, port: int):
         self.port = port
@@ -25,8 +24,8 @@ class WebApp:
         """Runs the web application."""
         self.blueprint.add_url_rule('/', 'home', self.home)
         self.blueprint.add_url_rule('/login', 'login', self.login, methods=['GET', 'POST'])
-        self.blueprint.add_url_rule('/logout', 'logout', self.logout, methods=['POST'])
-        self.blueprint.add_url_rule('/profile/<username>/<int:role>', 'user_profile', self.user_profile)
+        self.blueprint.add_url_rule('/logout', 'logout', self.logout, methods=['GET', 'POST'])
+        self.blueprint.add_url_rule('/profile/<username>', 'profile', self.profile, methods=['GET', 'POST'])
         self.app.register_blueprint(self.blueprint)
         self.app.run(debug=True, port=self.port)
 
@@ -40,6 +39,7 @@ class WebApp:
         """User login route"""
         template = 'login.html'
         
+        #Request data from web page
         if request.method == 'POST':
             entered_username = request.form['username']
             entered_password = request.form['password']
@@ -47,37 +47,20 @@ class WebApp:
             # Login Controller handles login
             loginCtl = LoginController()
             role = loginCtl.validateLogin(entered_username, entered_password)
-
-            if role == 1:
+            print(role)
+            #Session data assignment and page redirect on successful login
+            if 0 < role < 5:
                 session['username'] = entered_username
+                session['role'] = role
+                session['logged_in'] = True
                 flash('Login successful!', 'success')
-                template = 'profile_admin.html'
-            elif role == 2:
-                session['username'] = entered_username
-                flash('Login successful!', 'success')                
-                template = 'profile_rea.html'
-            elif role == 3:
-                session['username'] = entered_username
-                flash('Login successful!', 'success')                
-                template = 'profile_buyer.html'
-            elif role == 4:
-                session['username'] = entered_username
-                flash('Login successful!', 'success')                
-                template = 'profile_seller.html'
-            else:
-                template = 'login.html'
-                flash('Invalid username or password', 'error')
-
-        return render_template(template)
-
-            #if role > 0:
-                #session['username'] = entered_username
-                #flash('Login successful!', 'success')
-                #return redirect(url_for('user_profile', username=session['username'], role=role))
-            #else:
-                #flash('Invalid username or password', 'error')            
-
-        #return render_template(template)         
+                return redirect(url_for('web_app.profile', username=session['username']))
+            elif role == 5:
+                flash('Account is suspended', 'error')
+            elif role == 6:
+                flash('Invalid username or password', 'error')            
+        
+        return render_template(template)         
 
     def logout(self):
         """User logout route"""
@@ -86,46 +69,53 @@ class WebApp:
         # Logout Controller handles logout
         logoutCtl = LogoutController()
         if logoutCtl.logout(username):
+            #Clear session data and redirect to login page once logged out
             session.pop('username')
+            session.pop('role')
+            session.pop('logged_in', None)
             flash('Logout successful!', 'success')
             return redirect('/login')
 
-    def user_profile(self, username, role):
-        """View user profile"""
-        """if 'username' in session and username == session['username']:
-            user_found = next((user for user in self.users if user.username == username), None)
-            if user_found:
-                role = type(user_found)
-                if role == SystemAdmin:
-                    return render_template("profile_admin.html", user=user_found)
-                else:
-                    flash('Invalid user role', 'error')
-                    return redirect('/')
+    def profile(self, username):
+        """Assign & display user profile"""
+
+        role = session.get('role')
+
+        try:
+            #User profile assignment if successfully logged in
+            if session.get('logged_in'):
+                if role == 1:
+                    template = 'profile_admin.html'
+                elif role == 2:              
+                    template = 'profile_rea.html'
+                elif role == 3:          
+                    template = 'profile_buyer.html'
+                elif role == 4:             
+                    template = 'profile_seller.html'
             else:
-                flash('User not found', 'error')
-                return redirect('/')
-        flash('Unauthorized access! Please log in.', 'error')
-        return redirect('/login') """
-
-        if role == 1:
-            template = 'profile_admin.html'
-        elif role == 2:              
-            template = 'profile_rea.html'
-        elif role == 3:          
-            template = 'profile_buyer.html'
-        elif role == 4:             
-            template = 'profile_seller.html'
-
-        return render_template(template, username=username)
+                #If 'logged_in' key is not found in session, redirect to login page
+                return redirect('/login')
+            
+            return render_template(template, username=username)
+        except KeyError:
+            #If 'role' key is not found in session, redirect to login page
+            return redirect('/login')
     
     ## System Admin Functionalities
     #TODO: 3. Create user accounts
     def create_account(self):
         """Create new user account"""
         # Check that the user is a System Admin
-
+        while session['role'] == 1:
         # Get form data from POST request
+            if request.method == 'POST':
+                entered_username = request.form['username']
+                entered_password = request.form['password']
+                entered_confirm_password = request.form['confirm_password']
+                entered_email = request.form['email']
+                entered_profile = request.form['profile']
 
+                #userAccount = (request.form['username'], request.form['password'], request.form['confirm_password'], request.form['email'], request.form['profile'])
         # SystemAdmin Object creates new user object based on form data
 
     #TODO: 4. View user accounts

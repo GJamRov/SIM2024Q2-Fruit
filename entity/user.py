@@ -3,14 +3,13 @@ import database
 
 class User:
 
-    def __init__(self, userID, username, password, email, role, active, logged_in):
+    def __init__(self, userID, username, password, email, role, active):
         self.userID = userID
         self.username = username
         self.password = password
         self.email = email
         self.role = role
         self.active = active
-        self.logged_in = 0
 
     ## Getter & Setter
     def get_id(self):
@@ -28,9 +27,6 @@ class User:
     def get_status(self):
         return self.active
     
-    def get_login_status(self):
-        return self.logged_in
-    
     ## Setter methods
     def set_username(self, new_username):
         self.username = new_username
@@ -43,38 +39,33 @@ class User:
     
     def set_status(self, new_status):
         self.active = new_status
-    
-    def set_login_status(self, new_login_status):
-        self.logged_in = new_login_status
 
     # User Story 1
-    def login(entered_username, entered_password):
+    def login(entered_username, entered_password) -> int:
         """User Authentication"""
         db =  database.Database("SampleDatabase")
         db.cursor.execute("SELECT * FROM User WHERE username = ?", (entered_username,))
         user_data = db.cursor.fetchone()
+        db.cursor.close()
 
         if user_data:
             self = User(*user_data)
-            if entered_username == self.username and entered_password == self.password:
-                db.cursor.execute("UPDATE User SET logged_in = 1 WHERE username = ?", (entered_username,))
-                db.connection.commit()
-                db.cursor.close()
-                return self.role # Login Successful
-            else:
-                return 0 # Invalid Credentials
-    
+            if entered_username == self.username and entered_password == self.password and self.active == 1:
+                return self.role # Login Successful (Valid credentials and active account)
+            elif entered_username == self.username and entered_password == self.password and self.active == 2:
+                return 5 # Valid credentials but suspended account
+            elif entered_username != self.username or entered_password != self.password:
+                return 6 # Invalid credentials
+
     # User Story 2
     def logout(username):
         """Logout the user"""
         db =  database.Database("SampleDatabase")
         db.cursor.execute("SELECT * FROM User WHERE username = ?", (username,))
         user_data = db.cursor.fetchone()
+        db.cursor.close()
 
         if user_data:
             self = User(*user_data)
             if username == self.username:
-                db.cursor.execute("UPDATE User SET logged_in = 0 WHERE username = ?", (username,))
-                db.connection.commit()
-                db.cursor.close()
-        return True # Logout successful
+                return True # Logout successful
