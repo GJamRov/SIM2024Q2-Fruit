@@ -5,6 +5,12 @@ class User:
 
     # Static Variable
     db =  database.Database("SampleDatabase")
+    role_dict = {
+                "System Admin":1,
+                "REA":2,
+                "Buyer":3,
+                "Seller":4
+                }
 
     def __init__(self, userID, username, password, email, role, active):
         self.userID = userID

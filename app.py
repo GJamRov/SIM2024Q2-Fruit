@@ -2,12 +2,13 @@ from flask import Flask, Blueprint, render_template, request, redirect, session,
 # Controller Imports
 from controllers.login import LoginController
 from controllers.logout import LogoutController
+from controllers.addAccount import addAccountCtl
 
 # Entity Imports
-from entity.admin import SystemAdmin
-from entity.rea import REA
-from entity.buyer import Buyer
-from entity.seller import Seller
+# from entity.admin import SystemAdmin
+# from entity.rea import REA
+# from entity.buyer import Buyer
+# from entity.seller import Seller
 
 class WebApp:
 
@@ -102,12 +103,12 @@ class WebApp:
             return redirect('/login')
     
     ## System Admin Functionalities
-    #TODO: 3. Create user accounts
+    # 3. Create user accounts
     def create_account(self):
         """Create new user account"""
         # Check that the user is a System Admin
         while session['role'] == 1:
-        # Get form data from POST request
+            # Get form data from POST request
             if request.method == 'POST':
                 entered_username = request.form['username']
                 entered_password = request.form['password']
@@ -115,20 +116,41 @@ class WebApp:
                 entered_email = request.form['email']
                 entered_profile = request.form['profile']
 
-                #userAccount = (request.form['username'], request.form['password'], request.form['confirm_password'], request.form['email'], request.form['profile'])
-        # SystemAdmin Object creates new user object based on form data
+                if entered_password == entered_confirm_password:
+                    # Send details to controller
+                    addAccCtl = addAccountCtl()
+                    acc_details = [entered_username, entered_password, entered_email, entered_profile]
+                    addAccCtl.addUserAccount(session.get('username'), acc_details)
 
-    #TODO: 4. View user accounts
+                else:
+                    flash("Passwords don't match!", "error")
+
+    #4. View user accounts
     def view_account(self):
-        pass
+        """View user accounts"""
+        # Check that the user is a System Admin
+        while session['role'] == 1:
+            # Get form data from POST request
+            if request.method == 'POST':
+                pass
 
-    #TODO: 5. Update user accounts
+    #5. Update user accounts
     def update_account(self):
-        pass
+        """Update existing user account"""
+        # Check that the user is a System Admin
+        while session['role'] == 1:
+            # Get form data from POST request
+            if request.method == 'POST':
+                pass
 
-    #TODO: 6. Suspend user account
+    #6. Suspend user account
     def suspend_account(self):
-        pass
+        """Suspend a user account"""
+        # Check that the user is a System Admin
+        while session['role'] == 1:
+            # Get form data from POST request
+            if request.method == 'POST':
+                pass
 
     #TODO: 8. Create user profiles
     def create_profile(self):

@@ -52,6 +52,11 @@ if __name__ == "__main__":
         sample_db.view_table("User")
         #print(sample_db.search_one("User", "username = 'admin'"))
 
+        # Propety Listing Table
+        property_listing_col = ["id INTEGER PRIMARY KEY",
+                                "name TEXT",
+                                "price INTEGER"]
+
     ## When database is already populated
     # db =  database.Database("SampleDatabase")
     # print(type(db.search_one("User", "username = 'admin'")))
