@@ -1,8 +1,12 @@
 from flask import Flask, Blueprint, render_template, request, redirect, session, flash, url_for
 # Controller Imports
 from controllers.login import LoginController
-from controllers.logout import LogoutController
 from controllers.addAccount import addAccountCtl
+from controllers.createProfile import createUserProfileController
+from controllers.viewProfile import viewUserProfileController
+from controllers.updateProfile import updateUserProfileController
+from controllers.suspendProfile import suspendUserProfileController
+from controllers.searchProfile import searchUserProfileController
 
 # Entity Imports
 # from entity.admin import SystemAdmin
@@ -48,7 +52,7 @@ class WebApp:
             # Login Controller handles login
             loginCtl = LoginController()
             role = loginCtl.validateLogin(entered_username, entered_password)
-            print(role)
+
             #Session data assignment and page redirect on successful login
             if 0 < role < 5:
                 session['username'] = entered_username
@@ -65,17 +69,14 @@ class WebApp:
 
     def logout(self):
         """User logout route"""
-        username = session['username']
 
-        # Logout Controller handles logout
-        logoutCtl = LogoutController()
-        if logoutCtl.logout(username):
-            #Clear session data and redirect to login page once logged out
-            session.pop('username')
-            session.pop('role')
-            session.pop('logged_in', None)
-            flash('Logout successful!', 'success')
-            return redirect('/login')
+        #Clear session data and redirect to login page once logged out
+        session.pop('username')
+        session.pop('role')
+        session.pop('logged_in', None)
+        session['_flashes'].clear()
+        #flash('Logout successful!', 'success')
+        return redirect('/login')
 
     def profile(self, username):
         """Assign & display user profile"""
@@ -152,19 +153,60 @@ class WebApp:
             if request.method == 'POST':
                 pass
 
+    #7. Search user account
+    def search_account(self):
+        """Search user account"""
+        # Check that the user is a System Admin
+        while session['role'] == 1:
+            # Get form data from POST request
+            if request.method == 'POST':
+                pass
+
     #TODO: 8. Create user profiles
     def create_profile(self):
-        pass
+        """Create new user profile"""
+        # Check that the user is a System Admin
+        while session['role'] == 1:
+            # Get form data from POST request
+            if request.method == 'POST':
+                entered_username = request.form['username']
+                entered_profile_name = request.form['profile_name']
+                entered_profile_desc = request.form['profile_desc']
+                return redirect('/profile')
 
     #TODO: 9. View user profiles
     def view_profile(self):
-        pass
+        """View user profiles"""
+        # Check that the user is a System Admin
+        while session['role'] == 1:
+            # Get form data from POST request
+            if request.method == 'POST':
+                pass
+
+    #TODO: 10. Update user profiles
+    def update_profile(self):
+        """Update user profile"""
+        # Check that the user is a System Admin
+        while session['role'] == 1:
+            # Get form data from POST request
+            if request.method == 'POST':
+                pass        
 
     #TODO: 11. Suspend user profile
     def suspend_profile(self):
-        pass
+        """Suspend user profile"""
+        # Check that the user is a System Admin
+        while session['role'] == 1:
+            # Get form data from POST request
+            if request.method == 'POST':
+                pass
 
     #TODO: 12. Search user profile
     def search_profile(self):
-        pass
+        """Search user profile"""
+        # Check that the user is a System Admin
+        while session['role'] == 1:
+            # Get form data from POST request
+            if request.method == 'POST':
+                pass
 
