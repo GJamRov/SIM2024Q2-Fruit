@@ -18,7 +18,7 @@ class SystemAdmin(User):
             new_id = SystemAdmin.db.get_highest_id(table="User")
             # ["104, 'seller', '123', 'seller@example.com', 4, 1"]
         
-            details = [new_id] + [newAccDetails[:-1]] + [role_dict[newAccDetails[-1]]] + [1]
+            details = [new_id] + [newAccDetails[:-1]] + [self.role_dict[newAccDetails[-1]]] + [1]
             SystemAdmin.db.insert_into_table("User", details)
             return True
 
@@ -52,19 +52,3 @@ class SystemAdmin(User):
             return True
         else:
             return False
-
-    #TODO: 8. Create user profiles
-    def create_profile(self, db_connection):
-        pass
-
-    #TODO: 9. View user profiles
-    def view_profile(self, db_connection):
-        pass
-
-    #TODO: 11. Suspend user profile
-    def suspend_profile(self, db_connection):
-        pass
-
-    #TODO: 12. Search user profile
-    def search_profile(self, db_connection):
-        pass

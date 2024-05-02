@@ -63,13 +63,3 @@ class User:
                 return 5 # Valid credentials but suspended account
             elif entered_username != self.username or entered_password != self.password:
                 return 6 # Invalid credentials
-
-    # User Story 2
-    def logout(username):
-        """Log the User out"""
-        user_data = User.db.search_one("User", f"username = '{username}'")
-
-        if user_data:
-            self = User(*user_data)
-            if username == self.username:
-                return True # Logout successful

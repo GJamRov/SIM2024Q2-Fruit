@@ -56,6 +56,18 @@ if __name__ == "__main__":
         property_listing_col = ["id INTEGER PRIMARY KEY",
                                 "name TEXT",
                                 "price INTEGER"]
+        
+    if not os.path.exists('ProfileDatabase.db'):
+        # Initialise new table
+        profile_db = database.Database("ProfileDatabase")
+
+        # Profile Table
+        profile_col = ["id INTEGER PRIMARY KEY",
+                            "username TEXT",
+                            "name TEXT",
+                            "type TEXT",
+                            "description TEXT",]
+        profile_db.create_table("Profile", profile_col)
 
     ## When database is already populated
     # db =  database.Database("SampleDatabase")
