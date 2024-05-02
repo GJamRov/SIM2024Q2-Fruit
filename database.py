@@ -39,3 +39,10 @@ class Database:
         print(query)
         self.cursor.execute(query)
         return self.cursor.fetchone()
+    
+    def get_highest_id(self, table_name, id_coulmn = 'id'):
+        """Get the highest ID number from a table."""
+        query = f"SELECT MAX({id_coulmn}) FROM {table_name}"
+        self.cursor.execute(query)
+        highest_id = self.cursor.fetchone()[0]
+        return highest_id if highest_id is not None else 0

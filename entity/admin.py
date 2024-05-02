@@ -7,43 +7,51 @@ class SystemAdmin(User):
     def __init__(self, userID, username, password, email, active):
         super().__init__(userID, username, password, email, active)
 
-    #TODO: 3. Create user accounts
-    def create_account(self, userAcc):
-        if userAcc.username in self.username:
-            return False 
-        elif userAcc.password != userAcc.confirm_password:
-            return False 
-        else:
-            self.username = userAcc.username
-            self.password = userAcc.password
-            self.email = userAcc.email
-            return True #Account created
+    #3. Create user accounts
+    def addUserAccount(self, newAccDetails)-> bool: 
+        # Validate if the account already exists in the system
+        if (SystemAdmin.db.search_one("User", f"username = '{newAccDetails[0]}'")):
+            return False
 
-    #TODO: 4. View user accounts
-    def view_account(self, entered_username, db) -> list:
-        if entered_username == self.username:
-            return [self.userID, self.username, self.email]
-        else:
-            return []
-
-    #TODO: 5. Update user accounts
-    def update_account(self, db):
-        pass
+        else: # Passes all checks
+            # Create a new record and save it to database
+            new_id = SystemAdmin.db.get_highest_id(table="User")
+            # ["104, 'seller', '123', 'seller@example.com', 4, 1"]
         
+            details = [new_id] + [newAccDetails[:-1]] + [role_dict[newAccDetails[-1]]] + [1]
+            SystemAdmin.db.insert_into_table("User", details)
+            return True
 
-    #TODO: 6. Suspend user account
-    def suspend_account(self, entered_username, db):
-        # Suspend user in database (add is_active column to table)
-        # cursor = db_connection.cursor()
-        # query = "UPDATE sample_db SET is_active = FALSE WHERE username = %s"
-        # cursor.execute(query, (entered_username,))
-        # db_connection.commit()
-        # Check if the update affected any rows
-        #if cursor.rowcount > 0:
-        #    return True  # Suspend successful
-        #else:
-        #    return False  # User not found or already suspended
-        pass
+    #4. View user accounts
+    def view_account(self, entered_details="") -> list:
+        if entered_details == "": # View all accounts
+            pass
+        else:
+            search_param =  f"username='{entered_details}'"
+            search_result = SystemAdmin.db.search_one("User", search_param=search_param)
+            return list(search_result)
+
+    #5. Update user accounts
+    def update_account(self, entered_details) -> bool:
+        """Update User Account"""
+        target_account = SystemAdmin.db.search_one("User", f"username = {entered_details[0]}")
+        if target_account:
+            update_details = ""
+            # Update target_account with remaining information
+            SystemAdmin.db.update_table("User", update_details, f"username = '{target_account}'")
+            return True
+        else:
+            return False
+        
+    #6. Suspend user account
+    def suspend_account(self, entered_username):
+        """Suspend User Account in Database"""
+        target_account = SystemAdmin.db.search_one("User", f"username = '{entered_username}'")
+        if target_account:
+            SystemAdmin.db.update_table("User", "active = 2", f"username = '{entered_username}'")
+            return True
+        else:
+            return False
 
     #TODO: 8. Create user profiles
     def create_profile(self, db_connection):
