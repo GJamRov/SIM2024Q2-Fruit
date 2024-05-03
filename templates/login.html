@@ -1,27 +1,48 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Log in page</title>
+    <link rel="stylesheet"
+        href="style.css">
 </head>
+
+
 <body>
-    <h1>Login</h1>
-    <form action="/login" method="POST">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required><br>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required><br>
-        <input type="submit" value="Login">
-    </form>
-    {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-        {% set latest_message = messages[-1] %}
-        <script>
-            // Show the latest flash message in an alert box
-            alert("{{ latest_message[1] }}");
-        </script>
-    {% endif %}
-    {% endwith %}
+    <div class="main">
+        <h1>Real estate</h1>
+        <h3>Please log in</h3>
+        <form action="">
+            <label for="first">
+                Username:
+            </label>
+            <input type="text"
+                id="first"
+                name="first"
+                placeholder="Enter your Username" required>
+
+            <label for="password">
+                Password:
+            </label>
+            <input type="password"
+                id="password"
+                name="password"
+                placeholder="Enter your Password" required>
+
+            <div class="wrap">
+                <button type="submit"
+                        onclick="solve()">
+                    Log In
+                </button>
+            </div>
+        </form>
+        <p>Forgotten password? 
+            <a href="#"
+            style="text-decoration: none;">
+                Reset Password
+            </a>
+        </p>
+    </div>
 </body>
+
 </html>
