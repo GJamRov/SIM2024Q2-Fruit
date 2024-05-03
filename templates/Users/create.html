@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Create user page</title>
+    <!-- <link href="../style.css" rel="stylesheet" > -->
+    <link href="../output.css" rel="stylesheet" />
+    <link rel="stylesheet" href="../template.css" />
+  </head>
+
+  <body>
+    <!-- Header Section -->
+    <header>
+      <div class="head1">FruitRealEstate</div>
+    </header>
+
+    <!-- Menu Navigation Bar -->
+    <nav class="menu">
+      <a href="/src/Users/index.html">USERS</a>
+      <a href="#news">NEWS</a>
+      <a href="#notification"> NOTIFICATIONS </a>
+      <div class="menu-log">
+        <a href="#login">LOGOUT</a>
+      </div>
+    </nav>
+
+    <!-- Body section -->
+    <main class="body_sec p-4">
+      <section id="Content">
+        <div class="main">
+          <a
+            href="/src/Users/index.html"
+            class="bg-slate-600 text-sm text-white py-2 px-3 rounded"
+            >Back</a
+          >
+          <h3 class="text-xl font-bold underline mt-4">Create User Account</h3>
+          <form action="">
+            <label for="first"> Username: </label>
+            <input
+              type="text"
+              id="first"
+              name="first"
+              class="w-full md:w-[50%] xl:w-[30%]"
+              placeholder="Enter your Username"
+              required
+            />
+
+            <label for="password"> Password: </label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              class="w-full md:w-[50%] xl:w-[30%]"
+              placeholder="Enter your Password"
+              required
+            />
+
+            <label for="confirm-password"> Confirm password: </label>
+            <input
+              type="password"
+              id="confirm-password"
+              name="confirm-password"
+              onkeyup="check()"
+              class="w-full md:w-[50%] xl:w-[30%]"
+              placeholder="Enter your Password"
+              required
+            />
+            <span id="confirm-password-error" style="color: red"></span>
+
+            <label for="email"> Email: </label>
+            <input
+              type="text"
+              id="email"
+              name="email"
+              class="w-full md:w-[50%] xl:w-[30%]"
+              placeholder="Enter your Email"
+              required
+            />
+            <div class="wrap">
+              <button type="submit" id="submit-button">
+                Create user account
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer Section -->
+    <footer>Footer Section</footer>
+  </body>
+</html>
+<script>
+  function check() {
+    var input = document.getElementById("confirm-password");
+    var error = document.getElementById("confirm-password-error");
+    if (
+      input.value != "" &&
+      input.value != document.getElementById("password").value
+    ) {
+      error.innerHTML = "Password does not match";
+      document.getElementById("submit-button").disabled = true;
+    } else {
+      // input is valid -- reset the error message
+      error.innerHTML = "";
+      if (input.value != "") {
+        document.getElementById("submit-button").disabled = false;
+      }
+    }
+  }
+</script>

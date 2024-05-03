@@ -1,0 +1,101 @@
+.head1 {
+    font-size: 40px;
+    color: #FF5B00;
+    font-weight: bold;
+}
+
+.head2 {
+    font-size: 17px;
+    margin-left: 10px;
+    margin-bottom: 15px;
+}
+
+body {
+    margin: 0 auto;
+    background-position: center;
+    background-size: contain;
+}
+
+.menu {
+    position: sticky;
+    top: 0;
+    background-color: #0C1559;
+    padding: 10px 0px 10px 0px;
+    color: white;
+    margin: 0 auto;
+    overflow: hidden;
+    box-shadow: 0 2px 4px 0 rgba(0,0,0,.2);
+}
+
+.menu a {
+    float: left;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 20px;
+}
+
+.active, .menu a:hover {
+    float: left;
+    color: white;
+    background-color: #c2410c;
+    /* text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 20px; */
+}
+
+.menu-log {
+    right: auto;
+    float: right;
+}
+
+footer {
+    width: 100%;
+    bottom: 0px;
+    background-color: #000;
+    color: #fff;
+    position: absolute;
+    padding-top: 10px;
+    padding-bottom: 25px;
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.body_sec {
+    margin-left: 20px;
+}
+
+label {
+    display: block;
+    width: 100%;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    text-align: left;
+    color: #555;
+    font-weight: bold;
+}
+
+input {
+    display: block;
+    margin-bottom: 15px;
+    padding: 10px;
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+button {
+    padding: 15px;
+    border-radius: 10px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    border: none;
+    color: white;
+    cursor: pointer;
+    background-color: #312e81;
+    width: 100%;
+    font-size: 16px;
+}

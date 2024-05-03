@@ -1,0 +1,40 @@
+<nav class="menu flex flex-row top-0 sticky bg-red-400">
+    <img class="h-20 w-20 mx-3 rounded-xl" src="{{ url_for('static', filename='Fruit.jpg') }}" alt="logo" />
+    <div class="head1 self-center px-2">FruitRealEstate</div>
+    <div class="self-center ml-20 w-full min-w-max">
+        <a href="/" class="page hover:bg-orange-700 rounded mx-2">HOME</a>
+        <a href="/users/" id="user-page" class="page hover:bg-orange-700 rounded mx-2">USERS</a>
+        <a href="/user-profiles/" class="page hover:bg-orange-700 rounded mx-2">USER PROFILES</a>
+        <a href="/property-listings/" class="hover:bg-orange-700 rounded mx-2">PROPERTY LISTINGS</a>
+        <div class="menu-log ml-auto px-2">
+            <a href="/src/Login.html" class="hover:bg-orange-900 rounded mx-2">LOGOUT</a>
+        </div>
+    </div>
+</nav>
+
+{% block script %}
+<script>
+    // console.log(document.getElementById('user-page').href)
+    // console.log(window.location.href)
+    // console.log(document.getElementsByClassName('page'))
+    var list = document.getElementsByClassName('page')
+
+    for (var i = 0; i < list.length; i++) {
+        list[i].addEventListener("click", function() {
+            var current = document.getElementsByClassName("active");
+
+            // If there's no active class
+            if (current.length > 0) {
+                current[0].className = current[0].className.replace(" active", "");
+            }
+
+            // Add the active class to the current/clicked button
+            this.className += " active";
+        });
+    }
+    // document.getElementsByClassName('page').foreach((pg) => console.log(pg))
+    // if (window.location.href.includes(document.getElementByClass('page').href)) {
+    //     console.log();
+    // }
+</script>
+{% endblock script %}

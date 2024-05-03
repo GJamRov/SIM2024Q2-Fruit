@@ -6,10 +6,12 @@ import string
 import database
 import app
 
+
 def generate_random_string(length=8):
     """Generate a random string of specified length."""
     letters_and_digits = string.ascii_letters + string.digits
     return ''.join(random.choice(letters_and_digits) for _ in range(length))
+
 
 def generate_random_email(domain="example.com"):
     """Generate a random email address."""
@@ -33,11 +35,11 @@ if __name__ == "__main__":
                             "role INTEGER",
                             "active INTEGER"]
         sample_db.create_table("User", user_col)
-        
 
         # Populating the each table with at least 100 rows to each data type
         for i in range(100):
-            username = f"user{i+1}"  # Generate usernames like user1, user2, ...
+            # Generate usernames like user1, user2, ...
+            username = f"user{i+1}"
             password = generate_random_string(10)  # Generate random password
             email = generate_random_email()
             role = random.randint(1, 4)  # 1 = admin, 2 = rea, 3 = buyer, 4 = seller
