@@ -1,10 +1,10 @@
 # User Parent Class (user.py)
-import database
+from database import Database
 
 class User:
 
     # Static Variable
-    db =  database.Database("SampleDatabase")
+    db = None
     role_dict = {
                 "System Admin":1,
                 "REA":2,
@@ -19,6 +19,11 @@ class User:
         self.email = email
         self.role = role
         self.active = active
+
+    @staticmethod
+    def connect_database(db_name):
+        if not User.db:
+            User.db = Database(db_name)
 
     ## Getter & Setter
     def get_id(self):

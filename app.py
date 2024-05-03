@@ -8,11 +8,8 @@ from controllers.updateProfile import updateUserProfileController
 from controllers.suspendProfile import suspendUserProfileController
 from controllers.searchProfile import searchUserProfileController
 
-# Entity Imports
-# from entity.admin import SystemAdmin
-# from entity.rea import REA
-# from entity.buyer import Buyer
-# from entity.seller import Seller
+# Entity Import
+from entity.user import User
 
 class WebApp:
 
@@ -46,6 +43,7 @@ class WebApp:
         self.blueprint.add_url_rule('/property-listings/', 'property_listings_index', self.property_listings_index)
 
         self.app.register_blueprint(self.blueprint)
+        User.connect_database("SampleDatabase")
         self.app.run(debug=True, port=self.port)
 
     def home(self):
@@ -60,6 +58,7 @@ class WebApp:
         
         #Request data from web page
         if request.method == 'POST':
+            print("YIPEE")
             entered_username = request.form['username']
             entered_password = request.form['password']
 
@@ -73,7 +72,8 @@ class WebApp:
                 session['role'] = role
                 session['logged_in'] = True
                 flash('Login successful!', 'success')
-                return redirect(url_for('web_app.profile', username=session['username']))
+                # return redirect(url_for('web_app.profile', username=session['username']))
+                return redirect("/")
             elif role == 5:
                 flash('Account is suspended', 'error')
             elif role == 6:

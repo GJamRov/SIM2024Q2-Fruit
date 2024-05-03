@@ -1,5 +1,4 @@
 # Main Program (main.py)
-
 import os.path
 import random
 import string
@@ -17,16 +16,15 @@ def generate_random_email(domain="example.com"):
     email = f"{username}@{domain}"
     return email
 
-
 if __name__ == "__main__":
-
+    # print(os.path.exists("SampleDatabase.db"))
     # When Database hasnt been created
     if not os.path.exists('SampleDatabase.db'):
-        # Initialise new table
+        # Create new database
         sample_db = database.Database("SampleDatabase")
 
         # User Table
-        user_col = ["id INTEGER PRIMARY KEY",
+        user_col = ["id INTEGER PRIMARY KEY AUTOINCREMENT",
                             "username TEXT",
                             "password TEXT",
                             "email TEXT",
@@ -42,7 +40,8 @@ if __name__ == "__main__":
             email = generate_random_email()
             role = random.randint(1, 4)  # 1 = admin, 2 = rea, 3 = buyer, 4 = seller
             active = random.randint(1, 2) # 1 = active, 2 = suspended
-            sample_db.insert_into_table("User", [f"{i+1}, '{username}', '{password}',  '{email}', {role}, {active}"])
+            sample_db.insert_into_table("User", [f"NULL, '{username}', '{password}',  '{email}', {role}, {active}"])
+        
         # Actor accounts for test case use
         sample_db.insert_into_table("User", ["0, 'admin', '123', 'admin@example.com', 1, 1"])
         sample_db.insert_into_table("User", ["101, 'admin1', '123', 'admin1@example.com', 1, 2"])
@@ -50,16 +49,15 @@ if __name__ == "__main__":
         sample_db.insert_into_table("User", ["103, 'buyer', '123', 'buyer@example.com', 3, 1"])
         sample_db.insert_into_table("User", ["104, 'seller', '123', 'seller@example.com', 4, 1"])
         sample_db.view_table("User")
-        #print(sample_db.search_one("User", "username = 'admin'"))
+        print(sample_db.search_one("User", "username = 'admin'"))
 
         # Propety Listing Table
         property_listing_col = ["id INTEGER PRIMARY KEY",
                                 "name TEXT",
-                                "price INTEGER"]
-        
-    if not os.path.exists('ProfileDatabase.db'):
-        # Initialise new table
-        profile_db = database.Database("ProfileDatabase")
+                                "price INTEGER",
+                                "view_count INTEGER",
+                                "wishlisted INTEGER"]
+        sample_db.create_table("Profile", property_listing_col)
 
         # Profile Table
         profile_col = ["id INTEGER PRIMARY KEY",
@@ -67,15 +65,17 @@ if __name__ == "__main__":
                             "name TEXT",
                             "type TEXT",
                             "description TEXT",]
-        profile_db.create_table("Profile", profile_col)
-
+        
+        sample_db.create_table("Profile", profile_col)
+        
     ## When database is already populated
     # db =  database.Database("SampleDatabase")
-    # print(type(db.search_one("User", "username = 'admin'")))
+    # print(db.search_one("User", "username = 'admin'"))
     # print("Database Initliaised!")
     # db.view_table("User")
     # db.connection.close()
-    
+
     # Initialise Web App
+    print("--- Running App ---")
     main_app = app.WebApp(8000)
     main_app.run_app()
