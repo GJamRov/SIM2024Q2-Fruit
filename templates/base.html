@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{% block title %}{% endblock title %}</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    {% block style %}{% endblock style %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='output.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='template.css') }}">
+  </head>
+
+  <body>
+    <!-- Header Section -->
+    <!-- <header>
+      <div class="flex flex-row">
+        <img class="h-28" src="../Fruit.jpg" alt="logo" />
+        <div class="head1 self-center">FruitRealEstate</div>
+      </div>
+    </header> -->
+
+    <!-- Menu Navigation Bar -->
+    {% include("_navigation.html") %}
+
+    <!-- Body section -->
+    <main class="body_sec p-4 overflow-y-auto h-screen">
+      <section id="Content">
+        {% block content %}<p>No content.</p>{% endblock content %}
+      </section>
+    </main>
+
+    <!-- Footer Section -->
+    <footer class="bottom-0 sticky">Footer Section</footer>
+  </body>
+  {% block script %}{% endblock script %}
+</html>

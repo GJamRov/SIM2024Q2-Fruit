@@ -7,10 +7,12 @@ from database import Database
 import app
 from admin import SystemAdmin
 
+
 def generate_random_string(length=8):
     """Generate a random string of specified length."""
     letters_and_digits = string.ascii_letters + string.digits
     return ''.join(random.choice(letters_and_digits) for _ in range(length))
+
 
 def generate_random_email(domain="example.com"):
     """Generate a random email address."""
@@ -26,22 +28,23 @@ if __name__ == "__main__":
 
         # User Table
         user_col = ["id INTEGER PRIMARY KEY",
-                            "username TEXT",
-                            "password TEXT",
-                            "email TEXT",
-                            "role INTEGER"]
+                    "username TEXT",
+                    "password TEXT",
+                    "email TEXT",
+                    "role INTEGER"]
         sample_db.create_table("User", user_col)
-        
 
         # Populating the each table with at least 100 rows to each data type
         for i in range(100):
-            username = f"user{i+1}"  # Generate usernames like user1, user2, ...
+            # Generate usernames like user1, user2, ...
+            username = f"user{i+1}"
             password = generate_random_string(10)  # Generate random password
             email = generate_random_email()
-            role = random.randint(1, 4)  # 1 = admin, 2 = rea, 3 = buyer, 4 = seller
-            sample_db.insert_into_table("User", [f"{i+1}, '{username}', '{password}',  '{email}', {role}"])
+            # 1 = admin, 2 = rea, 3 = buyer, 4 = seller
+            role = random.randint(1, 4)
+            sample_db.insert_into_table(
+                "User", [f"{i+1}, '{username}', '{password}',  '{email}', {role}"])
         sample_db.view_table("User")
-
 
     # TODO: Main Function Logic
 
@@ -67,8 +70,8 @@ if __name__ == "__main__":
             pass
         elif u[4] == 4:
             pass
-    
-    # print(admins)    
+
+    # print(admins)
     # print(rows)
 
     main_app = app.WebApp(8000)
