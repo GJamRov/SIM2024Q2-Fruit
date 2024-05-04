@@ -32,7 +32,6 @@ if __name__ == "__main__":
                             "active INTEGER"]
         sample_db.create_table("User", user_col)
         
-
         # Populating the each table with at least 100 rows to each data type
         for i in range(100):
             username = f"user{i+1}"  # Generate usernames like user1, user2, ...
@@ -52,12 +51,19 @@ if __name__ == "__main__":
         print(sample_db.search_one("User", "username = 'admin'"))
 
         # Propety Listing Table
-        property_listing_col = ["id INTEGER PRIMARY KEY",
+        property_listing_col = ["id INTEGER PRIMARY KEY AUTOINCREMENT",
                                 "name TEXT",
                                 "price INTEGER",
                                 "view_count INTEGER",
                                 "wishlisted INTEGER"]
-        sample_db.create_table("Profile", property_listing_col)
+        sample_db.create_table("Property", property_listing_col)
+
+        for i in range(1, 101):
+            p_name = f"property {i}"
+            price = random.randint(50000, 1000000)
+            view_count = random.randint(1, 9999)
+            wishlisted = random.randint(1, 9999)
+            sample_db.insert_into_table("Property", [f"NULL, '{p_name}', {price}, {view_count}, {wishlisted}"])
 
         # Profile Table
         profile_col = ["id INTEGER PRIMARY KEY",
@@ -69,11 +75,12 @@ if __name__ == "__main__":
         sample_db.create_table("Profile", profile_col)
         
     ## When database is already populated
-    # db =  database.Database("SampleDatabase")
+    db =  database.Database("SampleDatabase")
     # print(db.search_one("User", "username = 'admin'"))
     # print("Database Initliaised!")
-    # db.view_table("User")
-    # db.connection.close()
+    db.view_table("User")
+    db.view_table("Property")
+    db.connection.close()
 
     # Initialise Web App
     print("--- Running App ---")

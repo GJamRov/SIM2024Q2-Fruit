@@ -15,17 +15,16 @@ class SystemAdmin(User):
 
         else: # Passes all checks
             # Create a new record and save it to database
-            new_id = SystemAdmin.db.get_highest_id(table="User")
-            # ["104, 'seller', '123', 'seller@example.com', 4, 1"]
-        
-            details = [new_id] + [newAccDetails[:-1]] + [self.role_dict[newAccDetails[-1]]] + [1]
+            # f"NULL, '{username}', '{password}',  '{email}', {role}, {active}"
+            details = f"NULL, '{newAccDetails[0]}', '{newAccDetails[1]}',  '{newAccDetails[2]}', {SystemAdmin.role_dict[newAccDetails[-1]]}, 1"
             SystemAdmin.db.insert_into_table("User", details)
             return True
 
     #4. View user accounts
     def view_account(self, entered_details="") -> list:
         if entered_details == "": # View all accounts
-            pass
+            search_result = SystemAdmin.db.view_table("User")
+            return list(search_result)
         else:
             search_param =  f"username='{entered_details}'"
             search_result = SystemAdmin.db.search_one("User", search_param=search_param)
@@ -38,7 +37,7 @@ class SystemAdmin(User):
         if target_account:
             update_details = ""
             # Update target_account with remaining information
-            SystemAdmin.db.update_table("User", update_details, f"username = '{target_account}'")
+            SystemAdmin.db.update_table("User", update_details, f"username = {entered_details[0]}")
             return True
         else:
             return False

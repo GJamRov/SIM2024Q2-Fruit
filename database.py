@@ -21,6 +21,7 @@ class Database:
         query = f"INSERT INTO {table_name} VALUES"
         value_q = ", ".join(values)
         query += f"({value_q})"
+        print(query)
         self.cursor.execute(query)
         self.connection.commit()
 
@@ -39,6 +40,13 @@ class Database:
         print(query)
         self.cursor.execute(query)
         return self.cursor.fetchone()
+    
+    def delete_from_table(self, table_name, condition):
+        """Delete records from a table based on a condition."""
+        query = f"DELETE FROM {table_name} WHERE {condition}"
+        self.cursor.execute(query)
+        self.connection.commit()
+        print(f"Deleted rows from {table_name} where {condition}")
     
     def get_highest_id(self, table_name, id_coulmn = 'id'):
         """Get the highest ID number from a table."""
