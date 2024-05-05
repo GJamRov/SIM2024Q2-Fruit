@@ -224,8 +224,6 @@ class WebApp:
             if request.method == 'POST':
                 pass
 
-
-
     # user
     def users_index(self):
         """users index page"""
@@ -264,3 +262,5 @@ class WebApp:
     def property_listings_index(self):
         """property listing index page"""
         return render_template("pages/property-listings/index.html")
+    
+    

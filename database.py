@@ -41,6 +41,21 @@ class Database:
         self.cursor.execute(query)
         return self.cursor.fetchone()
     
+    def search_by_keyword(self, table_name, keyword, search_columns):
+        """Search for records in a table based on a keyword."""
+        # Sample usage search_results = sample_db.search_by_keyword("User", "admin", ["username", "email"])
+        # Constructing the WHERE clause for search_columns
+        where_clause = " OR ".join([f"{column} LIKE ?" for column in search_columns])
+        query = f"SELECT * FROM {table_name} WHERE {where_clause}"
+
+        # Adding '%' wildcard to the keyword for pattern matching
+        keyword_with_wildcard = f"%{keyword}%"
+
+        self.cursor.execute(query, [keyword_with_wildcard] * len(search_columns))
+        rows = self.cursor.fetchall()
+        print(rows)
+        return rows
+    
     def delete_from_table(self, table_name, condition):
         """Delete records from a table based on a condition."""
         query = f"DELETE FROM {table_name} WHERE {condition}"
@@ -54,3 +69,4 @@ class Database:
         self.cursor.execute(query)
         highest_id = self.cursor.fetchone()[0]
         return highest_id if highest_id is not None else 0
+    
