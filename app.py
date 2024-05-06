@@ -30,15 +30,15 @@ class WebApp:
         # self.blueprint.add_url_rule('/profile/<username>', 'profile', self.profile, methods=['GET', 'POST'])
 
         # user
-        self.blueprint.add_url_rule('/users/', 'users_index', self.users_index)
-        self.blueprint.add_url_rule('/users/create', 'user_create', self.user_create)
-        self.blueprint.add_url_rule('/users/view', 'user_view', self.user_view)
-        self.blueprint.add_url_rule('/users/update', 'user_update', self.user_update)
+        self.blueprint.add_url_rule('/users/', 'users_index', self.users_index, methods=['GET', 'POST'])
+        self.blueprint.add_url_rule('/users/create', 'user_create', self.user_create, methods=['GET', 'POST'])
+        self.blueprint.add_url_rule('/users/view', 'user_view', self.user_view, methods=['GET', 'POST'])
+        self.blueprint.add_url_rule('/users/update', 'user_update', self.user_update, methods=['GET', 'POST'])
         # user profile
-        self.blueprint.add_url_rule('/user-profiles/', 'user_profiles_index', self.user_profiles_index)
-        self.blueprint.add_url_rule('/user-profiles/create', 'user_profile_create', self.user_profile_create)
-        self.blueprint.add_url_rule('/user-profiles/view', 'user_profile_view', self.user_profile_view)
-        self.blueprint.add_url_rule('/user-profiles/update', 'user_profile_update', self.user_profile_update)
+        self.blueprint.add_url_rule('/user-profiles/', 'user_profiles_index', self.user_profiles_index, methods=['GET', 'POST'])
+        self.blueprint.add_url_rule('/user-profiles/create', 'user_profile_create', self.user_profile_create, methods=['GET', 'POST'])
+        self.blueprint.add_url_rule('/user-profiles/view', 'user_profile_view', self.user_profile_view, methods=['GET', 'POST'])
+        self.blueprint.add_url_rule('/user-profiles/update', 'user_profile_update', self.user_profile_update, methods=['GET', 'POST'])
         # property listing
         self.blueprint.add_url_rule('/property-listings/', 'property_listings_index', self.property_listings_index)
 
@@ -58,7 +58,6 @@ class WebApp:
         
         #Request data from web page
         if request.method == 'POST':
-            print("YIPEE")
             entered_username = request.form['username']
             entered_password = request.form['password']
 
@@ -71,7 +70,7 @@ class WebApp:
                 session['username'] = entered_username
                 session['role'] = role
                 session['logged_in'] = True
-                flash('Login successful!', 'success')
+                # flash('Login successful!', 'success')
                 # return redirect(url_for('web_app.profile', username=session['username']))
                 return redirect("/")
             elif role == 5:
@@ -183,37 +182,60 @@ class WebApp:
         while session['role'] == 1:
             # Get form data from POST request
             if request.method == 'POST':
-                entered_username = request.form['username']
-                entered_profile_name = request.form['profile_name']
-                entered_profile_desc = request.form['profile_desc']
-                return redirect('/profile')
+                UP = [request.form['profile_type'], request.form['profile_desc']]
 
+                createProfileCtl = createUserProfileController()
+                if createProfileCtl(UP):
+                    flash("User profile created successfully!", "success")
+                    return redirect('/user-profiles/')
+                else:
+                    flash("User profile already exists! Please try again", "error")
+                    return redirect('/user-profiles/create')
+            return render_template("pages/user-profiles/create.html")
+        
     #TODO: 9. View user profiles
-    def view_profile(self):
+    def view_profile(self, profile):
         """View user profiles"""
         # Check that the user is a System Admin
         while session['role'] == 1:
-            # Get form data from POST request
-            if request.method == 'POST':
-                pass
+            viewProfileCtl = viewUserProfileController()
+            profile_data = viewProfileCtl.viewUserProfile(profile)
+            if profile_data:
+                return render_template('pages/user-profiles/view.html', profile=profile_data)
+            else:
+                flash("Invalid user profile", "error")
+                return redirect('/user-profiles/')
 
     #TODO: 10. Update user profiles
-    def update_profile(self):
+    def update_profile(self, profile):
         """Update user profile"""
         # Check that the user is a System Admin
         while session['role'] == 1:
             # Get form data from POST request
             if request.method == 'POST':
-                pass        
+                entered_desc = request.form['profile_desc']
+
+                updateProfileCtl = updateUserProfileController()
+                if updateProfileCtl.updateUserProfile(profile, entered_desc):
+                    flash("Profile description updated successfully!", "success")
+                    return redirect('/user-profiles/')
+                else:
+                    flash("Failed to update profile. Please try again.", "error")
+                    return redirect('/user-profiles/update')
+            return render_template('pages/user-profiles/update.html', profile=profile)
 
     #TODO: 11. Suspend user profile
-    def suspend_profile(self):
+    def suspend_profile(self, profile):
         """Suspend user profile"""
         # Check that the user is a System Admin
         while session['role'] == 1:
-            # Get form data from POST request
-            if request.method == 'POST':
-                pass
+            suspendUserProfileCtl = suspendUserProfileController()
+            if suspendUserProfileCtl.suspendUserProfile(profile):
+                flash("User profile suspended!", "success")
+            else:
+                flash("Error suspending user profile", "error")
+            return redirect('/user-profiles/')
+
 
     #TODO: 12. Search user profile
     def search_profile(self):
@@ -222,7 +244,14 @@ class WebApp:
         while session['role'] == 1:
             # Get form data from POST request
             if request.method == 'POST':
-                pass
+                entered_username = request.form['query-details']
+
+                searchUserProfileCtl = searchUserProfileController()
+                profile_data = searchUserProfileCtl.searchUserProfile(entered_username)
+                
+                if profile_data:
+                    return render_template("pages/users/index.html", profiles=profile_data)
+            return redirect('/user-profiles/')
 
     # user
     def users_index(self):
@@ -262,5 +291,3 @@ class WebApp:
     def property_listings_index(self):
         """property listing index page"""
         return render_template("pages/property-listings/index.html")
-    
-    
