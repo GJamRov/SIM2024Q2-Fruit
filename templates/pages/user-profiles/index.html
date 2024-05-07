@@ -16,7 +16,7 @@
             />
           </form>
           <a
-            href="{{ url_for('web_app.user_profile_create') }}"
+            href="{{ url_for('web_app.create_profile') }}"
             class="flex self-center ml-auto mx-4 bg-transparent hover:bg-indigo-900 text-indigo-700 font-semibold hover:text-white py-2 px-4 border border-indigo-500 hover:border-transparent rounded"
           >
             Create User Profiles +
@@ -25,9 +25,9 @@
         <table class="my-4 w-full min-w-max table-auto text-left">
           <thead>
             <tr class="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4">
-              <th>userid</th>
-              <th>username</th>
-              <th>email</th>
+              <th>id</th>
+              <th>Name</th>
+              <th>Description</th>
               <!-- <th>
                     created_on
                 </th> -->
@@ -35,62 +35,66 @@
             </tr>
           </thead>
           <tbody class="p-4 border-b border-blue-gray-50">
+            {% for profile in profiles %}
             <tr class="">
-              <td>1</td>
-              <td>johnny123</td>
-              <td>johnny123@gmail.com</td>
+              <td id="id">{{ profile[0] }}</td>
+              <td id="name">{{ profile[1] }}</td>
+              <td id="desc">{{ profile[2] }}</td>
               <!-- <td>
                     22/04/24 12:57AM
                 </td> -->
               <td class="">
                 <a
-                  href="{{ url_for('web_app.user_profile_view') }}"
+                  href="{{ url_for('web_app.view_profile', profile=profile[1]) }}"
                   class="button bg-transparent hover:bg-indigo-900 text-indigo-700 font-semibold hover:text-white px-2 border border-indigo-500 hover:border-transparent rounded"
                   >view</a
                 >
                 <a
-                  href="{{ url_for('web_app.user_profile_update') }}"
+                  href="{{ url_for('web_app.update_profile', profile=profile[1], profile_name=profile[1], profile_desc=profile[2]) }}"
                   class="button bg-transparent hover:bg-indigo-900 text-indigo-700 font-semibold hover:text-white px-2 border border-indigo-500 hover:border-transparent rounded"
                   >edit</a
                 >
                 <a
-                  href=""
+                  href="{{ url_for('web_app.suspend_profile', profile=profile[1]) }}"
                   class="button bg-transparent hover:bg-indigo-900 text-indigo-700 font-semibold hover:text-white px-2 border border-indigo-500 hover:border-transparent rounded"
                   >delete</a
                 >
               </td>
             </tr>
-            <tr>
-              <td>2</td>
-              <td>maryhadalittlelamb</td>
-              <td>maryhadalittlelamb@gmail.com</td>
-              <!-- <td>
-                    22/04/24 12:57AM
-                </td> -->
-              <td>
-                <a
-                  href="view.html"
-                  class="button bg-transparent hover:bg-indigo-900 text-indigo-700 font-semibold hover:text-white px-2 border border-indigo-500 hover:border-transparent rounded"
-                  >view</a
-                >
-                <a
-                  href="{{ url_for('web_app.user_profile_update') }}"
-                  class="button bg-transparent hover:bg-indigo-900 text-indigo-700 font-semibold hover:text-white px-2 border border-indigo-500 hover:border-transparent rounded"
-                  >edit</a
-                >
-                <a
-                  href=""
-                  class="button bg-transparent hover:bg-indigo-900 text-indigo-700 font-semibold hover:text-white px-2 border border-indigo-500 hover:border-transparent rounded"
-                  >delete</a
-                >
-              </td>
-            </tr>
+            {% endfor %}
           </tbody>
         </table>
 {% endblock content %}
 
 {% block script %}
-<!-- <script>
-    console.log(window.location.href);
-</script> -->
+<script>
+  function searchProfiles() {
+    // Declare variables
+    var input, filter, table, tr, tdId, tdName, tdDesc, i, txtValue;
+    input = document.getElementById('query-details');
+    filter = input.value.toUpperCase();
+    table = document.querySelector('.table-auto');
+    tr = table.getElementsByTagName('tr');
+
+    // Loop through all table rows, and hide those that don't match the search query
+    for (i = 0; i < tr.length; i++) {
+      tdId = tr[i].querySelector('#id');
+      tdName = tr[i].querySelector('#name');
+      tdDesc = tr[i].querySelector('#desc');
+      if (tdId || tdName || tdDesc) {
+        txtValueId = tdId.textContent || tdId.innerText;
+        txtValueName = tdName.textContent || tdName.innerText;
+        txtValueDesc = tdDesc.textContent || tdDesc.innerText;
+        if (txtValueId.toUpperCase().indexOf(filter) > -1 || txtValueName.toUpperCase().indexOf(filter) > -1 || txtValueDesc.toUpperCase().indexOf(filter) > -1) {
+          tr[i].style.display = '';
+        } else {
+          tr[i].style.display = 'none';
+        }
+      }
+    }
+  }
+
+  // Attach event listener to input field
+  document.getElementById('query-details').addEventListener('input', searchProfiles);
+</script>
 {% endblock script %}

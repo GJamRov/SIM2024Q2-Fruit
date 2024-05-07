@@ -18,8 +18,9 @@ class Database:
         self.connection.commit()
         
     def insert_into_table(self, table_name, values):
+        value_list = values.split(",")
         query = f"INSERT INTO {table_name} VALUES"
-        value_q = ", ".join(values)
+        value_q = ", ".join(value_list)
         query += f"({value_q})"
         print(query)
         self.cursor.execute(query)

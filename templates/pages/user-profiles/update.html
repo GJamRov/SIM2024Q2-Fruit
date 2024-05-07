@@ -10,17 +10,14 @@
       >Back</a
     >
     <h3 class="text-xl font-bold underline mt-4">Update User Profile</h3>
-    <form action="">
+    <form action="/user-profiles/update/<profile>" method = "POST">
+      
+      <input type="hidden" id="profile_name" name="profile_name" value="{{ profile }}">
+      
       <label for="first"> User profile: </label>
-      <input
-        type="text"
-        id="first"
-        name="first"
-        value="<user profile from db>"
-        class="w-full md:w-[50%] xl:w-[30%]"
-        placeholder="Enter new user profile"
-        required
-      />
+      <div id="profile_display" class="w-full md:w-[50%] xl:w-[30%] border p-2">
+        <span>{{profile}}</span>
+      </div>
 
       <label for="profile_desc"> User profile description: </label>
       <textarea
@@ -29,7 +26,7 @@
         rows="4"
         cols="50"
         class="border p-2"
-      ><user profile description from db></textarea>
+      >{{profile_desc}}</textarea>
       <!-- <input
         type="text"
         id="profile_desc"
