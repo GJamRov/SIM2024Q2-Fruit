@@ -42,14 +42,14 @@ if __name__ == "__main__":
             active = random.randint(1, 2) # 1 = active, 2 = suspended
             # add row to user_dict
             user_dict[role].append(i+1)
-            sample_db.insert_into_table("User", [f"NULL, '{username}', '{password}',  '{email}', {role}, {active}"])
+            sample_db.insert_into_table("User", f"NULL, '{username}', '{password}',  '{email}', {role}, {active}")
         
         # Actor accounts for test case use
-        sample_db.insert_into_table("User", ["0, 'admin', '123', 'admin@example.com', 1, 1"])
-        sample_db.insert_into_table("User", ["101, 'admin1', '123', 'admin1@example.com', 1, 2"])
-        sample_db.insert_into_table("User", ["102, 'rea', '123', 'rea@example.com', 2, 1"])
-        sample_db.insert_into_table("User", ["103, 'buyer', '123', 'buyer@example.com', 3, 1"])
-        sample_db.insert_into_table("User", ["104, 'seller', '123', 'seller@example.com', 4, 1"])
+        sample_db.insert_into_table("User", "0, 'admin', '123', 'admin@example.com', 1, 1")
+        sample_db.insert_into_table("User", "101, 'admin1', '123', 'admin1@example.com', 1, 2")
+        sample_db.insert_into_table("User", "102, 'rea', '123', 'rea@example.com', 2, 1")
+        sample_db.insert_into_table("User", "103, 'buyer', '123', 'buyer@example.com', 3, 1")
+        sample_db.insert_into_table("User", "104, 'seller', '123', 'seller@example.com', 4, 1")
         #sample_db.view_table("User")
         print(sample_db.search_one("User", "username = 'admin'"))
 
@@ -94,7 +94,7 @@ if __name__ == "__main__":
             sold_buyer = -1
             view_count = random.randint(1, 9999)
             wishlisted = random.randint(1, 9999)
-            sample_db.insert_into_table("Property", [f"NULL, '{p_name}', '{location}', '{description}', '{img_name}', {price}, {rea_id}, {seller_id}, {sold_buyer}, {view_count}, {wishlisted}"])
+            sample_db.insert_into_table("Property", f"NULL, '{p_name}', '{location}', '{description}', '{img_name}', {price}, {rea_id}, {seller_id}, {sold_buyer}, {view_count}, {wishlisted}")
 
         # Favourite Table Schema
         favourite_col = ["id INTEGER PRIMARY KEY AUTOINCREMENT",
@@ -106,14 +106,14 @@ if __name__ == "__main__":
             fav_chance = random.randint(1, 10)
             if fav_chance == 1:
                 b_id = random.choice(user_dict[3])
-                sample_db.insert_into_table("Favourite", [f"NULL, '{b_id}', '{i}'"])
+                sample_db.insert_into_table("Favourite", f"NULL, '{b_id}', '{i}'")
 
         # Profile Table
         profile_col = ["id INTEGER PRIMARY KEY AUTOINCREMENT",
                             "type TEXT",
                             "description TEXT",] 
         sample_db.create_table("Profile", profile_col)
-        sample_db.insert_into_table("Profile", [f"1, 'System Admin', 'FruitRealEstate system admin'"])
+        sample_db.insert_into_table("Profile", f"1, 'System Admin', 'FruitRealEstate system admin'")
         
     ## When database is already populated
     db =  database.Database("SampleDatabase")

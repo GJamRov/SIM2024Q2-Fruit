@@ -37,7 +37,7 @@ class Buyer(User):
         if curr_PL:
             return False
         else:
-            Buyer.db.insert_into_table("Favourite", [f"NULL, {self.get_id()}, {pl_id}"])
+            Buyer.db.insert_into_table("Favourite", f"NULL, {self.get_id()}, {pl_id}")
             return True
     
     def unfavourite(self, pl_id):
