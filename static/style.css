@@ -9,7 +9,7 @@ body {
     flex-direction: column;
     margin: 0;
 
-    background-image: url("./realestate-1.jpg");
+    background-image: linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ), url("./realestate-1.jpg");
     background-repeat: no-repeat;
     background-size: cover;
 }
@@ -57,7 +57,7 @@ button {
     border: none;
     color: white;
     cursor: pointer;
-    background-color: #0096C7;
+    background-color: #312e81;
     width: 100%;
     font-size: 16px;
 }

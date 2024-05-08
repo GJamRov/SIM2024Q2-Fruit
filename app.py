@@ -30,7 +30,7 @@ class WebApp:
         self.blueprint.add_url_rule('/', 'home', self.home)
         self.blueprint.add_url_rule('/login', 'login', self.login, methods=['GET', 'POST'])
         self.blueprint.add_url_rule('/logout', 'logout', self.logout, methods=['GET', 'POST'])
-        # self.blueprint.add_url_rule('/profile/<username>', 'profile', self.profile, methods=['GET', 'POST'])
+        self.blueprint.add_url_rule('/profile/<username>', 'profile', self.profile, methods=['GET', 'POST'])
 
         # user
         self.blueprint.add_url_rule('/users/', 'users_index', self.users_index, methods=['GET', 'POST'])
@@ -45,13 +45,18 @@ class WebApp:
         self.blueprint.add_url_rule('/user-profiles/suspend/,<profile>', 'suspend_profile', self.suspend_profile, methods=['GET', 'POST'])
         # property listing
         self.blueprint.add_url_rule('/property-listings/', 'property_listings_index', self.property_listings_index)
+        self.blueprint.add_url_rule('/property-listings/view', 'property_listings_view', self.property_listings_view)
+        self.blueprint.add_url_rule('/property-listings/create', 'property_listings_create', self.property_listings_create)
+
+        # my profile
+        self.blueprint.add_url_rule('/my-profile/', 'my_profile_index', self.my_profile_index)
 
         self.app.register_blueprint(self.blueprint)
         User.connect_database("SampleDatabase")
         self.app.run(debug=True, port=self.port)
 
     def home(self):
-        """View function for the index route."""
+        """View function for the view route."""
         # print(session)
         return render_template("pages/home.html")
     
@@ -82,7 +87,7 @@ class WebApp:
             elif role == 6:
                 flash('Invalid username or password', 'error')            
         
-        return render_template(template)         
+        return render_template(template)      
 
     def logout(self):
         """User logout route"""
@@ -283,3 +288,16 @@ class WebApp:
     def property_listings_index(self):
         """property listing index page"""
         return render_template("pages/property-listings/index.html")
+
+    def property_listings_view(self):
+        """View a property listing"""
+        return render_template("pages/property-listings/view.html")
+
+    def property_listings_create(self):
+        """Create a property listing"""
+        return render_template("pages/property-listings/create.html")
+
+    # my profile
+    def my_profile_index(self):
+        """My profile page"""
+        return render_template("pages/my-profile/index.html")
