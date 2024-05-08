@@ -16,12 +16,11 @@
             />
           </form>
           <a
-            href="{{ url_for('web_app.user_create') }}"
+            href="{{ url_for('web_app.create_account') }}"
             class="flex self-center ml-auto mx-4 bg-transparent hover:bg-indigo-900 text-indigo-700 font-semibold hover:text-white py-2 px-4 border border-indigo-500 hover:border-transparent rounded"
           >
             Create User +
           </a>
-          <!-- <a href="{{ url_for('web_app.user_create') }}">ff</a> -->
         </div>
         <table class="my-4 w-full min-w-max table-auto text-left">
           <thead>
@@ -36,21 +35,22 @@
             </tr>
           </thead>
           <tbody class="p-4 border-b border-blue-gray-50">
+            {% for user in users %}
             <tr class="">
-              <td>1</td>
-              <td>johnny123</td>
-              <td>johnny123@gmail.com</td>
+              <td id="id">{{ user[0] }}</td>
+              <td id="username">{{ user[1] }}</td>
+              <td id="email">{{ user[3] }}</td>
               <!-- <td>
                     22/04/24 12:57AM
                 </td> -->
               <td class="">
                 <a
-                  href="{{ url_for('web_app.user_view') }}"
+                  href="{{ url_for('web_app.view_account') }}"
                   class="button bg-transparent hover:bg-indigo-900 text-indigo-700 font-semibold hover:text-white px-2 border border-indigo-500 hover:border-transparent rounded"
                   >view</a
                 >
                 <a
-                  href="{{ url_for('web_app.user_update') }}"
+                  href="{{ url_for('web_app.update_account') }}"
                   class="button bg-transparent hover:bg-indigo-900 text-indigo-700 font-semibold hover:text-white px-2 border border-indigo-500 hover:border-transparent rounded"
                   >edit</a
                 >
@@ -61,31 +61,40 @@
                 >
               </td>
             </tr>
-            <tr>
-              <td>2</td>
-              <td>maryhadalittlelamb</td>
-              <td>maryhadalittlelamb@gmail.com</td>
-              <!-- <td>
-                    22/04/24 12:57AM
-                </td> -->
-              <td>
-                <a
-                  href="{{ url_for('web_app.user_view') }}"
-                  class="button bg-transparent hover:bg-indigo-900 text-indigo-700 font-semibold hover:text-white px-2 border border-indigo-500 hover:border-transparent rounded"
-                  >view</a
-                >
-                <a
-                  href="update.html"
-                  class="button bg-transparent hover:bg-indigo-900 text-indigo-700 font-semibold hover:text-white px-2 border border-indigo-500 hover:border-transparent rounded"
-                  >edit</a
-                >
-                <a
-                  href=""
-                  class="button bg-transparent hover:bg-indigo-900 text-indigo-700 font-semibold hover:text-white px-2 border border-indigo-500 hover:border-transparent rounded"
-                  >delete</a
-                >
-              </td>
-            </tr>
+            {% endfor %}
           </tbody>
         </table>
 {% endblock content %}
+
+{% block script %}
+<script>
+  function searchUsers() {
+    // Declare variables
+    var input, filter, table, tr, tdId, tdUsername, tdEmail, i, txtValue;
+    input = document.getElementById('query-details');
+    filter = input.value.toUpperCase();
+    table = document.querySelector('.table-auto');
+    tr = table.getElementsByTagName('tr');
+
+    // Loop through all table rows, and hide those that don't match the search query
+    for (i = 0; i < tr.length; i++) {
+      tdId = tr[i].querySelector('#id');
+      tdUsername = tr[i].querySelector('#username');
+      tdEmail = tr[i].querySelector('#email');
+      if (tdId || tdUsername || tdEmail) {
+        txtValueId = tdId.textContent || tdId.innerText;
+        txtValueUsername = tdUsername.textContent || tdUsername.innerText;
+        txtValueEmail = tdEmail.textContent || tdEmail.innerText;
+        if (txtValueId.toUpperCase().indexOf(filter) > -1 || txtValueUsername.toUpperCase().indexOf(filter) > -1 || txtValueEmail.toUpperCase().indexOf(filter) > -1) {
+          tr[i].style.display = '';
+        } else {
+          tr[i].style.display = 'none';
+        }
+      }
+    }
+  }
+
+  // Attach event listener to input field
+  document.getElementById('query-details').addEventListener('input', searchUsers);
+</script>
+{% endblock script %}

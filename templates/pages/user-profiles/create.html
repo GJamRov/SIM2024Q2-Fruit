@@ -10,16 +10,14 @@
       >Back</a
     >
     <h3 class="text-xl font-bold underline mt-4">Create User Profile</h3>
-    <form action="">
+    <form action="/user-profiles/create" method = "POST">
       <label for="first"> User profile: </label>
-      <input
-        type="text"
-        id="first"
-        name="first"
-        class="w-full md:w-[50%] xl:w-[30%]"
-        placeholder="Enter new user profile"
-        required
-      />
+      <select id="profile_type" name="profile_type" class="w-full md:w-[50%] xl:w-[30%]" required>
+        <option value="System Admin">System Admin</option>
+        <option value="Real Estate Agent">Real Estate Agent</option>
+        <option value="Buyer">Buyer</option>
+        <option value="Seller">Seller</option>
+      </select>
 
       <label for="profile_desc"> User profile description: </label>
       <textarea
