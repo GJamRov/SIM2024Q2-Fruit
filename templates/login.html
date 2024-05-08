@@ -43,6 +43,15 @@
             </a>
         </p>
     </div>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% set latest_message = messages[-1] %}
+        <script>
+            // Show the latest flash message in an alert box
+            alert("{{ latest_message[1] }}");
+        </script>
+    {% endif %}
+    {% endwith %}
 </body>
 
 </html>

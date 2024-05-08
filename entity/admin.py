@@ -7,6 +7,13 @@ class SystemAdmin(User):
     def __init__(self, userID, username, password, email, active):
         super().__init__(userID, username, password, email, active)
 
+    # Return all users to be displayed in users tab
+    def view_all_user():
+        SystemAdmin.connect_database("SampleDatabase")
+        SystemAdmin.db.cursor.execute("SELECT * FROM User")
+        users = SystemAdmin.db.cursor.fetchall()
+        return users
+
     #3. Create user accounts
     def addUserAccount(self, newAccDetails)-> bool: 
         # Validate if the account already exists in the system

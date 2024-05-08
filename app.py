@@ -2,6 +2,9 @@ from flask import Flask, Blueprint, render_template, request, redirect, session,
 # Controller Imports
 from controllers.login import LoginController
 from controllers.addAccount import addAccountCtl
+from controllers.viewAccount import viewAccountCtl
+from controllers.updateAccount import updateAccountCtl
+from controllers.suspendAccount import suspendAccountCtl
 from controllers.createProfile import createUserProfileController
 from controllers.viewProfile import viewUserProfileController
 from controllers.updateProfile import updateUserProfileController
@@ -30,15 +33,16 @@ class WebApp:
         # self.blueprint.add_url_rule('/profile/<username>', 'profile', self.profile, methods=['GET', 'POST'])
 
         # user
-        self.blueprint.add_url_rule('/users/', 'users_index', self.users_index)
-        self.blueprint.add_url_rule('/users/create', 'user_create', self.user_create)
-        self.blueprint.add_url_rule('/users/view', 'user_view', self.user_view)
-        self.blueprint.add_url_rule('/users/update', 'user_update', self.user_update)
+        self.blueprint.add_url_rule('/users/', 'users_index', self.users_index, methods=['GET', 'POST'])
+        self.blueprint.add_url_rule('/users/create', 'create_account', self.create_account, methods=['GET', 'POST'])
+        self.blueprint.add_url_rule('/users/view', 'view_account', self.view_account, methods=['GET', 'POST'])
+        self.blueprint.add_url_rule('/users/update', 'update_account', self.update_account, methods=['GET', 'POST'])
         # user profile
-        self.blueprint.add_url_rule('/user-profiles/', 'user_profiles_index', self.user_profiles_index)
-        self.blueprint.add_url_rule('/user-profiles/create', 'user_profile_create', self.user_profile_create)
-        self.blueprint.add_url_rule('/user-profiles/view', 'user_profile_view', self.user_profile_view)
-        self.blueprint.add_url_rule('/user-profiles/update', 'user_profile_update', self.user_profile_update)
+        self.blueprint.add_url_rule('/user-profiles/', 'user_profiles_index', self.user_profiles_index, methods=['GET', 'POST'])
+        self.blueprint.add_url_rule('/user-profiles/create', 'create_profile', self.create_profile, methods=['GET', 'POST'])
+        self.blueprint.add_url_rule('/user-profiles/view/<profile>', 'view_profile', self.view_profile, methods=['GET', 'POST'])
+        self.blueprint.add_url_rule('/user-profiles/update/<profile>', 'update_profile', self.update_profile, methods=['GET', 'POST'])
+        self.blueprint.add_url_rule('/user-profiles/suspend/,<profile>', 'suspend_profile', self.suspend_profile, methods=['GET', 'POST'])
         # property listing
         self.blueprint.add_url_rule('/property-listings/', 'property_listings_index', self.property_listings_index)
 
@@ -58,7 +62,6 @@ class WebApp:
         
         #Request data from web page
         if request.method == 'POST':
-            print("YIPEE")
             entered_username = request.form['username']
             entered_password = request.form['password']
 
@@ -71,7 +74,7 @@ class WebApp:
                 session['username'] = entered_username
                 session['role'] = role
                 session['logged_in'] = True
-                flash('Login successful!', 'success')
+                # flash('Login successful!', 'success')
                 # return redirect(url_for('web_app.profile', username=session['username']))
                 return redirect("/")
             elif role == 5:
@@ -139,6 +142,7 @@ class WebApp:
 
                 else:
                     flash("Passwords don't match!", "error")
+            return render_template("pages/users/create.html")
 
     #4. View user accounts
     def view_account(self):
@@ -148,7 +152,8 @@ class WebApp:
             # Get form data from POST request
             if request.method == 'POST':
                 pass
-
+            return render_template("pages/users/view.html")
+        
     #5. Update user accounts
     def update_account(self):
         """Update existing user account"""
@@ -157,7 +162,8 @@ class WebApp:
             # Get form data from POST request
             if request.method == 'POST':
                 pass
-
+            return render_template("pages/users/update.html")
+        
     #6. Suspend user account
     def suspend_account(self):
         """Suspend a user account"""
@@ -183,37 +189,57 @@ class WebApp:
         while session['role'] == 1:
             # Get form data from POST request
             if request.method == 'POST':
-                entered_username = request.form['username']
-                entered_profile_name = request.form['profile_name']
-                entered_profile_desc = request.form['profile_desc']
-                return redirect('/profile')
-
+                UP = [request.form['profile_type'], request.form['profile_desc']]
+                createProfileCtl = createUserProfileController()
+                if createProfileCtl.createUserProfile(UP):
+                    flash("User profile created successfully!", "success")
+                    return redirect('/user-profiles/')
+                else:
+                    flash("User profile already exists! Please try again", "error")
+                    return redirect('/user-profiles/create')
+            return render_template("pages/user-profiles/create.html")
+        
     #TODO: 9. View user profiles
-    def view_profile(self):
+    def view_profile(self, profile):
         """View user profiles"""
         # Check that the user is a System Admin
         while session['role'] == 1:
-            # Get form data from POST request
-            if request.method == 'POST':
-                pass
+            viewProfileCtl = viewUserProfileController()
+            profile_data = viewProfileCtl.viewUserProfile(profile)
+            if profile_data:
+                return render_template('pages/user-profiles/view.html', profile=profile_data)
+            else:
+                flash("Invalid user profile", "error")
+                return redirect('/user-profiles/')
 
     #TODO: 10. Update user profiles
-    def update_profile(self):
+    def update_profile(self, profile):
         """Update user profile"""
         # Check that the user is a System Admin
+        profile_desc = request.args.get('profile_desc')
         while session['role'] == 1:
             # Get form data from POST request
             if request.method == 'POST':
-                pass        
+                updateProfileCtl = updateUserProfileController()
+                if updateProfileCtl.updateUserProfile(request.form['profile_name'], request.form['profile_desc']):
+                    flash("Profile description updated successfully!", "success")
+                    return redirect('/user-profiles/')
+                else:
+                    flash("Failed to update profile. Please try again.", "error")
+                    return redirect('/user-profiles/update')
+            return render_template('pages/user-profiles/update.html', profile=profile, profile_desc=profile_desc)
 
     #TODO: 11. Suspend user profile
-    def suspend_profile(self):
+    def suspend_profile(self, profile):
         """Suspend user profile"""
         # Check that the user is a System Admin
         while session['role'] == 1:
-            # Get form data from POST request
-            if request.method == 'POST':
-                pass
+            suspendUserProfileCtl = suspendUserProfileController()
+            if suspendUserProfileCtl.suspendUserProfile(profile):
+                flash("User profile suspended!", "success")
+            else:
+                flash("Error suspending user profile", "error")
+            return redirect('/user-profiles/')
 
     #TODO: 12. Search user profile
     def search_profile(self):
@@ -222,45 +248,38 @@ class WebApp:
         while session['role'] == 1:
             # Get form data from POST request
             if request.method == 'POST':
-                pass
+                entered_username = request.form['query-details']
 
-    # user
+                searchUserProfileCtl = searchUserProfileController()
+                profile_data = searchUserProfileCtl.searchUserProfile(entered_username)
+                
+                if profile_data:
+                    return render_template("pages/users/index.html", profiles=profile_data)
+            return redirect('/user-profiles/')
+
+    # user tab
     def users_index(self):
         """users index page"""
+        # Check that the user is a System Admin
+        while session['role'] == 1:
+            viewAccCtl = viewAccountCtl()
+            users = viewAccCtl.viewAllUsers()
+            if users:
+                return render_template("pages/users/index.html", users=users)
         return render_template("pages/users/index.html")
 
-    def user_create(self):
-        """create a user"""
-        return render_template("pages/users/create.html")
-
-    def user_view(self):
-        """view a user"""
-        return render_template("pages/users/view.html")
-
-    def user_update(self):
-        """update a user"""
-        return render_template("pages/users/update.html")
-
-    # user profile
+    # user profile tab
     def user_profiles_index(self):
         """user profile index page"""
-        return render_template("pages/user-profiles/index.html")
-
-    def user_profile_create(self):
-        """create a user profile"""
-        return render_template("pages/user-profiles/create.html")
-
-    def user_profile_view(self):
-        """view a user profile"""
-        return render_template("pages/user-profiles/view.html")
-
-    def user_profile_update(self):
-        """update a user profile"""
-        return render_template("pages/user-profiles/update.html")
+        # Check that the user is a System Admin
+        while session['role'] == 1:
+            viewProfileCtl = viewUserProfileController()
+            profiles = viewProfileCtl.viewAllUserProfile()
+            if profiles:
+                return render_template("pages/user-profiles/index.html", profiles=profiles)
+            return render_template("pages/user-profiles/index.html")
 
     # property listing
     def property_listings_index(self):
         """property listing index page"""
         return render_template("pages/property-listings/index.html")
-    
-    

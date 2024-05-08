@@ -109,13 +109,11 @@ if __name__ == "__main__":
                 sample_db.insert_into_table("Favourite", [f"NULL, '{b_id}', '{i}'"])
 
         # Profile Table
-        profile_col = ["id INTEGER PRIMARY KEY",
-                            "username TEXT",
-                            "name TEXT",
+        profile_col = ["id INTEGER PRIMARY KEY AUTOINCREMENT",
                             "type TEXT",
-                            "description TEXT",]
-        
+                            "description TEXT",] 
         sample_db.create_table("Profile", profile_col)
+        sample_db.insert_into_table("Profile", [f"1, 'System Admin', 'FruitRealEstate system admin'"])
         
     ## When database is already populated
     db =  database.Database("SampleDatabase")
@@ -123,6 +121,7 @@ if __name__ == "__main__":
     # print("Database Initliaised!")
     # db.view_table("User")
     # db.view_table("Property")
+    # db.view_table("Profile")
     db.connection.close()
 
     # Initialise Web App
