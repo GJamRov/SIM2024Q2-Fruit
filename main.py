@@ -43,39 +43,60 @@ if __name__ == "__main__":
                         "userNameREA TEXT"]
         
         sample_db.create_table("Review", review_col)
+
+        #Rating Table
+        rating_col = ["id INTEGER PRIMARY KEY AUTOINCREMENT",
+                        "rating DECIMAL(2, 1)",
+                        "userName TEXT",
+                        "userNAMEREA TEXT"]
+        
+        sample_db.create_table("Rating", rating_col)
         
         # Populating the each table with at least 100 rows to each data type
-        for i in range(100):
+        for i in range(200):
             username = f"user{i+1}"  # Generate usernames like user1, user2, ...
             password = generate_random_string(10)  # Generate random password
             email = generate_random_email()
-            role = random.randint(1, 4)  # 1 = admin, 2 = rea, 3 = buyer, 4 = seller
+            role = random.randint(3, 4)  # 1 = admin, 2 = rea, 3 = buyer, 4 = seller
             active = random.randint(1, 2) # 1 = active, 2 = suspended
-            # add row to user_dict
-            user_dict[role].append(i+1)
-            sample_db.insert_into_table("User", f"NULL, '{username}', '{password}',  '{email}', {role}, {active}")
+
+            #Need to have at least 50 REA to have 100 reviews and ratings
+            if(i < 10):
+                sample_db.insert_into_table("User", f"NULL, '{username}', '{password}',  '{email}', {1}, {active}")
+                user_dict[1].append(i+1)
+
+            elif(i > 10 and i < 71):
+                sample_db.insert_into_table("User", f"NULL, '{username}', '{password}',  '{email}', {2}, {active}")
+                user_dict[2].append(i+1)
+
+            else:
+                sample_db.insert_into_table("User", f"NULL, '{username}', '{password}',  '{email}', {role}, {active}")
+                user_dict[role].append(i+1)
         
         # Actor accounts for test case use
         sample_db.insert_into_table("User", "0, 'admin', '123', 'admin@example.com', 1, 1")
-        sample_db.insert_into_table("User", "101, 'admin1', '123', 'admin1@example.com', 1, 2")
-        sample_db.insert_into_table("User", "102, 'rea', '123', 'rea@example.com', 2, 1")
-        sample_db.insert_into_table("User", "103, 'buyer', '123', 'buyer@example.com', 3, 1")
-        sample_db.insert_into_table("User", "104, 'seller', '123', 'seller@example.com', 4, 1")
+        sample_db.insert_into_table("User", "201, 'admin1', '123', 'admin1@example.com', 1, 2")
+        sample_db.insert_into_table("User", "202, 'rea', '123', 'rea@example.com', 2, 1")
+        sample_db.insert_into_table("User", "203, 'buyer', '123', 'buyer@example.com', 3, 1")
+        sample_db.insert_into_table("User", "204, 'seller', '123', 'seller@example.com', 4, 1")
         #sample_db.view_table("User")
         print(sample_db.search_one("User", "username = 'admin'"))
 
+        #An array of reviews to be randomly generated
         review_phrases = {
             1: "Great agent, highly recommend!",
             2: "Terrible agent, would not ask this agent to sell my property again",
             3: "Terrible agent, would not buy property again from this agent",
             4: "Agent was friendly and cool!",
-            5: "Average agent"
+            5: "Average agent",
+            6: "Amazing agent, would definitely ask this agent to sell my property again",
+            7: "Amazing agent, would definitely buy property again from this agent again"
         }
         
         #Function to randomly generate a review
         def generate_random_review():
             
-            reviewNum = random.randint(1, 5)
+            reviewNum = random.randint(1, 7)
             review = review_phrases[reviewNum]
             review_and_num = str(reviewNum) + " " + review
             return review_and_num
@@ -95,25 +116,40 @@ if __name__ == "__main__":
                     return True
                 
         #Function to add review to table
-        def addReview(review, tuple_s, tuple_r, review_tuple):
-            #List of usernames for sellers and buyers
-            user_s_list = [seller[1] for seller in tuple_s]
-            user_r_list = [agent[1] for agent in tuple_r]
+        def addReview(review, tuple_s, tuple_r):
+            hasReviews = False
+            length_s, length_r = len(tuple_s), len(tuple_r)
 
-            # Check for unique pairs and add the review
-            for user_s in user_s_list:
-                for user_r in user_r_list:
-                    if not any(r[2] == user_s and r[3] == user_r for r in review_tuple):
-                        # Insert the review into the database
-                        sample_db.insert_into_table("Review", f"NULL, '{review}', '{user_s}', '{user_r}'")
-                        return True  # Exit the loop once a review is added
-            
-            # If no unique pair is found, return False
+            for i in range(length_s):
+                current_tuple_s = tuple_s[i]
+                current_user = current_tuple_s[1]
+
+                for j in range(length_r):
+                    current_tuple_r = tuple_r[j]
+                    current_agent = current_tuple_r[1]
+                    
+                    #Get the tuples of 'current_user' made reviews
+                    review_tuples = sample_db.search_by_keyword("Review", current_user, ["userName"])
+                    length_t = len(review_tuples)
+
+                    if(length_t == 0):
+                        sample_db.insert_into_table("Review", f"NULL, '{review}', '{current_user}', '{current_agent}'")
+                        return True
+                    else:
+                        for k in range(length_t):
+                            check_tuple = review_tuples[k]
+                            if(check_tuple[3] == current_agent):
+                                hasReviews = True
+
+                    if(hasReviews == False):
+                        sample_db.insert_into_table("Review", f"NULL, '{review}', '{current_user}', '{current_agent}'")
+                        return True
             return False
 
+        counter = 0
         #Populate the REVIEW table
-        for i in range(101):
-
+        for i in range(300):
+            
             #Generate a random review
             review_og = generate_random_review()
 
@@ -140,7 +176,7 @@ if __name__ == "__main__":
             #If it is the first entry
             if(i == 0):
                 #If it is a review by SELLER
-                if(review_key == 2):
+                if((review_key == 2) or (review_key == 6)):
 
                     #Get the first tuple
                     tuple_seller = search_result_seller[0]
@@ -176,21 +212,69 @@ if __name__ == "__main__":
             #If it's not the first entry, needa to check for duplicates
             else:
                 #If it is a review by seller
-                if(review_key == 2):
-                    addReview(review_string ,search_result_seller, search_result_agent, tuple_review)
+                if((review_key == 2) or (review_key == 6)):
+                    addReview(review_string ,search_result_seller, search_result_agent)
                                 
 
                 #If it is a review by buyer
-                elif(review_key == 3):
-                    addReview(review_string ,search_result_buyer, search_result_agent, tuple_review)
+                elif((review_key == 3) or (review_key == 7)):
+                    addReview(review_string ,search_result_buyer, search_result_agent)
 
                 #If it is a review that can be made by both seller or buyer
                 else:
-                    noUnique = addReview(review_string ,search_result_seller, search_result_agent, tuple_review)
+                    noUnique = addReview(review_string ,search_result_seller, search_result_agent)
 
                     #If no unique records for seller, then check for buyer 
                     if(noUnique == False):
-                        addReview(review_string, search_result_buyer, search_result_agent, tuple_review)
+                        addReview(review_string, search_result_buyer, search_result_agent)
+
+            counter += 1
+
+            if(counter == 110):
+                break
+
+        #Function to randomly generate a rating based on the review
+        def generate_random_rating(review_index):
+            if((review_index == 1) or (review_index == 6) or (review_index == 7)):
+                return 5
+            elif((review_index) == 2 or (review_index == 3)):
+                return 1
+            else:
+                rating = random.randint(2, 4)
+                return rating
+            
+        #Function to add rating
+        def addRating(index, review_tuple):
+            #Length of tuple
+            tuple_length = len(review_tuple)
+
+            random_rating = generate_random_rating(index)
+
+            #Iterate through each tuple to add rating
+            for i in range(tuple_length):
+                current_tuple = review_tuple[i]
+                user_id = current_tuple[2]
+                agent_id = current_tuple[3]
+                sample_db.insert_into_table("Rating", f"NULL, '{random_rating}', '{user_id}', '{agent_id}'")
+            
+        #Populate RATING table
+        #Get the tuples of each review
+        review_tuple_one = sample_db.search_by_keyword("Review", review_phrases[1], ["review"])
+        review_tuple_two = sample_db.search_by_keyword("Review", review_phrases[2], ["review"])
+        review_tuple_three = sample_db.search_by_keyword("Review", review_phrases[3], ["review"])
+        review_tuple_four = sample_db.search_by_keyword("Review", review_phrases[4], ["review"])
+        review_tuple_five = sample_db.search_by_keyword("Review", review_phrases[5], ["review"])
+        review_tuple_six = sample_db.search_by_keyword("Review", review_phrases[6], ["review"])
+        review_tuple_seven = sample_db.search_by_keyword("Review", review_phrases[7], ["review"])
+        
+        #Add the ratings
+        addRating(1, review_tuple_one)
+        addRating(2, review_tuple_two)
+        addRating(3, review_tuple_three)
+        addRating(4, review_tuple_four)
+        addRating(5, review_tuple_five)
+        addRating(6, review_tuple_six)
+        addRating(7, review_tuple_seven)
 
         # Propety Listing Table
         property_listing_col = ["id INTEGER PRIMARY KEY AUTOINCREMENT",
@@ -255,7 +339,7 @@ if __name__ == "__main__":
         sample_db.insert_into_table("Profile", f"1, 'System Admin', 'FruitRealEstate system admin'")
 
     ## When database is already populated
-    # db =  database.Database("SampleDatabase")
+    db =  database.Database("SampleDatabase")
     # print(db.search_one("User", "username = 'admin'"))
     # print("Database Initliaised!")
     # db.view_table("User")
@@ -267,6 +351,8 @@ if __name__ == "__main__":
 
     # db.view_table("Profile")
     # db.view_table("Review")
+    # db.view_table("Rating")
+    # db.search_by_keyword("Review", 'user191', ["userName"])
     # db.connection.close()
 
     
