@@ -22,6 +22,9 @@ if __name__ == "__main__":
     if not os.path.exists('SampleDatabase.db'):
         # Create new database
         sample_db = database.Database("SampleDatabase")
+
+        #Search for roles
+        #e.g. user_dict[1] -> [1, 2, 3]
         user_dict = {1: [], 2: [], 3: [], 4: []}
 
         # User Table
@@ -32,6 +35,14 @@ if __name__ == "__main__":
                             "role INTEGER",
                             "active INTEGER"]
         sample_db.create_table("User", user_col)
+
+        #Review Table
+        review_col = ["id INTEGER PRIMARY KEY AUTOINCREMENT",
+                        "review TEXT",
+                        "userName TEXT",
+                        "userNameREA TEXT"]
+        
+        sample_db.create_table("Review", review_col)
         
         # Populating the each table with at least 100 rows to each data type
         for i in range(100):
@@ -52,6 +63,134 @@ if __name__ == "__main__":
         sample_db.insert_into_table("User", "104, 'seller', '123', 'seller@example.com', 4, 1")
         #sample_db.view_table("User")
         print(sample_db.search_one("User", "username = 'admin'"))
+
+        review_phrases = {
+            1: "Great agent, highly recommend!",
+            2: "Terrible agent, would not ask this agent to sell my property again",
+            3: "Terrible agent, would not buy property again from this agent",
+            4: "Agent was friendly and cool!",
+            5: "Average agent"
+        }
+        
+        #Function to randomly generate a review
+        def generate_random_review():
+            
+            reviewNum = random.randint(1, 5)
+            review = review_phrases[reviewNum]
+            review_and_num = str(reviewNum) + " " + review
+            return review_and_num
+        
+        #Function to check for duplicate reviews
+        def check_duplicate_review(review_tuples, username_s, username_r):
+            length_tuple = len(review_tuples)
+            
+            for i in range(length_tuple):
+                current_tuple = review_tuples[i]
+                seller_user = current_tuple[2]
+                agent_user = current_tuple[3]
+
+                if((seller_user == username_s) and (agent_user == username_r)):
+                    return False
+                else:
+                    return True
+                
+        #Function to add review to table
+        def addReview(review, tuple_s, tuple_r, review_tuple):
+            #List of usernames for sellers and buyers
+            user_s_list = [seller[1] for seller in tuple_s]
+            user_r_list = [agent[1] for agent in tuple_r]
+
+            # Check for unique pairs and add the review
+            for user_s in user_s_list:
+                for user_r in user_r_list:
+                    if not any(r[2] == user_s and r[3] == user_r for r in review_tuple):
+                        # Insert the review into the database
+                        sample_db.insert_into_table("Review", f"NULL, '{review}', '{user_s}', '{user_r}'")
+                        return True  # Exit the loop once a review is added
+            
+            # If no unique pair is found, return False
+            return False
+
+        #Populate the REVIEW table
+        for i in range(101):
+
+            #Generate a random review
+            review_og = generate_random_review()
+
+            #Get the review key
+            review_key = int(review_og[0])
+
+            length_review_og = len(review_og)
+
+            #Get the review
+            review_string = review_og[2: length_review_og]
+
+            #Tuple records of same review in database
+            tuple_review = sample_db.search_by_keyword("Review", review_string, ["review"])
+
+            #Search buyer
+            search_result_buyer = sample_db.search_by_keyword("User", 3, ["role"])
+
+            #Search REAs
+            search_result_agent = sample_db.search_by_keyword("User", 2, ["role"])
+
+            #Search seller
+            search_result_seller = sample_db.search_by_keyword("User", 4, ["role"])
+
+            #If it is the first entry
+            if(i == 0):
+                #If it is a review by SELLER
+                if(review_key == 2):
+
+                    #Get the first tuple
+                    tuple_seller = search_result_seller[0]
+
+                    #Get the username SELLER
+                    username_seller = tuple_seller[1]
+
+                    #Get the first tuple REA
+                    tuple_REA = search_result_agent[0]
+
+                    #Get AGENT username
+                    username_agent = tuple_REA[1]
+
+                    #Insert into DB
+                    sample_db.insert_into_table("Review", f"NULL, '{review_string}', '{username_seller}', '{username_agent}'")
+
+                else:
+                    #Get the first tuple
+                    tuple_buyer = search_result_buyer[0]
+
+                    #Get the username BUYER
+                    username_buyer = tuple_buyer[1]
+
+                    #Get the first tuple REA
+                    tuple_REA = search_result_agent[0]
+
+                    #Get AGENT username
+                    username_agent = tuple_REA[1]
+
+                    #Insert into DB
+                    sample_db.insert_into_table("Review", f"NULL, '{review_string}', '{username_buyer}', '{username_agent}'")
+
+            #If it's not the first entry, needa to check for duplicates
+            else:
+                #If it is a review by seller
+                if(review_key == 2):
+                    addReview(review_string ,search_result_seller, search_result_agent, tuple_review)
+                                
+
+                #If it is a review by buyer
+                elif(review_key == 3):
+                    addReview(review_string ,search_result_buyer, search_result_agent, tuple_review)
+
+                #If it is a review that can be made by both seller or buyer
+                else:
+                    noUnique = addReview(review_string ,search_result_seller, search_result_agent, tuple_review)
+
+                    #If no unique records for seller, then check for buyer 
+                    if(noUnique == False):
+                        addReview(review_string, search_result_buyer, search_result_agent, tuple_review)
 
         # Propety Listing Table
         property_listing_col = ["id INTEGER PRIMARY KEY AUTOINCREMENT",
@@ -114,15 +253,23 @@ if __name__ == "__main__":
                             "description TEXT",] 
         sample_db.create_table("Profile", profile_col)
         sample_db.insert_into_table("Profile", f"1, 'System Admin', 'FruitRealEstate system admin'")
-        
+
     ## When database is already populated
-    db =  database.Database("SampleDatabase")
+    # db =  database.Database("SampleDatabase")
     # print(db.search_one("User", "username = 'admin'"))
     # print("Database Initliaised!")
     # db.view_table("User")
     # db.view_table("Property")
+    #print(randomReview)
+    #print(len(randomReview))
+    #print(randomReview[2: len(randomReview)])
+    
+
     # db.view_table("Profile")
-    db.connection.close()
+    # db.view_table("Review")
+    # db.connection.close()
+
+    
 
     # Initialise Web App
     print("--- Running App ---")

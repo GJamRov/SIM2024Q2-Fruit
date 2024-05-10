@@ -143,10 +143,14 @@ class WebApp:
                     # Send details to controller
                     addAccCtl = addAccountCtl()
                     acc_details = [entered_username, entered_password, entered_email, entered_profile]
-                    addAccCtl.addUserAccount(session.get('username'), acc_details)
-
-                else:
-                    flash("Passwords don't match!", "error")
+                    print(acc_details)
+                    created = addAccCtl.addUserAccount(session.get('username'), acc_details)
+                    if created:
+                        flash("User account created successfully!", "success")
+                        return redirect('/users/')
+                    else:
+                        flash("Error creating user account, please try again!", "error")
+                        return redirect('/users/create')
             return render_template("pages/users/create.html")
 
     #4. View user accounts
@@ -301,3 +305,10 @@ class WebApp:
     def my_profile_index(self):
         """My profile page"""
         return render_template("pages/my-profile/index.html")
+    
+    # give review
+    def give_review(self, my_review):
+        #Check user is either buyer or seller
+        while ((session['role'] == 3) or session['role'] == 4):
+
+            return None

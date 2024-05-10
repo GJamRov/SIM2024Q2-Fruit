@@ -52,6 +52,15 @@
         placeholder="Enter your Email"
         required
       />
+
+      <label for="profile"> Profile: </label>
+      <select id="profile" name="profile" class="w-full md:w-[50%] xl:w-[30%]" required>
+        <option value="System Admin">System Admin</option>
+        <option value="Real Estate Agent">Real Estate Agent</option>
+        <option value="Buyer">Buyer</option>
+        <option value="Seller">Seller</option>
+      </select>
+      
       <div class="wrap">
         <button type="submit" id="submit-button">
           Create user account
