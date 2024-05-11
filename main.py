@@ -74,20 +74,31 @@ if __name__ == "__main__":
             4: "West Coast"
         }
 
+        p_img_dict = {
+            1: "house1.png",
+            2: "house2.webp",
+            3: "house3.webp",
+            4: "house4.jpeg",
+            5: "house5.jpeg",
+            6: "house6.jpeg"
+        }
+
         desc_dict = {
             1: "Spacious 3-bedroom family house with a backyard garden, located in a quiet neighborhood.",
             2: "Cozy 2-bedroom apartment in the heart of downtown, with modern amenities and a city view.",
             3: "Luxurious 5-bedroom villa with a swimming pool and panoramic ocean views, perfect for entertaining guests.",
             4: "Charming 4-bedroom cottage nestled in the countryside, surrounded by lush greenery and scenic views.",
-            5: "Contemporary loft-style apartment featuring an open floor plan, high ceilings, and plenty of natural light."
+            5: "Contemporary loft-style apartment featuring an open floor plan, high ceilings, and plenty of natural light.",
+            6: "House"
         }
 
 
         for i in range(1, 101):
             p_name = f"property {i}"
             location = loc_dict[random.randint(1,4)]
-            description = desc_dict[random.randint(1,5)]
-            img_name = f"{random.randint(1,5)}.png"
+            house_choice = random.randint(1,6)
+            description = desc_dict[house_choice]
+            img_name = p_img_dict[house_choice]
             price = random.randint(50000, 1000000)
             rea_id = random.choice(user_dict[2])
             seller_id = random.choice(user_dict[3])

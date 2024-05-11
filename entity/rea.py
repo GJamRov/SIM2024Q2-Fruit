@@ -3,7 +3,7 @@ from entity.user import User
 class REA(User):
 
     def __init__(self, userID, username, password, email, active):
-        super().__init__(userID, username, password, email, active)
+        super().__init__(userID, username, password, email, 2, active)
     
     # 15. Create new property listings
     def createListing(self, newPropertyDetails):
@@ -19,12 +19,13 @@ class REA(User):
             return True
 
     # 16. View existing property listings
-    def view_listing(self, p_name = ""):
-        if p_name == "": # View all accounts
+    def viewListing(self, p_id = "") -> list:
+        """View Listing by ID"""
+        if p_id == "": # View all accounts
             search_result = REA.db.view_table("Property")
             return list(search_result)
         else:
-            search_param =  f"p_name ='{p_name}'"
+            search_param =  f"id ='{p_id}'"
             search_result = REA.db.search_one("Property", search_param=search_param)
             return list(search_result)
 

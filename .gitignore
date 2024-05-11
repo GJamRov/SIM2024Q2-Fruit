@@ -13,6 +13,7 @@ dist-ssr
 *.local
 **/.DS_Store
 *.pyc 
+*.pyc*
 
 # Editor directories and files
 .vscode/*

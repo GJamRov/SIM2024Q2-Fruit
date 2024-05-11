@@ -27,6 +27,7 @@ class Database:
         self.cursor.execute(f"SELECT * FROM {table_name}")
         rows = self.cursor.fetchall()
         print(rows)
+        return rows
     
     def update_table(self, table_name, set_values, condition):
         query = f"UPDATE {table_name} SET {set_values} WHERE {condition}"

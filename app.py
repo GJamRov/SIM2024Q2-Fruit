@@ -10,6 +10,7 @@ from controllers.viewProfile import viewUserProfileController
 from controllers.updateProfile import updateUserProfileController
 from controllers.suspendProfile import suspendUserProfileController
 from controllers.searchProfile import searchUserProfileController
+from controllers.viewPropertyListing import viewPLController
 
 # Entity Import
 from entity.user import User
@@ -57,7 +58,7 @@ class WebApp:
 
     def home(self):
         """View function for the view route."""
-        # print(session)
+        print(session)
         return render_template("pages/home.html")
     
     ## User Functionalities
@@ -280,6 +281,7 @@ class WebApp:
         while session['role'] == 1:
             viewProfileCtl = viewUserProfileController()
             profiles = viewProfileCtl.viewAllUserProfile()
+            
             if profiles:
                 return render_template("pages/user-profiles/index.html", profiles=profiles)
             return render_template("pages/user-profiles/index.html")
@@ -287,11 +289,28 @@ class WebApp:
     # property listing
     def property_listings_index(self):
         """property listing index page"""
-        return render_template("pages/property-listings/index.html")
+        # Checks that the user is an REA, buyer or seller
+        while session['role'] > 1 and session['role'] < 5:
+            viewPLCtl = viewPLController()
+            properties = viewPLCtl.viewListing(session['username'], "")
+            # print(properties)
+            if properties:
+                return render_template('pages/property-listings/index.html', propertyListings = properties)
+            else:
+                return render_template('pages/property-listings/index.html')
 
     def property_listings_view(self):
         """View a property listing"""
-        return render_template("pages/property-listings/view.html")
+        print(request.args.get("listing_id"))
+        viewPLCtl = viewPLController()
+        listing_id = request.args.get("listing_id")
+        listing = viewPLCtl.viewListing(session['username'], listing_id)
+        print(listing)
+        if listing:
+            return render_template("pages/property-listings/view.html", listing=listing)
+        else:
+            flash('Listing not found', 'error')
+            return redirect(url_for('web_app.property_listings_index'))
 
     def property_listings_create(self):
         """Create a property listing"""

@@ -46,14 +46,17 @@
                   </div>
               </div>
           </div>
-
+          
+          
           <div class="grid lg:grid-cols-5 md:grid-cols-3 grid-cols-2 gap-6">
+              {% for listing in propertyListings %}
               <div class="bg-white shadow rounded overflow-hidden group">
                   <div class="relative">
-                      <img src="{{ url_for('static', filename='house4.jpeg') }}" alt="product 1" class="w-full aspect-square object-cover">
+                      <!-- Listing Image Directory -->
+                      <img src="{{ url_for('static', filename=listing[4]) }}" alt="{{ listing[1] }}" class="w-full aspect-square object-cover">
                       <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center 
                       justify-center gap-2 opacity-0 group-hover:opacity-100 transition">
-                          <a href="{{ url_for('web_app.property_listings_view') }}"
+                          <a href="{{ url_for('web_app.property_listings_view', listing_id = listing[0])}}"
                               class="text-white text-lg w-9 h-8 rounded-full bg-indigo-700 flex items-center justify-center hover:bg-gray-800 transition"
                               title="view listing">
                               <i class="fa-solid fa-magnifying-glass"></i>
@@ -66,12 +69,13 @@
                       </div>
                   </div>
                   <div class="pt-4 pb-3 px-4">
+                      <!-- Listing Name -->
                       <a href="#">
-                          <h4 class="uppercase font-medium text-xl mb-2 text-gray-800 hover:text-indigo-700 transition">
-                              Studio apartment</h4>
+                          <h4 class="uppercase font-medium text-xl mb-2 text-gray-800 hover:text-indigo-700 transition">{{ listing[1] }}</h4>
                       </a>
                       <div class="flex items-baseline mb-1 space-x-2">
-                          <p class="text-xl text-indigo-700 font-semibold">$545,000</p>
+                        <!-- Listing Price -->
+                          <p class="text-xl text-indigo-700 font-semibold">{{ listing[5] }}</p>
                           <!-- <p class="text-sm text-gray-400 line-through">$55.90</p> -->
                       </div>
                       <!-- <div class="flex items-center">
@@ -89,223 +93,37 @@
                       class="block w-full py-1 text-center text-white bg-indigo-700 border border-indigo-700 rounded-b hover:bg-transparent hover:text-indigo-700 transition">
                       View Listing</a>
               </div>
-
-              
-
-              <div class="bg-white shadow rounded overflow-hidden group">
-                  <div class="relative">
-                      <img src="{{ url_for('static', filename='house1.png') }}" alt="product 1" class="w-full aspect-square object-cover">
-                      <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center 
-                      justify-center gap-2 opacity-0 group-hover:opacity-100 transition">
-                          <a href="#"
-                              class="text-white text-lg w-9 h-8 rounded-full bg-indigo-700 flex items-center justify-center hover:bg-gray-800 transition"
-                              title="view listing">
-                              <i class="fa-solid fa-magnifying-glass"></i>
-                          </a>
-                          <a href="#"
-                              class="text-white text-lg w-9 h-8 rounded-full bg-indigo-700 flex items-center justify-center hover:bg-gray-800 transition"
-                              title="add to wishlist">
-                              <i class="fa-solid fa-heart"></i>
-                          </a>
-                      </div>
-                  </div>
-                  <div class="pt-4 pb-3 px-4">
-                      <a href="#">
-                          <h4 class="uppercase font-medium text-xl mb-2 text-gray-800 hover:text-indigo-700 transition">
-                              House with pool</h4>
-                      </a>
-                      <div class="flex items-baseline mb-1 space-x-2">
-                          <p class="text-xl text-indigo-700 font-semibold">$45.00</p>
-                          <p class="text-sm text-gray-400 line-through">$55.90</p>
-                      </div>
-                      <div class="flex items-center">
-                          <div class="flex gap-1 text-sm text-yellow-400">
-                              <span><i class="fa-solid fa-star"></i></span>
-                              <span><i class="fa-solid fa-star"></i></span>
-                              <span><i class="fa-solid fa-star"></i></span>
-                              <span><i class="fa-solid fa-star"></i></span>
-                              <span><i class="fa-solid fa-star"></i></span>
-                          </div>
-                          <div class="text-xs text-gray-500 ml-3">(150)</div>
-                      </div>
-                  </div>
-                  <a href="#"
-                      class="block w-full py-1 text-center text-white bg-indigo-700 border border-indigo-700 rounded-b hover:bg-transparent hover:text-indigo-700 transition">Add
-                      to cart</a>
-              </div>
-
-              <div class="bg-white shadow rounded overflow-hidden group">
-                  <div class="relative">
-                      <img src="{{ url_for('static', filename='house2.webp') }}" alt="product 1" class="w-full aspect-square object-cover">
-                      <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center 
-                      justify-center gap-2 opacity-0 group-hover:opacity-100 transition">
-                          <a href="#"
-                              class="text-white text-lg w-9 h-8 rounded-full bg-indigo-700 flex items-center justify-center hover:bg-gray-800 transition"
-                              title="view listing">
-                              <i class="fa-solid fa-magnifying-glass"></i>
-                          </a>
-                          <a href="#"
-                              class="text-white text-lg w-9 h-8 rounded-full bg-indigo-700 flex items-center justify-center hover:bg-gray-800 transition"
-                              title="add to wishlist">
-                              <i class="fa-solid fa-heart"></i>
-                          </a>
-                      </div>
-                  </div>
-                  <div class="pt-4 pb-3 px-4">
-                      <a href="#">
-                          <h4 class="uppercase font-medium text-xl mb-2 text-gray-800 hover:text-indigo-700 transition">
-                              House with pool</h4>
-                      </a>
-                      <div class="flex items-baseline mb-1 space-x-2">
-                          <p class="text-xl text-indigo-700 font-semibold">$45.00</p>
-                          <p class="text-sm text-gray-400 line-through">$55.90</p>
-                      </div>
-                      <div class="flex items-center">
-                          <div class="flex gap-1 text-sm text-yellow-400">
-                              <span><i class="fa-solid fa-star"></i></span>
-                              <span><i class="fa-solid fa-star"></i></span>
-                              <span><i class="fa-solid fa-star"></i></span>
-                              <span><i class="fa-solid fa-star"></i></span>
-                              <span><i class="fa-solid fa-star"></i></span>
-                          </div>
-                          <div class="text-xs text-gray-500 ml-3">(150)</div>
-                      </div>
-                  </div>
-                  <a href="#"
-                      class="block w-full py-1 text-center text-white bg-indigo-700 border border-indigo-700 rounded-b hover:bg-transparent hover:text-indigo-700 transition">Add
-                      to cart</a>
-              </div>
-
-              <div class="bg-white shadow rounded overflow-hidden group">
-                  <div class="relative">
-                    <img src="{{ url_for('static', filename='house3.webp') }}" alt="product 1" class="w-full aspect-square object-cover">
-                      <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center 
-                      justify-center gap-2 opacity-0 group-hover:opacity-100 transition">
-                          <a href="#"
-                              class="text-white text-lg w-9 h-8 rounded-full bg-indigo-700 flex items-center justify-center hover:bg-gray-800 transition"
-                              title="view listing">
-                              <i class="fa-solid fa-magnifying-glass"></i>
-                          </a>
-                          <a href="#"
-                              class="text-white text-lg w-9 h-8 rounded-full bg-indigo-700 flex items-center justify-center hover:bg-gray-800 transition"
-                              title="add to wishlist">
-                              <i class="fa-solid fa-heart"></i>
-                          </a>
-                      </div>
-                  </div>
-                  <div class="pt-4 pb-3 px-4">
-                      <a href="#">
-                          <h4 class="uppercase font-medium text-xl mb-2 text-gray-800 hover:text-indigo-700 transition">
-                              Penthouse</h4>
-                      </a>
-                      <div class="flex items-baseline mb-1 space-x-2">
-                          <p class="text-xl text-indigo-700 font-semibold">$45.00</p>
-                          <p class="text-sm text-gray-400 line-through">$55.90</p>
-                      </div>
-                      <div class="flex items-center">
-                          <div class="flex gap-1 text-sm text-yellow-400">
-                              <span><i class="fa-solid fa-star"></i></span>
-                              <span><i class="fa-solid fa-star"></i></span>
-                              <span><i class="fa-solid fa-star"></i></span>
-                              <span><i class="fa-solid fa-star"></i></span>
-                              <span><i class="fa-solid fa-star"></i></span>
-                          </div>
-                          <div class="text-xs text-gray-500 ml-3">(150)</div>
-                      </div>
-                  </div>
-                  <a href="#"
-                      class="block w-full py-1 text-center text-white bg-indigo-700 border border-indigo-700 rounded-b hover:bg-transparent hover:text-indigo-700 transition">Add
-                      to cart</a>
-              </div>
-
-              <div class="bg-white shadow rounded overflow-hidden group">
-                  <div class="relative">
-                    <img src="{{ url_for('static', filename='house5.jpeg') }}" alt="product 1" class="w-full aspect-square object-cover">
-                      <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center 
-                      justify-center gap-2 opacity-0 group-hover:opacity-100 transition">
-                          <a href="#"
-                              class="text-white text-lg w-9 h-8 rounded-full bg-indigo-700 flex items-center justify-center hover:bg-gray-800 transition"
-                              title="view listing">
-                              <i class="fa-solid fa-magnifying-glass"></i>
-                          </a>
-                          <a href="#"
-                              class="text-white text-lg w-9 h-8 rounded-full bg-indigo-700 flex items-center justify-center hover:bg-gray-800 transition"
-                              title="add to wishlist">
-                              <i class="fa-solid fa-heart"></i>
-                          </a>
-                      </div>
-                  </div>
-                  <div class="pt-4 pb-3 px-4">
-                      <a href="#">
-                          <h4 class="uppercase font-medium text-xl mb-2 text-gray-800 hover:text-indigo-700 transition">
-                              5BR HDB</h4>
-                      </a>
-                      <div class="flex items-baseline mb-1 space-x-2">
-                          <p class="text-xl text-indigo-700 font-semibold">$45.00</p>
-                          <p class="text-sm text-gray-400 line-through">$55.90</p>
-                      </div>
-                      <div class="flex items-center">
-                          <div class="flex gap-1 text-sm text-yellow-400">
-                              <span><i class="fa-solid fa-star"></i></span>
-                              <span><i class="fa-solid fa-star"></i></span>
-                              <span><i class="fa-solid fa-star"></i></span>
-                              <span><i class="fa-solid fa-star"></i></span>
-                              <span><i class="fa-solid fa-star"></i></span>
-                          </div>
-                          <div class="text-xs text-gray-500 ml-3">(150)</div>
-                      </div>
-                  </div>
-                  <a href="#"
-                      class="block w-full py-1 text-center text-white bg-indigo-700 border border-indigo-700 rounded-b hover:bg-transparent hover:text-indigo-700 transition">Add
-                      to cart</a>
-              </div>
-
-              <div class="bg-white shadow rounded overflow-hidden group">
-                  <div class="relative">
-                    <img src="{{ url_for('static', filename='house6.jpeg') }}" alt="product 1" class="w-full aspect-square object-cover">
-                      <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center 
-                      justify-center gap-2 opacity-0 group-hover:opacity-100 transition">
-                          <a href="#"
-                              class="text-white text-lg w-9 h-8 rounded-full bg-indigo-700 flex items-center justify-center hover:bg-gray-800 transition"
-                              title="view listing">
-                              <i class="fa-solid fa-magnifying-glass"></i>
-                          </a>
-                          <a href="#"
-                              class="text-white text-lg w-9 h-8 rounded-full bg-indigo-700 flex items-center justify-center hover:bg-gray-800 transition"
-                              title="add to wishlist">
-                              <i class="fa-solid fa-heart"></i>
-                          </a>
-                      </div>
-                  </div>
-                  <div class="pt-4 pb-3 px-4">
-                      <a href="#">
-                          <h4 class="uppercase font-medium text-xl mb-2 text-gray-800 hover:text-indigo-700 transition">
-                              3BR HDB</h4>
-                      </a>
-                      <div class="flex items-baseline mb-1 space-x-2">
-                          <p class="text-xl text-indigo-700 font-semibold">$45.00</p>
-                          <p class="text-sm text-gray-400 line-through">$55.90</p>
-                      </div>
-                      <div class="flex items-center">
-                          <div class="flex gap-1 text-sm text-yellow-400">
-                              <span><i class="fa-solid fa-star"></i></span>
-                              <span><i class="fa-solid fa-star"></i></span>
-                              <span><i class="fa-solid fa-star"></i></span>
-                              <span><i class="fa-solid fa-star"></i></span>
-                              <span><i class="fa-solid fa-star"></i></span>
-                          </div>
-                          <div class="text-xs text-gray-500 ml-3">(150)</div>
-                      </div>
-                  </div>
-                  <a href="#"
-                      class="block w-full py-1 text-center text-white bg-indigo-700 border border-indigo-700 rounded-b hover:bg-transparent hover:text-indigo-700 transition">Add
-                      to cart</a>
-              </div>
-
-
-
+              {% endfor %}
           </div>
       </div>
 
         
 {% endblock content %}
+
+{% block script %}
+<script>
+  function searchListings() {
+    // Declare variables
+    var input, filter, cards, cardTitle, i, txtValue;
+    input = document.getElementById('query-details');
+    filter = input.value.toUpperCase();
+    cards = document.querySelectorAll('.grid .bg-white');
+
+    // Loop through all cards, and hide those that don't match the search query
+    cards.forEach(function(card) {
+      cardTitle = card.querySelector('.uppercase');
+      if (cardTitle) {
+        txtValue = cardTitle.textContent || cardTitle.innerText;
+        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+          card.style.display = '';
+        } else {
+          card.style.display = 'none';
+        }
+      }
+    });
+  }
+
+  // Attach event listener to input field
+  document.getElementById('query-details').addEventListener('input', searchListings);
+</script>
+{% endblock script %}
