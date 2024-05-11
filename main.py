@@ -46,9 +46,9 @@ if __name__ == "__main__":
 
         #Rating Table
         rating_col = ["id INTEGER PRIMARY KEY AUTOINCREMENT",
-                        "rating DECIMAL(2, 1)",
+                        "rating INTEGER",
                         "userName TEXT",
-                        "userNAMEREA TEXT"]
+                        "userNameREA TEXT"]
         
         sample_db.create_table("Rating", rating_col)
         
@@ -350,8 +350,8 @@ if __name__ == "__main__":
     
 
     # db.view_table("Profile")
-    # db.view_table("Review")
-    # db.view_table("Rating")
+    db.view_table("Review")
+    db.view_table("Rating")
     # db.search_by_keyword("Review", 'user191', ["userName"])
     # db.connection.close()
 

@@ -50,6 +50,83 @@ class REA(User):
             return False
 
     # 19. View my ratings
+    def viewRating(self, agent_id):
+        #Get the rating tuples where userNameREA == agent_id
+        review_tuples = REA.db.search_by_keyword("Rating", agent_id, ["userNameREA"])
+
+        #Length of tuple
+        length_tuple = len(review_tuples)
+
+        total_rating = 0
+        #Iterate to add the total rating
+        for i in range(length_tuple):
+            current_tuple = review_tuples[i]
+            current_rating = current_tuple[1]
+            total_rating += current_rating
+        
+        #Calculate average rating
+        average_rating = total_rating / length_tuple
+
+        return average_rating
+    
+    #Edit rating
+    def editRating(self, new_rating, user_id, agent_id):
+        #Check if user previously has existing rating with selected agent
+        rating_tuples = REA.db.search_by_keyword("Rating", user_id, ["userName"])
+        length_tuple = len(rating_tuples)
+        hasRating = False
+        old_rating_index = 0
+        old_rating = 0
+        
+        #If user has not made any rating
+        if(length_tuple == 0):
+            return False
+        else:
+            for i in range(length_tuple):
+                current_tuple = rating_tuples[i]
+                current_agent = current_tuple[3]
+
+                if(current_agent == agent_id):
+                    hasRating = True
+                    old_rating_index = i
+                    old_rating = current_tuple[1]
+
+            if(hasRating == False):
+                return False
+            else:
+                #Delete from table the old rating
+                REA.db.delete_from_table("Rating", f"rating = {old_rating}, userName = '{user_id}', userNameREA = '{agent_id}'")
+
+                #Insert new rating
+                REA.db.insert_into_table("Rating", f"NULL, {new_rating}, '{user_id}', '{agent_id}'")
+                return True
+
+
+    #Create rating
+    def giveRating(self, new_rating, user_id, agent_id):
+        rating_tuple = REA.db.search_by_keyword("Rating", user_id, ["userName"])
+        length_tuple = len(rating_tuple)
+        hasRating = False
+
+        if(length_tuple == 0):
+            #Insert new rating
+            REA.db.insert_into_table("Rating", f"NULL, {new_rating}, '{user_id}', '{agent_id}'")
+
+        else:
+            for i in range(length_tuple):
+                current_tuple = rating_tuple[i]
+                current_agent= current_tuple[3]
+
+                if(current_agent == agent_id):
+                    hasRating = True
+
+            
+            if(hasRating == True):
+                return False
+            else:
+                REA.db.insert_into_table("Rating", f"NULL, {new_rating}, '{user_id}', '{agent_id}'")
+                return True
+
 
     # 20. View my reviews
     def viewReview(self, agent_id):
@@ -88,19 +165,17 @@ class REA(User):
         old_review_index = 0
 
         #Get the tuples of the old review
-        old_review_tuples = REA.db.search_by_keyword("Review", old_review, ["review"])
+        old_review_tuples = REA.db.search_by_keyword("Review", user_id, ["userName"])
 
         #Length of tuple
         tuple_length = len(old_review_tuples)
 
         for i in range(tuple_length):
             current_tuple = old_review_tuples[i]
-
             current_review = current_tuple[1]
-            current_user_id = current_tuple[2]
             current_agent_id = current_tuple[3]
 
-            if((current_review == old_review) and (current_user_id == user_id) and (current_agent_id == agent_id)):
+            if(current_agent_id == agent_id):
                 old_review_index = i
                 hasReview = True
 
