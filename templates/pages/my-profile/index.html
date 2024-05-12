@@ -4,6 +4,41 @@
 
 {% block content %}
     <h3 class="text-3xl font-bold underline">My profile</h3>
+
+
+        <div class="flex col-span-1 my-4 border bg-gray-100 rounded-md">
+            <div class="">
+                <img src="{{ url_for('static', filename='house4.jpeg') }}" alt="product 1" class="w-48 m-4 aspect-square object-cover rounded-full">
+            </div>
+            <div class="p-8 self-center flex flex-col">
+                <div class="text-3xl font-bold">
+                    Username123
+                </div>
+                <div class="flex items-center">
+                    <span>Rating: </span>
+                    <div class="mx-2 flex gap-1 text-sm text-yellow-400">
+                        <span><i class="fa-solid fa-star"></i></span>
+                        <span><i class="fa-solid fa-star"></i></span>
+                        <span><i class="fa-solid fa-star"></i></span>
+                        <span><i class="fa-solid fa-star"></i></span>
+                        <!-- <span><i class="fa-regular fa-star"></i></span> -->
+                        <span><i class="fa-regular fa-star-half-stroke"></i></span>
+                    </div>
+                    <a href="{{ url_for('web_app.reviews_index') }}" 
+                        class="text-xs text-gray-500 hover:text-blue-500 underline underline-offset-2">
+                        (<span>20</span> Reviews)
+                    </a>
+                </div>
+                <a href="{{ url_for('web_app.wishlists_index') }}"
+                    class="text-white text-nowrap text-sm px-2 py-1 mt-8 max-w-min rounded-md bg-indigo-700 flex items-center justify-center hover:bg-gray-800 transition"
+                    title="add to wishlist">
+                    <i class="fa-solid fa-heart mx-1"></i>My wishlist
+                </a>
+            </div>
+        </div>
+
+        <h4 class="text-xl font-bold underline">My Listings</h4>
+
         <div class="flex flex-row">
           <form class="mt-4" role="search-role" id="form">
             <input
@@ -35,7 +70,7 @@
                   <option value="latest">Latest product</option>
               </select>
 
-              <div class="flex gap-2 ml-auto">
+              <!-- <div class="flex gap-2 ml-auto">
                   <div
                       class="border border-indigo-700 w-10 h-9 flex items-center justify-center text-white bg-indigo-700 rounded cursor-pointer">
                       <i class="fa-solid fa-grip-vertical"></i>
@@ -44,36 +79,11 @@
                       class="border border-gray-300 w-10 h-9 flex items-center justify-center text-gray-600 rounded cursor-pointer">
                       <i class="fa-solid fa-list"></i>
                   </div>
-              </div>
+              </div> -->
           </div>
 
-            <div class="flex col-span-1 mb-4 border bg-gray-100 rounded-md">
-                <!-- <div className="w-18 h-18 border rounded-full bg-blue-500"> -->
-                    <!-- <span className="w-18 h-18 border rounded-full bg-blue-500">pf</span> -->
-                <!-- </div> -->
-                <div className="">
-                    <img src="{{ url_for('static', filename='house4.jpeg') }}" alt="product 1" class="w-48 m-4 aspect-square object-cover rounded-full">
-                </div>
-                <div className="px-4 lex flex-col">
-                    <div>
-                        Username from db
-                    </div>
-                    <div>
-                        Username from db
-                    </div>
-                    <div>
-                        Username from db
-                    </div>
-                    <div>
-                        Username from db
-                    </div>
-                    
-                </div>
-            </div>
+            
           <div class="grid lg:grid-cols-5 md:grid-cols-3 grid-cols-2 gap-6">
-            <!-- <div class="col-span-1 h-full border">
-                profile deets
-            </div> -->
               <div class="bg-white shadow rounded overflow-hidden group">
                   <div class="relative">
                       <img src="{{ url_for('static', filename='house4.jpeg') }}" alt="product 1" class="w-full aspect-square object-cover">
@@ -144,22 +154,11 @@
                       </a>
                       <div class="flex items-baseline mb-1 space-x-2">
                           <p class="text-xl text-indigo-700 font-semibold">$45.00</p>
-                          <p class="text-sm text-gray-400 line-through">$55.90</p>
-                      </div>
-                      <div class="flex items-center">
-                          <div class="flex gap-1 text-sm text-yellow-400">
-                              <span><i class="fa-solid fa-star"></i></span>
-                              <span><i class="fa-solid fa-star"></i></span>
-                              <span><i class="fa-solid fa-star"></i></span>
-                              <span><i class="fa-solid fa-star"></i></span>
-                              <span><i class="fa-solid fa-star"></i></span>
-                          </div>
-                          <div class="text-xs text-gray-500 ml-3">(150)</div>
                       </div>
                   </div>
                   <a href="#"
-                      class="block w-full py-1 text-center text-white bg-indigo-700 border border-indigo-700 rounded-b hover:bg-transparent hover:text-indigo-700 transition">Add
-                      to cart</a>
+                      class="block w-full py-1 text-center text-white bg-indigo-700 border border-indigo-700 rounded-b hover:bg-transparent hover:text-indigo-700 transition">
+                    View Listing</a>
               </div>
 
               
@@ -189,22 +188,11 @@
                       </a>
                       <div class="flex items-baseline mb-1 space-x-2">
                           <p class="text-xl text-indigo-700 font-semibold">$45.00</p>
-                          <p class="text-sm text-gray-400 line-through">$55.90</p>
-                      </div>
-                      <div class="flex items-center">
-                          <div class="flex gap-1 text-sm text-yellow-400">
-                              <span><i class="fa-solid fa-star"></i></span>
-                              <span><i class="fa-solid fa-star"></i></span>
-                              <span><i class="fa-solid fa-star"></i></span>
-                              <span><i class="fa-solid fa-star"></i></span>
-                              <span><i class="fa-solid fa-star"></i></span>
-                          </div>
-                          <div class="text-xs text-gray-500 ml-3">(150)</div>
                       </div>
                   </div>
                   <a href="#"
-                      class="block w-full py-1 text-center text-white bg-indigo-700 border border-indigo-700 rounded-b hover:bg-transparent hover:text-indigo-700 transition">Add
-                      to cart</a>
+                      class="block w-full py-1 text-center text-white bg-indigo-700 border border-indigo-700 rounded-b hover:bg-transparent hover:text-indigo-700 transition">
+                    View Listing</a>
               </div>
 
               <div class="bg-white shadow rounded overflow-hidden group">
@@ -231,22 +219,11 @@
                       </a>
                       <div class="flex items-baseline mb-1 space-x-2">
                           <p class="text-xl text-indigo-700 font-semibold">$45.00</p>
-                          <p class="text-sm text-gray-400 line-through">$55.90</p>
-                      </div>
-                      <div class="flex items-center">
-                          <div class="flex gap-1 text-sm text-yellow-400">
-                              <span><i class="fa-solid fa-star"></i></span>
-                              <span><i class="fa-solid fa-star"></i></span>
-                              <span><i class="fa-solid fa-star"></i></span>
-                              <span><i class="fa-solid fa-star"></i></span>
-                              <span><i class="fa-solid fa-star"></i></span>
-                          </div>
-                          <div class="text-xs text-gray-500 ml-3">(150)</div>
                       </div>
                   </div>
                   <a href="#"
-                      class="block w-full py-1 text-center text-white bg-indigo-700 border border-indigo-700 rounded-b hover:bg-transparent hover:text-indigo-700 transition">Add
-                      to cart</a>
+                      class="block w-full py-1 text-center text-white bg-indigo-700 border border-indigo-700 rounded-b hover:bg-transparent hover:text-indigo-700 transition">
+                    View Listing</a>
               </div>
 
               <div class="bg-white shadow rounded overflow-hidden group">
@@ -273,22 +250,11 @@
                       </a>
                       <div class="flex items-baseline mb-1 space-x-2">
                           <p class="text-xl text-indigo-700 font-semibold">$45.00</p>
-                          <p class="text-sm text-gray-400 line-through">$55.90</p>
-                      </div>
-                      <div class="flex items-center">
-                          <div class="flex gap-1 text-sm text-yellow-400">
-                              <span><i class="fa-solid fa-star"></i></span>
-                              <span><i class="fa-solid fa-star"></i></span>
-                              <span><i class="fa-solid fa-star"></i></span>
-                              <span><i class="fa-solid fa-star"></i></span>
-                              <span><i class="fa-solid fa-star"></i></span>
-                          </div>
-                          <div class="text-xs text-gray-500 ml-3">(150)</div>
                       </div>
                   </div>
                   <a href="#"
-                      class="block w-full py-1 text-center text-white bg-indigo-700 border border-indigo-700 rounded-b hover:bg-transparent hover:text-indigo-700 transition">Add
-                      to cart</a>
+                      class="block w-full py-1 text-center text-white bg-indigo-700 border border-indigo-700 rounded-b hover:bg-transparent hover:text-indigo-700 transition">
+                    View Listing</a>
               </div>
 
               <div class="bg-white shadow rounded overflow-hidden group">
@@ -315,22 +281,11 @@
                       </a>
                       <div class="flex items-baseline mb-1 space-x-2">
                           <p class="text-xl text-indigo-700 font-semibold">$45.00</p>
-                          <p class="text-sm text-gray-400 line-through">$55.90</p>
-                      </div>
-                      <div class="flex items-center">
-                          <div class="flex gap-1 text-sm text-yellow-400">
-                              <span><i class="fa-solid fa-star"></i></span>
-                              <span><i class="fa-solid fa-star"></i></span>
-                              <span><i class="fa-solid fa-star"></i></span>
-                              <span><i class="fa-solid fa-star"></i></span>
-                              <span><i class="fa-solid fa-star"></i></span>
-                          </div>
-                          <div class="text-xs text-gray-500 ml-3">(150)</div>
                       </div>
                   </div>
                   <a href="#"
-                      class="block w-full py-1 text-center text-white bg-indigo-700 border border-indigo-700 rounded-b hover:bg-transparent hover:text-indigo-700 transition">Add
-                      to cart</a>
+                      class="block w-full py-1 text-center text-white bg-indigo-700 border border-indigo-700 rounded-b hover:bg-transparent hover:text-indigo-700 transition">
+                    View Listing</a>
               </div>
 
 

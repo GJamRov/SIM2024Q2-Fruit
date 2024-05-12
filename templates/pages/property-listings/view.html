@@ -5,7 +5,11 @@
 {% block content %}
     
 
-
+<a
+      href="{{url_for('web_app.property_listings_index')}}"
+      class="bg-slate-600 text-sm text-white py-2 px-3 rounded">
+      Back
+    </a>
 <div class="container grid grid-cols-2 gap-6 pt-6">
     <div>
         <img src="{{ url_for('static', filename='house4.jpeg') }}" alt="product 1" class="w-full">
@@ -20,16 +24,6 @@
 
     <div>
         <h2 class="text-3xl font-medium uppercase mb-2">Studio apartment</h2>
-        <!-- <div class="flex items-center mb-4">
-            <div class="flex gap-1 text-sm text-yellow-400">
-                <span><i class="fa-solid fa-star"></i></span>
-                <span><i class="fa-solid fa-star"></i></span>
-                <span><i class="fa-solid fa-star"></i></span>
-                <span><i class="fa-solid fa-star"></i></span>
-                <span><i class="fa-solid fa-star"></i></span>
-            </div>
-            <div class="text-xs text-gray-500 ml-3">(150 Reviews)</div>
-        </div> -->
         <div class="space-y-2">
             <p class="text-gray-800 font-semibold space-x-2">
                 <span>Availability: </span>
@@ -40,12 +34,12 @@
                 <span class="text-gray-600">Clementi</span>
             </p>
             <p class="space-x-2">
-                <span class="text-gray-800 font-semibold">Category: </span>
-                <span class="text-gray-600">Sofa</span>
+                <span class="text-gray-800 font-semibold">No of rooms: </span>
+                <span class="text-gray-600">1 Bedroom, 1 Bath</span>
             </p>
             <p class="space-x-2">
-                <span class="text-gray-800 font-semibold">SKU: </span>
-                <span class="text-gray-600">BE45VGRT</span>
+                <span class="text-gray-800 font-semibold">Sqft: </span>
+                <span class="text-gray-600">1302 sqft</span>
             </p>
         </div>
         <div class="flex items-baseline mb-1 space-x-2 font-roboto mt-4">
@@ -123,17 +117,25 @@
         </div> -->
 
         <div class="mt-6 flex gap-3 border-b border-gray-200 pb-5 pt-5">
-            <a href="#"
+            <!-- <a href="#"
                 class="bg-indigo-700 border border-indigo-700 text-white px-8 py-2 font-medium rounded uppercase flex items-center gap-2 hover:bg-transparent hover:text-indigo-700 transition">
-                <i class="fa-solid fa-bag-shopping"></i> Add to cart
-            </a>
+                <i class="fa-solid fa-bag-shopping"></i> View Listing
+            </a> -->
             <a href="#"
                 class="border border-gray-300 text-gray-600 px-8 py-2 font-medium rounded uppercase flex items-center gap-2 hover:text-indigo-700 transition">
                 <i class="fa-solid fa-heart"></i> Wishlist
             </a>
         </div>
+        <div class="mt-4 bg-gray-100 border flex flex-col px-3 py-2">
+            <span class="my-3">Zach Ho<span class="ml-2 font-bold italic">@ReaZach001</span></span>
+            <!-- <a href="#" class="max-w-min bg-red-200 px-2 py-1 rounded-md my-3 hover:bg-red-300">Chat</a> -->
+            <form class="flex">
+                <input type="text" placeholder="Enter offer..">
+                <button type="submit" class="mt-1 max-w-min text-nowrap ml-2">Make offer</button>
+            </form>
+        </div>
 
-        <div class="flex gap-3 mt-4">
+        <!-- <div class="flex gap-3 mt-4">
             <a href="#"
                 class="text-gray-400 hover:text-gray-500 h-8 w-8 rounded-full border border-gray-300 flex items-center justify-center">
                 <i class="fa-brands fa-facebook-f"></i>
@@ -146,13 +148,13 @@
                 class="text-gray-400 hover:text-gray-500 h-8 w-8 rounded-full border border-gray-300 flex items-center justify-center">
                 <i class="fa-brands fa-instagram"></i>
             </a>
-        </div>
+        </div> -->
     </div>
 </div>
 <!-- ./product-detail -->
 
 <!-- description -->
-<div class="container pb-16 pt-16">
+<!-- <div class="container pb-16 pt-16">
     <h3 class="border-b border-gray-200 font-roboto text-gray-800 pb-3 font-medium">Product details</h3>
     <div class="w-3/5 pt-6">
         <div class="text-gray-600">
@@ -182,11 +184,11 @@
             </tr>
         </table>
     </div>
-</div>
+</div> -->
 <!-- ./description -->
 
 <!-- related product -->
-<div class="container pb-16">
+<!-- <div class="container pb-16">
     <h2 class="text-2xl font-medium text-gray-800 uppercase mb-6">Related products</h2>
     <div class="grid grid-cols-4 gap-6">
         <div class="bg-white shadow rounded overflow-hidden group">
@@ -227,8 +229,8 @@
                 </div>
             </div>
             <a href="#"
-                class="block w-full py-1 text-center text-white bg-indigo-700 border border-indigo-700 rounded-b hover:bg-transparent hover:text-indigo-700 transition">Add
-                to cart</a>
+                class="block w-full py-1 text-center text-white bg-indigo-700 border border-indigo-700 rounded-b hover:bg-transparent hover:text-indigo-700 transition">
+            View Listing</a>
         </div>
         <div class="bg-white shadow rounded overflow-hidden group">
             <div class="relative">
@@ -268,8 +270,8 @@
                 </div>
             </div>
             <a href="#"
-                class="block w-full py-1 text-center text-white bg-indigo-700 border border-indigo-700 rounded-b hover:bg-transparent hover:text-indigo-700 transition">Add
-                to cart</a>
+                class="block w-full py-1 text-center text-white bg-indigo-700 border border-indigo-700 rounded-b hover:bg-transparent hover:text-indigo-700 transition">
+            View Listing</a>
         </div>
         <div class="bg-white shadow rounded overflow-hidden group">
             <div class="relative">
@@ -309,8 +311,8 @@
                 </div>
             </div>
             <a href="#"
-                class="block w-full py-1 text-center text-white bg-indigo-700 border border-indigo-700 rounded-b hover:bg-transparent hover:text-indigo-700 transition">Add
-                to cart</a>
+                class="block w-full py-1 text-center text-white bg-indigo-700 border border-indigo-700 rounded-b hover:bg-transparent hover:text-indigo-700 transition">
+            View Listing</a>
         </div>
         <div class="bg-white shadow rounded overflow-hidden group">
             <div class="relative">
@@ -350,11 +352,11 @@
                 </div>
             </div>
             <a href="#"
-                class="block w-full py-1 text-center text-white bg-indigo-700 border border-indigo-700 rounded-b hover:bg-transparent hover:text-indigo-700 transition">Add
-                to cart</a>
+                class="block w-full py-1 text-center text-white bg-indigo-700 border border-indigo-700 rounded-b hover:bg-transparent hover:text-indigo-700 transition">
+            View Listing</a>
         </div>
     </div>
-</div>
+</div> -->
 
         
 {% endblock content %}
