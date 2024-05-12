@@ -62,6 +62,16 @@ class WebApp:
         # my profile
         self.blueprint.add_url_rule('/my-profile/', 'my_profile_index', self.my_profile_index)
 
+        # reviews
+        self.blueprint.add_url_rule('/reviews/', 'reviews_index', self.reviews_index)
+
+        # wishlists
+        self.blueprint.add_url_rule('/wishlists/', 'wishlists_index', self.wishlists_index)
+
+        # my reviews - for buyers and sellers
+        self.blueprint.add_url_rule('/my-reviews/', 'my_reviews_index', self.my_reviews_index)
+        self.blueprint.add_url_rule('/my-reviews/update', 'my_reviews_update', self.my_reviews_update)
+
         self.app.register_blueprint(self.blueprint)
         User.connect_database("SampleDatabase")
         self.app.run(debug=True, port=self.port)
@@ -374,3 +384,22 @@ class WebApp:
     def my_profile_index(self):
         """My profile page"""
         return render_template("pages/my-profile/index.html")
+
+    # reviews
+    def reviews_index(self):
+        """reviews page"""
+        return render_template("pages/reviews/index.html")
+
+    # wishlists
+    def wishlists_index(self):
+        """wishlists page"""
+        return render_template("pages/wishlists/index.html")
+
+    # my reviews - for buyers and sellers
+    def my_reviews_index(self):
+        """my reviews page"""
+        return render_template("pages/my-reviews/index.html")
+
+    def my_reviews_update(self):
+        """update my reviews page"""
+        return render_template("pages/my-reviews/update.html")

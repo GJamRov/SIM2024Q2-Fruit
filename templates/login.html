@@ -1,16 +1,12 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <title>Log in page</title>
-    <link rel="stylesheet"
-        href="style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-
-
 <body>
     <div class="main">
-        <h1>Real estate</h1>
+        <h1>Fruit Real estate</h1>
         <h3>Please log in</h3>
         <form action="/login" method="POST">
             <label for="first">
