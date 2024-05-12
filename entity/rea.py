@@ -50,6 +50,7 @@ class REA(User):
         else:
             return False
 
-    # 19. View my ratings
+    
 
-    # 20. View my reviews
+
+    
