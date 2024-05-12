@@ -13,22 +13,19 @@ class viewPLController:
         # print(propertyDetail)
         # Check if adminName is valid
         if found_user:
-            id = found_user[0]
-            name = found_user[1]
-            password = found_user[2]
-            email = found_user[3]
+            print(found_user)
             role = found_user[4]
-            active = found_user[5]
-            #print(id, name, password, email, role, active)
+            found_user = found_user[:4] + found_user[5:]
+            print(found_user)
             properties = []
             if role == 2:
-                tREA = REA(id, name, password, email, active)
+                tREA = REA(*found_user)
                 properties = tREA.viewListing(propertyDetail)
             elif role == 3:
-                tBuyer = Buyer(id, name, password, email, active)
+                tBuyer = Buyer(*found_user)
                 properties = tBuyer.viewListing(propertyDetail)
             elif role == 4:
-                tSeller = Seller(id, name, password, email, active)
+                tSeller = Seller(*found_user)
                 properties = tSeller.viewListing(propertyDetail)
             # print("Properties before sorting:", properties[:5])  # Debug statement
             # print(properties[0], "I AM HERE")

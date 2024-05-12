@@ -375,7 +375,7 @@ if __name__ == "__main__":
     # db.search_by_keyword("Review", 'user191', ["userName"])
     # db.connection.close()
 
-    
+    # print(os.path.dirname(os.path.abspath(__file__)))
 
     # Initialise Web App
     print("--- Running App ---")

@@ -23,7 +23,7 @@ class WebApp:
 
     def __init__(self, port):
         self.app = Flask(__name__)
-        self.upload_folder = "/static"
+        self.upload_folder = os.path.normpath(os.path.dirname(os.path.abspath(__file__))) + "\static"
         self.port = port
         self.app.secret_key = 'super secret key'  # for sessions
         self.blueprint = Blueprint('web_app', __name__)
@@ -34,7 +34,8 @@ class WebApp:
     def run_app(self):
         """Runs the web application."""
         self.app.config['UPLOAD_FOLDER'] = self.upload_folder
-        self.app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
+        if not os.path.exists(self.upload_folder):
+            os.makedirs(self.upload_folder)
         # Default Pages
         self.blueprint.add_url_rule('/', 'home', self.home)
         self.blueprint.add_url_rule('/login', 'login', self.login, methods=['GET', 'POST'])
@@ -57,7 +58,7 @@ class WebApp:
         self.blueprint.add_url_rule('/property-listings/sort', 'property_listings_sort', self.property_listings_sort)
         self.blueprint.add_url_rule('/property-listings/view', 'property_listings_view', self.property_listings_view)
         self.blueprint.add_url_rule('/property-listings/create', 'property_listings_create', self.property_listings_create, methods=['GET', 'POST'])
-        self.blueprint.add_url_rule('/upload', 'upload_file', self.upload_file, methods=['GET', 'POST'])
+        self.blueprint.add_url_rule('/upload', 'upload_file', self.upload_file, methods=['POST'])
 
         # my profile
         self.blueprint.add_url_rule('/my-profile/', 'my_profile_index', self.my_profile_index)
@@ -347,41 +348,35 @@ class WebApp:
 
     def property_listings_create(self):
         """Create a property listing"""
-        # if request.method == 'POST':
-        #     print(request.form)
-        #     print(request.files)
-        #     name = request.form['name']
-        #     location = request.form['location']
-        #     price = request.form['price']
-
-            # if 'image' in request.files:
-            #     print(request.files)
-            #     image_file = request.files['image']    
-            
-
-            # # Save the image file to your desired location
-            # image_filename = secure_filename(image_file.filename)
-            # image_file.save(os.path.join(self.app.config['UPLOAD_FOLDER'], image_filename))
-
-            # Save the details to database
-            # createPLCtl = createPLController()
-            # result = createPLCtl.createPropertyListing(session['username'], [name, location, image_file, price])
-
-            # if result:
-            #     flash('Property listing created successfully!', 'success')
-            #     return redirect(url_for('web_app.property_listings_index'))
-            # else:
-            #     flash('Property listing created unsuccssfully.', 'error')
-            #     return redirect("pages/property-listings/create.html")
-
         return render_template("pages/property-listings/create.html")
     
     def upload_file(self):
-        print(request.files)
+        # print(request.form)
+        # print(request.files)
         if 'image' in request.files:
-            file = request.file['image']
-            return 'File upload successfully'
-        return 'No file uploaded'
+            image_file = request.files['image']
+            name = request.form['location']
+            location = request.form['location']
+            price = request.form['price']
+
+            # Save the image file to UPLOAD_FOLDER
+            image_filename = secure_filename(image_file.filename)
+            # print(image_filename)
+            image_filepath = os.path.normpath(os.path.join(self.app.config['UPLOAD_FOLDER'], image_filename)) 
+            print(image_filepath)
+            image_file.save(image_filepath)
+
+            # Save new property details to database
+            createPLCtl = createPLController()
+            result = createPLCtl.createPropertyListing(session['username'], [name, location, image_filename, price])
+
+            if result:
+                flash('Property listing created successfully!', 'success')
+                return redirect(url_for('web_app.property_listings_index'))
+            else:
+                flash('Property listing created unsuccssfully.', 'error')
+                return redirect("pages/property-listings/create.html")
+        return redirect('/property-listings/create')
 
 
     # my profile
