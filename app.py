@@ -1,4 +1,7 @@
-from flask import Flask, Blueprint, render_template, request, redirect, session, flash, url_for
+from flask import Flask, Blueprint, render_template, request, redirect, session, flash, url_for, jsonify
+from werkzeug.utils import secure_filename
+import os
+
 # Controller Imports
 from controllers.login import LoginController
 from controllers.addAccount import addAccountCtl
@@ -11,6 +14,7 @@ from controllers.updateProfile import updateUserProfileController
 from controllers.suspendProfile import suspendUserProfileController
 from controllers.searchProfile import searchUserProfileController
 from controllers.viewPropertyListing import viewPLController
+from controllers.createPropertyListing import createPLController
 
 # Entity Import
 from entity.user import User
@@ -19,6 +23,7 @@ class WebApp:
 
     def __init__(self, port):
         self.app = Flask(__name__)
+        self.upload_folder = "/static"
         self.port = port
         self.app.secret_key = 'super secret key'  # for sessions
         self.blueprint = Blueprint('web_app', __name__)
@@ -28,26 +33,31 @@ class WebApp:
 
     def run_app(self):
         """Runs the web application."""
+        self.app.config['UPLOAD_FOLDER'] = self.upload_folder
+        self.app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
+        # Default Pages
         self.blueprint.add_url_rule('/', 'home', self.home)
         self.blueprint.add_url_rule('/login', 'login', self.login, methods=['GET', 'POST'])
         self.blueprint.add_url_rule('/logout', 'logout', self.logout, methods=['GET', 'POST'])
         self.blueprint.add_url_rule('/profile/<username>', 'profile', self.profile, methods=['GET', 'POST'])
 
-        # user
+        # User Account Pages
         self.blueprint.add_url_rule('/users/', 'users_index', self.users_index, methods=['GET', 'POST'])
         self.blueprint.add_url_rule('/users/create', 'create_account', self.create_account, methods=['GET', 'POST'])
         self.blueprint.add_url_rule('/users/view', 'view_account', self.view_account, methods=['GET', 'POST'])
         self.blueprint.add_url_rule('/users/update', 'update_account', self.update_account, methods=['GET', 'POST'])
-        # user profile
+        # user profile pages
         self.blueprint.add_url_rule('/user-profiles/', 'user_profiles_index', self.user_profiles_index, methods=['GET', 'POST'])
         self.blueprint.add_url_rule('/user-profiles/create', 'create_profile', self.create_profile, methods=['GET', 'POST'])
         self.blueprint.add_url_rule('/user-profiles/view/<profile>', 'view_profile', self.view_profile, methods=['GET', 'POST'])
         self.blueprint.add_url_rule('/user-profiles/update/<profile>', 'update_profile', self.update_profile, methods=['GET', 'POST'])
         self.blueprint.add_url_rule('/user-profiles/suspend/,<profile>', 'suspend_profile', self.suspend_profile, methods=['GET', 'POST'])
-        # property listing
+        # property listing pages
         self.blueprint.add_url_rule('/property-listings/', 'property_listings_index', self.property_listings_index)
+        self.blueprint.add_url_rule('/property-listings/sort', 'property_listings_sort', self.property_listings_sort)
         self.blueprint.add_url_rule('/property-listings/view', 'property_listings_view', self.property_listings_view)
-        self.blueprint.add_url_rule('/property-listings/create', 'property_listings_create', self.property_listings_create)
+        self.blueprint.add_url_rule('/property-listings/create', 'property_listings_create', self.property_listings_create, methods=['GET', 'POST'])
+        self.blueprint.add_url_rule('/upload', 'upload_file', self.upload_file, methods=['GET', 'POST'])
 
         # my profile
         self.blueprint.add_url_rule('/my-profile/', 'my_profile_index', self.my_profile_index)
@@ -188,7 +198,7 @@ class WebApp:
             if request.method == 'POST':
                 pass
 
-    #TODO: 8. Create user profiles
+    # 8. Create user profiles
     def create_profile(self):
         """Create new user profile"""
         # Check that the user is a System Admin
@@ -235,7 +245,7 @@ class WebApp:
                     return redirect('/user-profiles/update')
             return render_template('pages/user-profiles/update.html', profile=profile, profile_desc=profile_desc)
 
-    #TODO: 11. Suspend user profile
+    #11. Suspend user profile
     def suspend_profile(self, profile):
         """Suspend user profile"""
         # Check that the user is a System Admin
@@ -291,21 +301,30 @@ class WebApp:
         """property listing index page"""
         # Checks that the user is an REA, buyer or seller
         while session['role'] > 1 and session['role'] < 5:
+            sort_option = request.args.get('sort')
             viewPLCtl = viewPLController()
-            properties = viewPLCtl.viewListing(session['username'], "")
-            # print(properties)
+            properties = viewPLCtl.viewListing(session['username'], "", sort_option)
+            #print(properties, "RIGHT HERE")
             if properties:
+                # print(properties)
                 return render_template('pages/property-listings/index.html', propertyListings = properties)
             else:
-                return render_template('pages/property-listings/index.html')
+                return render_template('/')
+    
+    def property_listings_sort(self):
+        sort_option = request.args.get('sort')
+        # Call your controller or service method to fetch sorted property listings
+        viewPLCtl = viewPLController()
+        sorted_properties = viewPLCtl.viewListing(session['username'], "", sort_option)
+
+        # Return sorted listings as JSON response
+        return jsonify(sorted_properties)
 
     def property_listings_view(self):
         """View a property listing"""
-        print(request.args.get("listing_id"))
         viewPLCtl = viewPLController()
         listing_id = request.args.get("listing_id")
         listing = viewPLCtl.viewListing(session['username'], listing_id)
-        print(listing)
         if listing:
             return render_template("pages/property-listings/view.html", listing=listing)
         else:
@@ -314,7 +333,42 @@ class WebApp:
 
     def property_listings_create(self):
         """Create a property listing"""
+        # if request.method == 'POST':
+        #     print(request.form)
+        #     print(request.files)
+        #     name = request.form['name']
+        #     location = request.form['location']
+        #     price = request.form['price']
+
+            # if 'image' in request.files:
+            #     print(request.files)
+            #     image_file = request.files['image']    
+            
+
+            # # Save the image file to your desired location
+            # image_filename = secure_filename(image_file.filename)
+            # image_file.save(os.path.join(self.app.config['UPLOAD_FOLDER'], image_filename))
+
+            # Save the details to database
+            # createPLCtl = createPLController()
+            # result = createPLCtl.createPropertyListing(session['username'], [name, location, image_file, price])
+
+            # if result:
+            #     flash('Property listing created successfully!', 'success')
+            #     return redirect(url_for('web_app.property_listings_index'))
+            # else:
+            #     flash('Property listing created unsuccssfully.', 'error')
+            #     return redirect("pages/property-listings/create.html")
+
         return render_template("pages/property-listings/create.html")
+    
+    def upload_file(self):
+        print(request.files)
+        if 'image' in request.files:
+            file = request.file['image']
+            return 'File upload successfully'
+        return 'No file uploaded'
+
 
     # my profile
     def my_profile_index(self):

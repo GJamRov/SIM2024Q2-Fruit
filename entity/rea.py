@@ -13,8 +13,8 @@ class REA(User):
             pass
 
         else:
-            # f"NULL, '{p_name}', {price}, {view_count}, {wishlisted}"
-            details = f"NULL, '{newPropertyDetails[0]}', {newPropertyDetails[1]}, 0, 0"
+            # f"NULL, '{p_name}', '{location}', '{description}', '{img_name}', {price}, {rea_id}, {seller_id}, {sold_buyer}, {view_count}, {wishlisted}"
+            details = f"NULL, '{newPropertyDetails[0]}', '{newPropertyDetails[1]}', 'Test', '{newPropertyDetails[2]}', {newPropertyDetails[3]}, {self.userID}, 0, -1, 0, 0"
             REA.db.insert_into_table("Property", details)
             return True
 

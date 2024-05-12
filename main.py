@@ -74,6 +74,15 @@ if __name__ == "__main__":
             4: "West Coast"
         }
 
+        p_name_dict = {
+            1: "White Bungalow with Pool",
+            2: "Modern House with Pool",
+            3: "3-Bedroom City-Centre Condominium",
+            4: "4-Bedroom Town Condominium",
+            5: "4-Bedroom Modern City Aparment",
+            6: "5-Bedroom Town Apartment"
+        }
+
         p_img_dict = {
             1: "house1.png",
             2: "house2.webp",
@@ -84,19 +93,19 @@ if __name__ == "__main__":
         }
 
         desc_dict = {
-            1: "Spacious 3-bedroom family house with a backyard garden, located in a quiet neighborhood.",
-            2: "Cozy 2-bedroom apartment in the heart of downtown, with modern amenities and a city view.",
-            3: "Luxurious 5-bedroom villa with a swimming pool and panoramic ocean views, perfect for entertaining guests.",
-            4: "Charming 4-bedroom cottage nestled in the countryside, surrounded by lush greenery and scenic views.",
-            5: "Contemporary loft-style apartment featuring an open floor plan, high ceilings, and plenty of natural light.",
-            6: "House"
+            1: "This beautiful white bungalow offers a peaceful retreat with a private pool and spacious backyard garden, perfect for family gatherings and relaxation. The interior features a modern design with open living spaces and ample natural light, creating a welcoming atmosphere for residents.",
+            2: "Experience urban living at its finest in this modern house located in a vibrant neighborhood. With a refreshing pool and contemporary amenities, this home provides both comfort and style. Enjoy panoramic city views from the rooftop terrace, ideal for entertaining guests or unwinding after a busy day.",
+            3: "Elegance meets convenience in this stunning 3-bedroom condominium situated in the heart of the city center. Featuring luxurious amenities, including a pool and fitness center, this residence offers a sophisticated urban lifestyle. The spacious layout and modern finishes make it an ideal choice for discerning homeowners.",
+            4: "Discover the charm of this 4-bedroom townhouse-style condominium, offering a perfect blend of comfort and community living. With well-appointed interiors and a shared courtyard, this home provides a cozy retreat in a bustling urban setting. Experience modern conveniences and a sense of community in this desirable residence.",
+            5: "Step into luxury with this exquisite 4-bedroom modern city apartment boasting contemporary design elements and expansive living spaces. Enjoy breathtaking city views from the private balcony and entertain guests in style with the gourmet kitchen and elegant dining area. This residence offers a sophisticated urban lifestyle.",
+            6: "Experience the epitome of luxury living in this spacious 5-bedroom town apartment, offering unparalleled comfort and style. With high-end finishes, private outdoor spaces, and panoramic views, this home is perfect for those seeking a premium urban lifestyle in a desirable location."
         }
 
 
         for i in range(1, 101):
-            p_name = f"property {i}"
-            location = loc_dict[random.randint(1,4)]
             house_choice = random.randint(1,6)
+            p_name = p_name_dict[house_choice]
+            location = loc_dict[random.randint(1,4)]
             description = desc_dict[house_choice]
             img_name = p_img_dict[house_choice]
             price = random.randint(50000, 1000000)

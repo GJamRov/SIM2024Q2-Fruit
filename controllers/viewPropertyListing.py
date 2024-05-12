@@ -8,9 +8,9 @@ class viewPLController:
     def __init__(self):
         pass
 
-    def viewListing(self, userName, propertyDetail):
+    def viewListing(self, userName, propertyDetail='', sortOrder = ''):
         found_user = User.db.search_one("User", f"username = '{userName}'")
-        # print(found_user)
+        # print(propertyDetail)
         # Check if adminName is valid
         if found_user:
             id = found_user[0]
@@ -30,5 +30,15 @@ class viewPLController:
             elif role == 4:
                 tSeller = Seller(id, name, password, email, active)
                 properties = tSeller.viewListing(propertyDetail)
-
-        return properties
+            # print("Properties before sorting:", properties[:5])  # Debug statement
+            # print(properties[0], "I AM HERE")
+            if sortOrder == 'asc':
+                # print(sortOrder)
+                properties.sort(key=lambda x: x[5])
+            elif sortOrder == 'desc':
+                # print(sortOrder)
+                properties.sort(key=lambda x: x[5], reverse=True)
+            #print("Properties after sorting:", properties[:5])  # Debug statement
+            return properties
+        else:
+            return []
