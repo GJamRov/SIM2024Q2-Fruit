@@ -356,9 +356,10 @@ if __name__ == "__main__":
         # Profile Table
         profile_col = ["id INTEGER PRIMARY KEY AUTOINCREMENT",
                             "type TEXT",
-                            "description TEXT",] 
+                            "description TEXT",
+                            "active INTEGER"] 
         sample_db.create_table("Profile", profile_col)
-        sample_db.insert_into_table("Profile", f"1, 'System Admin', 'FruitRealEstate system admin'")
+        sample_db.insert_into_table("Profile", f"1, 'System Admin', 'FruitRealEstate system admin', 1")
 
     ## When database is already populated
     db =  database.Database("SampleDatabase")

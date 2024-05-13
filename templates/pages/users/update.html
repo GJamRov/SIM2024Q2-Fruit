@@ -10,53 +10,66 @@
       >Back</a
     >
     <h3 class="text-xl font-bold underline mt-4">Update User Account</h3>
-    <form action="">
-        <label for="first">
-            Username:
-        </label>
-        <input type="text"
-            id="first"
-            name="first"
-            value="<user.username from db>"
-            class="w-full md:w-[50%] xl:w-[30%]"
-            placeholder="Enter your Username" required>
+    <form action="/users/update/<account>" method="POST">
 
-        <!-- <label for="password">
-            Password:
-        </label>
-        <input type="password"
-            id="password"
-            name="password"
-            class="w-full md:w-[50%] xl:w-[30%]"
-            placeholder="Enter your Password" required>
+      <input type="hidden" id="account_name" name="account_name" value="{{ account }}">
 
-        <label for="confirm-password">
-            Confirm password:
-        </label>
-        <input type="password"
-            id="confirm-password"
-            name="confirm-password"
-            class="w-full md:w-[50%] xl:w-[30%]"
-            onchange=check()
-            placeholder="Enter your Password" required>
-        <span id="confirm-password-error" style="color:red"></span> -->
+      <label for="username">
+          Username:
+      </label>
+      <input type="text"
+          id="username"
+          name="username"
+          class="w-full md:w-[50%] xl:w-[30%]"
+          value="{{ account }}"
+          required>
 
-        <label for="email">
-            Email:
-        </label>
-        <input type="text"
-            id="email"
-            name="email"
-            value="<user.email from db>"
-            class="w-full md:w-[50%] xl:w-[30%]"
-            placeholder="Enter your Email" required>
+      <label for="password"> Password: </label>
+      <input
+        type="password"
+        id="password"
+        name="password"
+        class="w-full md:w-[50%] xl:w-[30%]"
+        value="{{ password }}"
+        required
+      />
 
-        <div class="wrap">
-            <button type="submit"
-                    onclick="solve()">
-                Update user account
-            </button>
-        </div>
+      <label for="confirm-password"> Confirm password: </label>
+      <input
+        type="password"
+        id="confirm-password"
+        name="confirm-password"
+        onkeyup="check()"
+        class="w-full md:w-[50%] xl:w-[30%]"
+        value="{{ password }}"
+        required
+      />
+      <span id="confirm-password-error" style="color: red"></span>
+
+      <label for="email"> Email: </label>
+      <input
+        type="text"
+        id="email"
+        name="email"
+        class="w-full md:w-[50%] xl:w-[30%]"
+        value="{{ email }}"
+        required
+      />
+
+      <label for="profile"> Profile: </label>
+      <select id="role" name="role" class="w-full md:w-[50%] xl:w-[30%]" required>
+        <option value="1" {% if role == "1" %}selected{% endif %}>System Admin</option>
+        <option value="2" {% if role == "2" %}selected{% endif %}>Real Estate Agent</option>
+        <option value="3" {% if role == "3" %}selected{% endif %}>Buyer</option>
+        <option value="4" {% if role == "4" %}selected{% endif %}>Seller</option>
+      </select>          
+
+      <div class="wrap">
+          <button type="submit"
+                  onclick="solve()">
+              Update user account
+          </button>
+      </div>
     </form>
 </div>
 {% endblock content %}

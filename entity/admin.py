@@ -15,7 +15,8 @@ class SystemAdmin(User):
         return users
 
     #3. Create user accounts
-    def addUserAccount(self, newAccDetails)-> bool: 
+    def addUserAccount(newAccDetails)-> bool: 
+        SystemAdmin.connect_database("SampleDatabase")
         # Validate if the account already exists in the system
         if (SystemAdmin.db.search_one("User", f"username = '{newAccDetails[0]}'")):
             return False
@@ -23,38 +24,51 @@ class SystemAdmin(User):
         else: # Passes all checks
             # Create a new record and save it to database
             # f"NULL, '{username}', '{password}',  '{email}', {role}, {active}"
-            details = f"NULL, '{newAccDetails[0]}', '{newAccDetails[1]}',  '{newAccDetails[2]}', {SystemAdmin.role_dict[newAccDetails[-1]]}, 1"
+            details = f"NULL, '{newAccDetails[0]}', '{newAccDetails[1]}',  '{newAccDetails[2]}', {newAccDetails[3]}, 1"
             SystemAdmin.db.insert_into_table("User", details)
             return True
 
     #4. View user accounts
-    def view_account(self, entered_details="") -> list:
-        if entered_details == "": # View all accounts
+    def view_account(account=""):
+        if account == "": # View all accounts
             search_result = SystemAdmin.db.view_table("User")
-            return list(search_result)
+            return search_result
         else:
-            search_param =  f"username='{entered_details}'"
+            search_param =  f"username='{account}'"
             search_result = SystemAdmin.db.search_one("User", search_param=search_param)
-            return list(search_result)
+            return search_result
 
     #5. Update user accounts
-    def update_account(self, entered_details) -> bool:
+    def update_account(entered_details) -> bool:
         """Update User Account"""
-        target_account = SystemAdmin.db.search_one("User", f"username = {entered_details[0]}")
-        if target_account:
-            update_details = ""
+        SystemAdmin.connect_database("SampleDatabase")
+        account_data = SystemAdmin.db.search_one("User", f"username = '{entered_details[0]}'")
+        if account_data:
+            update_details = f"username = '{entered_details[1]}', password = '{entered_details[2]}', email = '{entered_details[3]}', role = {entered_details[4]}"
             # Update target_account with remaining information
-            SystemAdmin.db.update_table("User", update_details, f"username = {entered_details[0]}")
+            SystemAdmin.db.update_table("User", update_details, f"username = '{entered_details[0]}'")
             return True
         else:
             return False
         
     #6. Suspend user account
-    def suspend_account(self, entered_username):
+    def suspend_account(entered_username):
         """Suspend User Account in Database"""
+        SystemAdmin.connect_database("SampleDatabase")
         target_account = SystemAdmin.db.search_one("User", f"username = '{entered_username}'")
         if target_account:
             SystemAdmin.db.update_table("User", "active = 2", f"username = '{entered_username}'")
+            return True
+        else:
+            return False
+        
+    #13. Reactivate user account
+    def reactivate_account(entered_username):
+        """Reactivate User Account in Database"""
+        SystemAdmin.connect_database("SampleDatabase")
+        target_account = SystemAdmin.db.search_one("User", f"username = '{entered_username}'")
+        if target_account:
+            SystemAdmin.db.update_table("User", "active = 1", f"username = '{entered_username}'")
             return True
         else:
             return False

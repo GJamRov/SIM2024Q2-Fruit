@@ -16,12 +16,20 @@
     <h3 class="text-xl font-bold underline mt-4">View User Profile</h3>
     <table class="mt-4 mx-2">
         <tr class="h-14">
-            <td class="text-gray-300">User Profile:</td>
+            <td class="text-gray-300">User profile:</td>
             <td>&emsp;{{ profile[1] }}</td>
         </tr>
         <tr class="h-14">
             <td class="text-gray-300">User profile description:</td>
             <td>&emsp;{{ profile[2] }}</td>
+        </tr>
+        <tr class="h-14">
+            <td class="text-gray-300">User profile status:</td>
+            {% if profile[3] == 1 %}
+            <td>&emsp;Active</td>
+            {% elif profile[3] == 2 %}
+            <td>&emsp;Suspended</td>
+            {% endif %}
         </tr>
     </table>
 </div>
