@@ -88,8 +88,12 @@ class WebApp:
 
     def home(self):
         """View function for the view route."""
-        print(session)
-        return render_template("pages/home.html")
+        #print(session)
+        if session.get('logged_in'):
+            username = session['username']
+        else:
+            return redirect('/login')
+        return render_template("pages/home.html", username=username)
     
     ## User Functionalities
     def login(self):
@@ -97,6 +101,7 @@ class WebApp:
         template = 'login.html'
         
         #Request data from web page
+        print(session)
         if request.method == 'POST':
             entered_username = request.form['username']
             entered_password = request.form['password']
@@ -127,10 +132,13 @@ class WebApp:
         session.pop('username')
         session.pop('role')
         session.pop('logged_in', None)
-        session['_flashes'].clear()
-        #flash('Logout successful!', 'success')
-        print(session)
-        return redirect('/login')
+        try:
+            session['_flashes'].clear()
+            #flash('Logout successful!', 'success')
+            print(session)
+            return redirect('/login')
+        except KeyError:
+            return redirect('/login')
 
     def profile(self, username):
         """Assign & display user profile"""
@@ -378,7 +386,7 @@ class WebApp:
 
     def property_listings_create(self):
         """Create a property listing"""
-        if session['role'] == 3:
+        if session['role'] == 2:
             return render_template("pages/property-listings/create.html")
         else:
             flash('You do not have permission to create a property listing!', 'error')
