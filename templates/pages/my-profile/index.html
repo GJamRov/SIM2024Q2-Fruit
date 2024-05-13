@@ -17,12 +17,44 @@
                 <div class="flex items-center">
                     <span>Rating: </span>
                     <div class="mx-2 flex gap-1 text-sm text-yellow-400">
+                        <!-- change condition to the rating, rounded to the nearest number -->
+                        {% if true %}
+                        <!-- 5 stars -->
                         <span><i class="fa-solid fa-star"></i></span>
                         <span><i class="fa-solid fa-star"></i></span>
                         <span><i class="fa-solid fa-star"></i></span>
                         <span><i class="fa-solid fa-star"></i></span>
-                        <!-- <span><i class="fa-regular fa-star"></i></span> -->
-                        <span><i class="fa-regular fa-star-half-stroke"></i></span>
+                        <span><i class="fa-solid fa-star"></i></span>
+                        {% elif false %}
+                        <!-- 4 stars -->
+                        <span><i class="fa-solid fa-star"></i></span>
+                        <span><i class="fa-solid fa-star"></i></span>
+                        <span><i class="fa-solid fa-star"></i></span>
+                        <span><i class="fa-solid fa-star"></i></span>
+                        <span><i class="fa-regular fa-star"></i></span>
+                        <!-- <span><i class="fa-regular fa-star-half-stroke"></i></span> -->
+                        {% elif false %}
+                        <!-- 3 stars -->
+                        <span><i class="fa-solid fa-star"></i></span>
+                        <span><i class="fa-solid fa-star"></i></span>
+                        <span><i class="fa-solid fa-star"></i></span>
+                        <span><i class="fa-regular fa-star"></i></span>
+                        <span><i class="fa-regular fa-star"></i></span>
+                        {% elif false %}
+                        <!-- 2 stars -->
+                        <span><i class="fa-solid fa-star"></i></span>
+                        <span><i class="fa-solid fa-star"></i></span>
+                        <span><i class="fa-regular fa-star"></i></span>
+                        <span><i class="fa-regular fa-star"></i></span>
+                        <span><i class="fa-regular fa-star"></i></span>
+                        {% else %}
+                        <!-- 1 star -->
+                        <span><i class="fa-solid fa-star"></i></span>
+                        <span><i class="fa-regular fa-star"></i></span>
+                        <span><i class="fa-regular fa-star"></i></span>
+                        <span><i class="fa-regular fa-star"></i></span>
+                        <span><i class="fa-regular fa-star"></i></span>
+                        {% endif %}
                     </div>
                     <a href="{{ url_for('web_app.reviews_index') }}" 
                         class="text-xs text-gray-500 hover:text-blue-500 underline underline-offset-2">
@@ -58,8 +90,6 @@
           </a> -->
         </div>
 
-
-
         <div class="col-span-3">
           <div class="flex items-center mb-4">
               <select name="sort" id="sort"
@@ -69,17 +99,6 @@
                   <option value="price-high-to-low">Price high to low</option>
                   <option value="latest">Latest product</option>
               </select>
-
-              <!-- <div class="flex gap-2 ml-auto">
-                  <div
-                      class="border border-indigo-700 w-10 h-9 flex items-center justify-center text-white bg-indigo-700 rounded cursor-pointer">
-                      <i class="fa-solid fa-grip-vertical"></i>
-                  </div>
-                  <div
-                      class="border border-gray-300 w-10 h-9 flex items-center justify-center text-gray-600 rounded cursor-pointer">
-                      <i class="fa-solid fa-list"></i>
-                  </div>
-              </div> -->
           </div>
 
             
@@ -89,7 +108,7 @@
                       <img src="{{ url_for('static', filename='house4.jpeg') }}" alt="product 1" class="w-full aspect-square object-cover">
                       <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center 
                       justify-center gap-2 opacity-0 group-hover:opacity-100 transition">
-                          <a href="{{ url_for('web_app.property_listings_view') }}"
+                          <a href="{{ url_for('web_app.my_profile_view') }}"
                               class="text-white text-lg w-9 h-8 rounded-full bg-indigo-700 flex items-center justify-center hover:bg-gray-800 transition"
                               title="view listing">
                               <i class="fa-solid fa-magnifying-glass"></i>
@@ -103,23 +122,20 @@
                   </div>
                   <div class="pt-4 pb-3 px-4">
                       <a href="#">
-                          <h4 class="uppercase font-medium text-xl mb-2 text-gray-800 hover:text-indigo-700 transition">
+                          <h4 class="min-h-24 uppercase font-medium text-xl mb-2 text-gray-800 hover:text-indigo-700 transition">
                               Studio apartment</h4>
                       </a>
-                      <div class="flex items-baseline mb-1 space-x-2">
+                      <div class="flex items-baseline mb-1">
                           <p class="text-xl text-indigo-700 font-semibold">$545,000</p>
-                          <!-- <p class="text-sm text-gray-400 line-through">$55.90</p> -->
+                          <span class="text-sm text-gray-400 ml-auto px-2">10
+                            <!-- change condition below to if wishlisted, change number above to total number wishlisted -->
+                            {% if true %} 
+                            <i class="fa-solid fa-heart text-red-500"></i>
+                            {% else %}
+                            <i class="fa-solid fa-heart"></i>
+                            {% endif %}
+                        </span>
                       </div>
-                      <!-- <div class="flex items-center">
-                          <div class="flex gap-1 text-sm text-yellow-400">
-                              <span><i class="fa-solid fa-star"></i></span>
-                              <span><i class="fa-solid fa-star"></i></span>
-                              <span><i class="fa-solid fa-star"></i></span>
-                              <span><i class="fa-solid fa-star"></i></span>
-                              <span><i class="fa-solid fa-star"></i></span>
-                          </div>
-                          <div class="text-xs text-gray-500 ml-3">(150)</div>
-                      </div> -->
                   </div>
                   <a href="#"
                       class="block w-full py-1 text-center text-white bg-indigo-700 border border-indigo-700 rounded-b hover:bg-transparent hover:text-indigo-700 transition">
