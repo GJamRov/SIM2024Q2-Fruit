@@ -5,7 +5,7 @@ from entity.user import User
 class SystemAdmin(User):
     
     def __init__(self, userID, username, password, email, active):
-        super().__init__(userID, username, password, email, active)
+        super().__init__(userID, username, password, email, 1, active)
 
     # Return all users to be displayed in users tab
     def view_all_user():

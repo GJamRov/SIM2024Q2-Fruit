@@ -36,21 +36,7 @@ if __name__ == "__main__":
                             "active INTEGER"]
         sample_db.create_table("User", user_col)
 
-        #Review Table
-        review_col = ["id INTEGER PRIMARY KEY AUTOINCREMENT",
-                        "review TEXT",
-                        "userName TEXT",
-                        "userNameREA TEXT"]
         
-        sample_db.create_table("Review", review_col)
-
-        #Rating Table
-        rating_col = ["id INTEGER PRIMARY KEY AUTOINCREMENT",
-                        "rating INTEGER",
-                        "userName TEXT",
-                        "userNameREA TEXT"]
-        
-        sample_db.create_table("Rating", rating_col)
         
         # Populating the each table with at least 100 rows to each data type
         for i in range(200):
@@ -81,6 +67,22 @@ if __name__ == "__main__":
         sample_db.insert_into_table("User", "204, 'seller', '123', 'seller@example.com', 4, 1")
         #sample_db.view_table("User")
         print(sample_db.search_one("User", "username = 'admin'"))
+
+        #Review Table
+        review_col = ["id INTEGER PRIMARY KEY AUTOINCREMENT",
+                        "review TEXT",
+                        "userName TEXT",
+                        "userNameREA TEXT"]
+        
+        sample_db.create_table("Review", review_col)
+
+        #Rating Table
+        rating_col = ["id INTEGER PRIMARY KEY AUTOINCREMENT",
+                        "rating INTEGER",
+                        "userName TEXT",
+                        "userNameREA TEXT"]
+        
+        sample_db.create_table("Rating", rating_col)
 
         #An array of reviews to be randomly generated
         review_phrases = {

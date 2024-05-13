@@ -34,8 +34,10 @@ class WebApp:
     def run_app(self):
         """Runs the web application."""
         self.app.config['UPLOAD_FOLDER'] = self.upload_folder
+        self.app.config['SESSION_TYPE'] = 'redis'
         if not os.path.exists(self.upload_folder):
             os.makedirs(self.upload_folder)
+        
         # Default Pages
         self.blueprint.add_url_rule('/', 'home', self.home)
         self.blueprint.add_url_rule('/login', 'login', self.login, methods=['GET', 'POST'])
@@ -120,6 +122,7 @@ class WebApp:
         session.pop('logged_in', None)
         session['_flashes'].clear()
         #flash('Logout successful!', 'success')
+        print(session)
         return redirect('/login')
 
     def profile(self, username):
@@ -363,7 +366,7 @@ class WebApp:
             image_filename = secure_filename(image_file.filename)
             # print(image_filename)
             image_filepath = os.path.normpath(os.path.join(self.app.config['UPLOAD_FOLDER'], image_filename)) 
-            print(image_filepath)
+            # print(image_filepath)
             image_file.save(image_filepath)
 
             # Save new property details to database

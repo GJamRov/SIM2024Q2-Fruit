@@ -3,7 +3,7 @@ from entity.user import User
 class Seller(User):
 
     def __init__(self, userID, username, password, email, active):
-        super().__init__(userID, username, password, email, active)
+        super().__init__(userID, username, password, email, 4, active)
 
     # 36. Rate REA
 
@@ -16,6 +16,16 @@ class Seller(User):
     # 40. Edit Review of REA
 
     # 41. View rating of REA
+
+    def viewListing(self, search_param = "") -> list:
+        """View Listing by serach_param"""
+        if search_param == "":
+            search_result = Seller.db.view_table("Property")
+            return list(search_result)
+        
+        else:
+            search_result = Seller.db.search_by_keyword("Property", search_param, ["location", "description"])
+            return list(search_result)
 
     # 42. View property listing views
     def view_PL_views(self, pl_name):
