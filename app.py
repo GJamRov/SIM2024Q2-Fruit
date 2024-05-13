@@ -28,9 +28,19 @@ class WebApp:
         self.port = port
         self.app.secret_key = 'super secret key'  # for sessions
         self.blueprint = Blueprint('web_app', __name__)
+        self.app.before_request(self.check_authentication)
 
     def set_port(self, port: int):
         self.port = port
+
+    def check_authentication(self):
+        """Check if the user is authenticated."""
+        # Exclude routes that should be accessible without authentication
+        # print(request.endpoint)
+        excluded_routes = ['/login', 'static', 'web_app.login']
+        if request.endpoint and not any(request.endpoint.startswith(exclude) for exclude in excluded_routes):
+            if not session.get('logged_in'):
+                return redirect('/login')
 
     def run_app(self):
         """Runs the web application."""
@@ -88,11 +98,7 @@ class WebApp:
 
     def home(self):
         """View function for the view route."""
-        #print(session)
-        if session.get('logged_in'):
-            username = session['username']
-        else:
-            return redirect('/login')
+        username = session['username']
         return render_template("pages/home.html", username=username)
     
     ## User Functionalities
@@ -100,8 +106,7 @@ class WebApp:
         """User login route"""
         template = 'login.html'
         
-        #Request data from web page
-        print(session)
+        # Request data from web page
         if request.method == 'POST':
             entered_username = request.form['username']
             entered_password = request.form['password']
@@ -121,7 +126,9 @@ class WebApp:
             elif role == 5:
                 flash('Account is suspended', 'error')
             elif role == 6:
-                flash('Invalid username or password', 'error')            
+                flash('Invalid username or password', 'error')   
+            elif role == 7:
+                flash('User profile is suspended', 'error')          
         
         return render_template(template)      
 
@@ -135,7 +142,6 @@ class WebApp:
         try:
             session['_flashes'].clear()
             #flash('Logout successful!', 'success')
-            print(session)
             return redirect('/login')
         except KeyError:
             return redirect('/login')
@@ -211,7 +217,10 @@ class WebApp:
         """Update existing user account"""
         # Check that the user is a System Admin
         while session['role'] == 1:
-            password = request.args.get('password')
+            if account == 'admin':
+                flash("admin cannot be edited", "error")
+                return redirect('/users/')
+            # password = request.args.get('password')
             email = request.args.get('email')
             role = request.args.get('role')
             # Get form data from POST request
@@ -224,7 +233,7 @@ class WebApp:
                 else:
                     flash("Failed to update account. Please try again.", "error")
                     return redirect('/users/')
-            return render_template("pages/users/update.html", account=account, password=password, email=email, role=role)
+            return render_template("pages/users/update.html", account=account, email=email, role=role)
         
     #6. Suspend user account
     def suspend_account(self, account):
@@ -232,10 +241,13 @@ class WebApp:
         # Check that the user is a System Admin
         while session['role'] == 1:
             suspendAccountCtl = suspendAccountController()
-            if suspendAccountCtl.suspendUserAccount(account):
-                flash("User account suspended!", "success")
+            if account != 'admin':
+                if suspendAccountCtl.suspendUserAccount(account):
+                    flash("User account suspended!", "success")
+                else:
+                    flash("System admin cannot be suspended", "error")
             else:
-                flash("System admin cannot be suspended", "error")
+                flash("admin cannot be suspended", "error")
             return redirect('/users/')
 
     # 8. Create user profiles

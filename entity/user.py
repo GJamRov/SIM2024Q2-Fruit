@@ -7,7 +7,7 @@ class User:
     db = None
     role_dict = {
                 "System Admin":1,
-                "REA":2,
+                "Real Estate Agent":2,
                 "Buyer":3,
                 "Seller":4
                 }
@@ -59,11 +59,16 @@ class User:
     def login(entered_username, entered_password) -> int:
         """Authenticates user to log them in"""
         user_data = User.db.search_one("User", f"username = '{entered_username}'")
-
+        
         if user_data:
             self = User(*user_data)
             if entered_username == self.username and entered_password == self.password and self.active == 1:
-                return self.role # Login Successful (Valid credentials and active account)
+                role_str = next((role for role, value in User.role_dict.items() if value == self.role), None)
+                profile_data = User.db.search_one("Profile", f"type = '{role_str}'")
+                if profile_data[3] == 1:
+                    return self.role # Login Successful (Valid credentials and active account)
+                else:
+                    return 7 # Valid credentials, active account but suspended profile
             elif entered_username == self.username and entered_password == self.password and self.active == 2:
                 return 5 # Valid credentials but suspended account
             elif entered_username != self.username or entered_password != self.password:

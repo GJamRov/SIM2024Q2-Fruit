@@ -365,7 +365,7 @@ if __name__ == "__main__":
     db =  database.Database("SampleDatabase")
     # print(db.search_one("User", "username = 'admin'"))
     # print("Database Initliaised!")
-    # db.view_table("User")
+    # print(db.view_table("User"))
     # db.view_table("Property")
     #print(randomReview)
     #print(len(randomReview))
