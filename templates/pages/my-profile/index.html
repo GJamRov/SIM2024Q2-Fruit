@@ -17,6 +17,7 @@
                 <div class="flex items-center">
                     <span>Rating: </span>
                     <div class="mx-2 flex gap-1 text-sm text-yellow-400">
+                        <span class="text-black mr-1">5.0</span>
                         <!-- change condition to the rating, rounded to the nearest number -->
                         {% if true %}
                         <!-- 5 stars -->
@@ -137,7 +138,7 @@
                         </span>
                       </div>
                   </div>
-                  <a href="#"
+                  <a href="{{ url_for('web_app.my_profile_view') }}"
                       class="block w-full py-1 text-center text-white bg-indigo-700 border border-indigo-700 rounded-b hover:bg-transparent hover:text-indigo-700 transition">
                       View Listing</a>
               </div>
