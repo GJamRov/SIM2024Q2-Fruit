@@ -35,7 +35,7 @@
                     <option value="desc">Price high to low</option>
                 </select>
 
-              <div class="flex gap-2 ml-auto">
+              <!-- <div class="flex gap-2 ml-auto">
                   <div
                       class="border border-indigo-700 w-10 h-9 flex items-center justify-center text-white bg-indigo-700 rounded cursor-pointer">
                       <i class="fa-solid fa-grip-vertical"></i>
@@ -44,7 +44,7 @@
                       class="border border-gray-300 w-10 h-9 flex items-center justify-center text-gray-600 rounded cursor-pointer">
                       <i class="fa-solid fa-list"></i>
                   </div>
-              </div>
+              </div> -->
           </div>
           
           
@@ -71,25 +71,22 @@
                   <div class="pt-4 pb-3 px-4">
                       <!-- Listing Name -->
                       <a href="#">
-                          <h4 class="uppercase font-medium text-xl mb-2 text-gray-800 hover:text-indigo-700 transition">{{ listing[1] }}</h4>
+                          <h4 class="min-h-24 uppercase font-medium text-xl mb-2 text-gray-800 hover:text-indigo-700 transition">{{ listing[1] }}</h4>
                       </a>
-                      <div class="flex items-baseline mb-1 space-x-2">
+                      <div class="flex items-baseline mb-1">
                         <!-- Listing Price -->
                           <p class="text-xl text-indigo-700 font-semibold">$ {{ listing[5] }}</p>
-                          <!-- <p class="text-sm text-gray-400 line-through">$55.90</p> -->
+                          <span class="text-sm text-gray-400 ml-auto px-2">10
+                            <!-- change condition below to if wishlisted, change number above to total number wishlisted -->
+                            {% if listing[5] == 574890 %} 
+                            <i class="fa-solid fa-heart text-red-500"></i>
+                            {% else %}
+                            <i class="fa-solid fa-heart"></i>
+                            {% endif %}
+                        </span>
                       </div>
-                      <!-- <div class="flex items-center">
-                          <div class="flex gap-1 text-sm text-yellow-400">
-                              <span><i class="fa-solid fa-star"></i></span>
-                              <span><i class="fa-solid fa-star"></i></span>
-                              <span><i class="fa-solid fa-star"></i></span>
-                              <span><i class="fa-solid fa-star"></i></span>
-                              <span><i class="fa-solid fa-star"></i></span>
-                          </div>
-                          <div class="text-xs text-gray-500 ml-3">(150)</div>
-                      </div> -->
                   </div>
-                  <a href="#"
+                  <a href="{{ url_for('web_app.property_listings_view', listing_id = listing[0])}}"
                       class="block w-full py-1 text-center text-white bg-indigo-700 border border-indigo-700 rounded-b hover:bg-transparent hover:text-indigo-700 transition">
                       View Listing</a>
               </div>
@@ -145,23 +142,12 @@
                   <div class="pt-4 pb-3 px-4">
                       <!-- Listing Name -->
                       <a href="#">
-                          <h4 class="uppercase font-medium text-xl mb-2 text-gray-800 hover:text-indigo-700 transition">${ listing[1] }</h4>
+                          <h4 class="min-h-24 uppercase font-medium text-xl mb-2 text-gray-800 hover:text-indigo-700 transition">${ listing[1] }</h4>
                       </a>
-                      <div class="flex items-baseline mb-1 space-x-2">
+                      <div class="flex items-baseline mb-1">
                         <!-- Listing Price -->
                           <p class="text-xl text-indigo-700 font-semibold">$ ${ listing[5] }</p>
-                          <!-- <p class="text-sm text-gray-400 line-through">$55.90</p> -->
                       </div>
-                      <!-- <div class="flex items-center">
-                          <div class="flex gap-1 text-sm text-yellow-400">
-                              <span><i class="fa-solid fa-star"></i></span>
-                              <span><i class="fa-solid fa-star"></i></span>
-                              <span><i class="fa-solid fa-star"></i></span>
-                              <span><i class="fa-solid fa-star"></i></span>
-                              <span><i class="fa-solid fa-star"></i></span>
-                          </div>
-                          <div class="text-xs text-gray-500 ml-3">(150)</div>
-                      </div> -->
                   </div>
                   <a href="#"
                       class="block w-full py-1 text-center text-white bg-indigo-700 border border-indigo-700 rounded-b hover:bg-transparent hover:text-indigo-700 transition">

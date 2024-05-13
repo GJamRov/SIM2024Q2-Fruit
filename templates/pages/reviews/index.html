@@ -47,12 +47,45 @@
               <td>
                   <div class="flex flex-col self-center mx-2 mt-3">
                     <div class="mx-2 flex gap-1 text-sm text-yellow-400">
+                      <!-- change condition to the rating, rounded to the nearest number -->
+                      {% if true %}
+                      <!-- 5 stars -->
                       <span><i class="fa-solid fa-star"></i></span>
                       <span><i class="fa-solid fa-star"></i></span>
                       <span><i class="fa-solid fa-star"></i></span>
                       <span><i class="fa-solid fa-star"></i></span>
-                      <span><i class="fa-regular fa-star-half-stroke"></i></span>
-                    </div>
+                      <span><i class="fa-solid fa-star"></i></span>
+                      {% elif false %}
+                      <!-- 4 stars -->
+                      <span><i class="fa-solid fa-star"></i></span>
+                      <span><i class="fa-solid fa-star"></i></span>
+                      <span><i class="fa-solid fa-star"></i></span>
+                      <span><i class="fa-solid fa-star"></i></span>
+                      <span><i class="fa-regular fa-star"></i></span>
+                      <!-- <span><i class="fa-regular fa-star-half-stroke"></i></span> -->
+                      {% elif false %}
+                      <!-- 3 stars -->
+                      <span><i class="fa-solid fa-star"></i></span>
+                      <span><i class="fa-solid fa-star"></i></span>
+                      <span><i class="fa-solid fa-star"></i></span>
+                      <span><i class="fa-regular fa-star"></i></span>
+                      <span><i class="fa-regular fa-star"></i></span>
+                      {% elif false %}
+                      <!-- 2 stars -->
+                      <span><i class="fa-solid fa-star"></i></span>
+                      <span><i class="fa-solid fa-star"></i></span>
+                      <span><i class="fa-regular fa-star"></i></span>
+                      <span><i class="fa-regular fa-star"></i></span>
+                      <span><i class="fa-regular fa-star"></i></span>
+                      {% else %}
+                      <!-- 1 star -->
+                      <span><i class="fa-solid fa-star"></i></span>
+                      <span><i class="fa-regular fa-star"></i></span>
+                      <span><i class="fa-regular fa-star"></i></span>
+                      <span><i class="fa-regular fa-star"></i></span>
+                      <span><i class="fa-regular fa-star"></i></span>
+                      {% endif %}
+                  </div>
                     <div class="mx-2 my-2 text-sm">
                       Effortless real estate transaction! Jamie provided top-notch service, guiding us smoothly through the process. Their expertise and responsiveness ensured a stress-free experience. Highly recommended!Effortless real estate transaction! Jamie provided top-notch service, guiding us smoothly through the process.
                     </div>

@@ -64,10 +64,12 @@ class WebApp:
         self.blueprint.add_url_rule('/property-listings/sort', 'property_listings_sort', self.property_listings_sort)
         self.blueprint.add_url_rule('/property-listings/view', 'property_listings_view', self.property_listings_view)
         self.blueprint.add_url_rule('/property-listings/create', 'property_listings_create', self.property_listings_create, methods=['GET', 'POST'])
-        self.blueprint.add_url_rule('/upload', 'upload_file', self.upload_file, methods=['POST'])
+        self.blueprint.add_url_rule('/property-listings/update', 'property_listings_update', self.property_listings_update)
+        self.blueprint.add_url_rule('/upload', 'upload_file', self.upload_file, methods=['GET', 'POST'])
 
         # my profile
         self.blueprint.add_url_rule('/my-profile/', 'my_profile_index', self.my_profile_index)
+        self.blueprint.add_url_rule('/my-profile/view', 'my_profile_view', self.my_profile_view)
 
         # reviews
         self.blueprint.add_url_rule('/reviews/', 'reviews_index', self.reviews_index)
@@ -77,6 +79,7 @@ class WebApp:
 
         # my reviews - for buyers and sellers
         self.blueprint.add_url_rule('/my-reviews/', 'my_reviews_index', self.my_reviews_index)
+        self.blueprint.add_url_rule('/my-reviews/create', 'my_reviews_create', self.my_reviews_create)
         self.blueprint.add_url_rule('/my-reviews/update', 'my_reviews_update', self.my_reviews_update)
 
         self.app.register_blueprint(self.blueprint)
@@ -380,6 +383,11 @@ class WebApp:
         else:
             flash('You do not have permission to create a property listing!', 'error')
             return redirect("/")
+
+    def property_listings_update(self):
+        """Update a property listing"""
+        return render_template("pages/property-listings/update.html")
+        
     
     def upload_file(self):
         """Handles the form submission for property_listings_create"""
@@ -412,6 +420,19 @@ class WebApp:
         """My profile page"""
         return render_template("pages/my-profile/index.html")
 
+    def my_profile_view(self):
+        """View one of my listing"""
+        return render_template("pages/my-profile/view.html")
+        # viewPLCtl = viewPLController()
+        # listing_id = request.args.get("listing_id")
+        # listing = viewPLCtl.viewListing(session['username'], listing_id)
+        # if listing:
+        #     return render_template("pages/my-profile/view.html", listing=listing)
+        # else:
+        #     flash('Listing not found', 'error')
+        #     return redirect(url_for('web_app.my_profile_index'))
+
+
     # reviews
     def reviews_index(self):
         """reviews page"""
@@ -422,10 +443,14 @@ class WebApp:
         """wishlists page"""
         return render_template("pages/wishlists/index.html")
 
-    # my reviews - for buyers and sellers
+    # my reviews given - for buyers and sellers
     def my_reviews_index(self):
         """my reviews page"""
         return render_template("pages/my-reviews/index.html")
+
+    def my_reviews_create(self):
+        """create reviews page"""
+        return render_template("pages/my-reviews/create.html")
 
     def my_reviews_update(self):
         """update my reviews page"""
