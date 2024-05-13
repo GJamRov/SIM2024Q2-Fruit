@@ -10,12 +10,12 @@
       >Back</a
     >
     <h3 class="text-xl font-bold underline mt-4">Create User Account</h3>
-    <form action="">
-      <label for="first"> Username: </label>
+    <form action="/users/create" method="POST">
+      <label for="username"> Username: </label>
       <input
         type="text"
-        id="first"
-        name="first"
+        id="username"
+        name="username"
         class="w-full md:w-[50%] xl:w-[30%]"
         placeholder="Enter your Username"
         required
@@ -55,10 +55,10 @@
 
       <label for="profile"> Profile: </label>
       <select id="profile" name="profile" class="w-full md:w-[50%] xl:w-[30%]" required>
-        <option value="System Admin">System Admin</option>
-        <option value="Real Estate Agent">Real Estate Agent</option>
-        <option value="Buyer">Buyer</option>
-        <option value="Seller">Seller</option>
+        <option value=1>System Admin</option>
+        <option value=2>Real Estate Agent</option>
+        <option value=3>Buyer</option>
+        <option value=4>Seller</option>
       </select>
       
       <div class="wrap">

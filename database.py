@@ -30,6 +30,7 @@ class Database:
         return rows
     
     def update_table(self, table_name, set_values, condition):
+        """ Updates table with new values"""
         query = f"UPDATE {table_name} SET {set_values} WHERE {condition}"
         self.cursor.execute(query)
         self.connection.commit()

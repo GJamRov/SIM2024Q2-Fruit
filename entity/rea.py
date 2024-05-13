@@ -7,16 +7,18 @@ class REA(User):
     
     # 15. Create new property listings
     def createListing(self, newPropertyDetails):
-        
-        # If property details already exist in database
-        if ():
-            pass
-
-        else:
+        """Inserts a property listing into database"""
+        if not newPropertyDetails or len(newPropertyDetails) != 4:
+            return False  # Input validation failed
+        try:
             # f"NULL, '{p_name}', '{location}', '{description}', '{img_name}', {price}, {rea_id}, {seller_id}, {sold_buyer}, {view_count}, {wishlisted}"
             details = f"NULL, '{newPropertyDetails[0]}', '{newPropertyDetails[1]}', 'Test', '{newPropertyDetails[2]}', {newPropertyDetails[3]}, {self.userID}, 0, -1, 0, 0"
             REA.db.insert_into_table("Property", details)
             return True
+
+        except Exception as e:
+            print(f"Error creating listing: {e}")
+            return False
 
     # 16. View existing property listings
     def viewListing(self, p_id = "") -> list:
@@ -28,6 +30,13 @@ class REA(User):
             search_param =  f"id ='{p_id}'"
             search_result = REA.db.search_one("Property", search_param=search_param)
             return list(search_result)
+        
+    def updateViewCount(self, pl):
+        """ Increments the view count of a property by one when selected """
+        p_id = pl[0]
+        updated_p_view_count = pl[-2] + 1
+        REA.db.update_table("Property", f"view_count = {updated_p_view_count}", f"id = {p_id}")
+
 
     # 17. Update property listings
     def update_listing(self, entered_details):

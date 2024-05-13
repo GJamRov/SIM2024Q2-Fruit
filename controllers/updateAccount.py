@@ -1,16 +1,9 @@
 from entity.admin import SystemAdmin
 
-class updateAccountCtl:
+class updateAccountController:
 
-    def __init__():
+    def __init__(self):
         pass
 
-    def viewUserAccount(self, adminName, newUserDetails):
-        found_admin = SystemAdmin.db.search_one("User", f"username = '{adminName}'")
-        # Check if adminName is valid
-        if found_admin:
-            t_admin = SystemAdmin(*found_admin)
-            t_admin.update_account(newUserDetails)
-            return True
-        else:
-            return False
+    def updateUserAccount(self, newUserDetails):
+        return SystemAdmin.update_account(newUserDetails)

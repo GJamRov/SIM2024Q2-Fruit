@@ -25,13 +25,14 @@
         <table class="my-4 w-full min-w-max table-auto text-left">
           <thead>
             <tr class="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4">
-              <th>userid</th>
-              <th>username</th>
-              <th>email</th>
+              <th>Userid</th>
+              <th>Username</th>
+              <th>Email</th>
               <!-- <th>
                     created_on
                 </th> -->
-              <th>actions</th>
+              <th>Profile</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody class="p-4 border-b border-blue-gray-50">
@@ -40,25 +41,39 @@
               <td id="id">{{ user[0] }}</td>
               <td id="username">{{ user[1] }}</td>
               <td id="email">{{ user[3] }}</td>
-              <!-- <td>
-                    22/04/24 12:57AM
-                </td> -->
+              <td id="profile">
+              {% if user[4] == 1 %}
+              System Admin
+              {% elif user[4] == 2 %}
+              Real Estate Agent
+              {% elif user[4] == 3 %}
+              Buyer
+              {% elif user[4] == 4 %}
+              Seller
+              {% endif %}
+              </td>
               <td class="">
                 <a
-                  href="{{ url_for('web_app.view_account') }}"
+                  href="{{ url_for('web_app.view_account', account=user[1]) }}"
                   class="button bg-transparent hover:bg-indigo-900 text-indigo-700 font-semibold hover:text-white px-2 border border-indigo-500 hover:border-transparent rounded"
-                  >view</a
+                  >View</a
                 >
                 <a
-                  href="{{ url_for('web_app.update_account') }}"
+                  href="{{ url_for('web_app.update_account', account=user[1], password=user[2], email=user[3], role=user[4]) }}"
                   class="button bg-transparent hover:bg-indigo-900 text-indigo-700 font-semibold hover:text-white px-2 border border-indigo-500 hover:border-transparent rounded"
-                  >edit</a
+                  >Edit</a
                 >
+                {% if user[5] == 1 %}
                 <a
-                  href=""
-                  class="button bg-transparent hover:bg-indigo-900 text-indigo-700 font-semibold hover:text-white px-2 border border-indigo-500 hover:border-transparent rounded"
-                  >suspend</a
-                >
+                    href="{{ url_for('web_app.suspend_account', account=user[1]) }}"
+                    class="button bg-transparent hover:bg-indigo-900 text-indigo-700 font-semibold hover:text-white px-2 border border-indigo-500 hover:border-transparent rounded"
+                    >Suspend</a>
+                {% elif user[5] == 2 %}
+                <a
+                    href="{{ url_for('web_app.reactivate_account', account=user[1]) }}"
+                    class="button bg-transparent hover:bg-indigo-900 text-indigo-700 font-semibold hover:text-white px-2 border border-indigo-500 hover:border-transparent rounded"
+                    >Reactivate</a>
+                {% endif %}
               </td>
             </tr>
             {% endfor %}
@@ -70,7 +85,7 @@
 <script>
   function searchUsers() {
     // Declare variables
-    var input, filter, table, tr, tdId, tdUsername, tdEmail, i, txtValue;
+    var input, filter, table, tr, tdId, tdUsername, tdEmail, tdProfile, i, txtValueId, txtValueUsername, txtValueEmail, txtValueProfile;
     input = document.getElementById('query-details');
     filter = input.value.toUpperCase();
     table = document.querySelector('.table-auto');
@@ -81,11 +96,13 @@
       tdId = tr[i].querySelector('#id');
       tdUsername = tr[i].querySelector('#username');
       tdEmail = tr[i].querySelector('#email');
-      if (tdId || tdUsername || tdEmail) {
+      tdProfile = tr[i].querySelector('#profile');
+      if (tdId || tdUsername || tdEmail || tdProfile) {
         txtValueId = tdId.textContent || tdId.innerText;
         txtValueUsername = tdUsername.textContent || tdUsername.innerText;
         txtValueEmail = tdEmail.textContent || tdEmail.innerText;
-        if (txtValueId.toUpperCase().indexOf(filter) > -1 || txtValueUsername.toUpperCase().indexOf(filter) > -1 || txtValueEmail.toUpperCase().indexOf(filter) > -1) {
+        txtValueProfile = tdProfile.textContent || tdProfile.innerText;
+        if (txtValueId.toUpperCase().indexOf(filter) > -1 || txtValueUsername.toUpperCase().indexOf(filter) > -1 || txtValueEmail.toUpperCase().indexOf(filter) > -1 || txtValueProfile.toUpperCase().indexOf(filter) > -1) {
           tr[i].style.display = '';
         } else {
           tr[i].style.display = 'none';

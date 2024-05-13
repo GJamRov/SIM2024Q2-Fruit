@@ -13,36 +13,39 @@
       >Back</a
     >
 <div class="main">
-    <!-- <h3>View User account</h3> -->
     <h3 class="text-xl font-bold underline mt-4">View User Account</h3>
-    <!-- to populate with this user data from db, below is just example of what it would look like -->
-    <!-- <div class="view-account mt-4">
-        <p>User id: <span>1</span></p>
-        <p>Username: <span>johnny123</span></p>
-        <p>Email: <span>johnny123@gmail.com</span></p>
-        <p>Profile: <span>System Admin</span></p>
-        <p>Created on: <span>22/04/2024 12:42AM</span></p>
-    </div> -->
     <table class="mt-4 mx-2">
         <tr class="h-14">
             <td class="text-gray-300">User id:</td>
-            <td class="pl-3">1</td>
+            <td class="pl-3">{{ account[0] }}</td>
         </tr>
         <tr class="h-14">
             <td class="text-gray-300">Username:</td>
-            <td class="pl-3">johnny1234</td>
+            <td class="pl-3">{{ account[1] }}</td>
         </tr>
         <tr class="h-14">
             <td class="text-gray-300">Email:</td>
-            <td class="pl-3">johnny123@gmail.com</td>
+            <td class="pl-3">{{ account[3] }}</td>
         </tr>
         <tr class="h-14">
             <td class="text-gray-300">Profile:</td>
+            {% if account[4] == 1 %}
             <td class="pl-3">System Admin</td>
+            {% elif account[4] == 2 %}
+            <td class="pl-3">Real Estate Agent</td>
+            {% elif account[4] == 3 %}
+            <td class="pl-3">Seller</td>
+            {% elif account[4] == 4 %}
+            <td class="pl-3">Buyer</td>
+            {% endif %}
         </tr>
         <tr class="h-14">
-            <td class="text-gray-300">Created on:</td>
-            <td class="pl-3">22/04/2024 12:42AM</td>
+            <td class="text-gray-300">Status:</td>
+            {% if account[5] == 1 %}
+            <td class="pl-3">Active</td>
+            {% elif account[5] == 2 %}
+            <td class="pl-3">Suspended</td>
+            {% endif %}
         </tr>
     </table>
 </div>

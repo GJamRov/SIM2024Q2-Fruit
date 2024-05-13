@@ -19,8 +19,22 @@
     </header> -->
 
     <!-- Menu Navigation Bar -->
-    <!-- check role here and include the respective navigation bar? -->
-    {% include("_navigation.html") %}
+    <!-- check role here and include the respective navigation bar -->
+    {% if 'role' in session %}
+      {% if session['role'] == 1 %}
+        {% include("_navigation_sysadmin.html") %}
+      {% endif %}
+      {% if session['role'] == 2 %}
+        {% include("_navigation_rea.html") %}
+      {% endif %}
+      {% if session['role'] == 3 %}
+        {% include("_navigation_buyer.html") %}
+      {% endif %}
+      {% if session['role'] == 4 %}
+        {% include("_navigation_seller.html") %}
+      {% endif %}
+    {% endif %}
+    <!-- {% include("_navigation.html") %} -->
     <!-- {% include("_navigation_sysadmin.html") %} -->
     <!-- {% include("_navigation_rea.html") %} -->
     <!-- {% include("_navigation_buyer.html") %} -->
@@ -34,7 +48,7 @@
     </main>
 
     <!-- Footer Section -->
-    <footer class="bottom-0 sticky">Footer Section</footer>
+    <!-- <footer class="bottom-0 sticky">Footer Section</footer> -->
     {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
         {% set latest_message = messages[-1] %}

@@ -4,15 +4,16 @@ import os
 
 # Controller Imports
 from controllers.login import LoginController
-from controllers.addAccount import addAccountCtl
-from controllers.viewAccount import viewAccountCtl
-from controllers.updateAccount import updateAccountCtl
-from controllers.suspendAccount import suspendAccountCtl
+from controllers.createAccount import createAccountController
+from controllers.viewAccount import viewAccountController
+from controllers.updateAccount import updateAccountController
+from controllers.suspendAccount import suspendAccountController
+from controllers.reactivateAccount import reactivateUserAccountController
 from controllers.createProfile import createUserProfileController
 from controllers.viewProfile import viewUserProfileController
 from controllers.updateProfile import updateUserProfileController
 from controllers.suspendProfile import suspendUserProfileController
-from controllers.searchProfile import searchUserProfileController
+from controllers.reactivateProfile import reactivateUserProfileController
 from controllers.viewPropertyListing import viewPLController
 from controllers.createPropertyListing import createPLController
 
@@ -23,7 +24,7 @@ class WebApp:
 
     def __init__(self, port):
         self.app = Flask(__name__)
-        self.upload_folder = "/static"
+        self.upload_folder = os.path.normpath(os.path.dirname(os.path.abspath(__file__))) + "\static"
         self.port = port
         self.app.secret_key = 'super secret key'  # for sessions
         self.blueprint = Blueprint('web_app', __name__)
@@ -34,7 +35,10 @@ class WebApp:
     def run_app(self):
         """Runs the web application."""
         self.app.config['UPLOAD_FOLDER'] = self.upload_folder
-        self.app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
+        self.app.config['SESSION_TYPE'] = 'redis'
+        if not os.path.exists(self.upload_folder):
+            os.makedirs(self.upload_folder)
+        
         # Default Pages
         self.blueprint.add_url_rule('/', 'home', self.home)
         self.blueprint.add_url_rule('/login', 'login', self.login, methods=['GET', 'POST'])
@@ -44,14 +48,17 @@ class WebApp:
         # User Account Pages
         self.blueprint.add_url_rule('/users/', 'users_index', self.users_index, methods=['GET', 'POST'])
         self.blueprint.add_url_rule('/users/create', 'create_account', self.create_account, methods=['GET', 'POST'])
-        self.blueprint.add_url_rule('/users/view', 'view_account', self.view_account, methods=['GET', 'POST'])
-        self.blueprint.add_url_rule('/users/update', 'update_account', self.update_account, methods=['GET', 'POST'])
+        self.blueprint.add_url_rule('/users/view/<account>', 'view_account', self.view_account, methods=['GET', 'POST'])
+        self.blueprint.add_url_rule('/users/update/<account>', 'update_account', self.update_account, methods=['GET', 'POST'])
+        self.blueprint.add_url_rule('/users/suspend/<account>', 'suspend_account', self.suspend_account, methods=['GET', 'POST'])
+        self.blueprint.add_url_rule('/users/reactivate/<account>', 'reactivate_account', self.reactivate_account, methods=['GET', 'POST'])
         # user profile pages
         self.blueprint.add_url_rule('/user-profiles/', 'user_profiles_index', self.user_profiles_index, methods=['GET', 'POST'])
         self.blueprint.add_url_rule('/user-profiles/create', 'create_profile', self.create_profile, methods=['GET', 'POST'])
         self.blueprint.add_url_rule('/user-profiles/view/<profile>', 'view_profile', self.view_profile, methods=['GET', 'POST'])
         self.blueprint.add_url_rule('/user-profiles/update/<profile>', 'update_profile', self.update_profile, methods=['GET', 'POST'])
-        self.blueprint.add_url_rule('/user-profiles/suspend/,<profile>', 'suspend_profile', self.suspend_profile, methods=['GET', 'POST'])
+        self.blueprint.add_url_rule('/user-profiles/suspend/<profile>', 'suspend_profile', self.suspend_profile, methods=['GET', 'POST'])
+        self.blueprint.add_url_rule('/user-profiles/reactivate/<profile>', 'reactivate_profile', self.reactivate_profile, methods=['GET', 'POST'])
         # property listing pages
         self.blueprint.add_url_rule('/property-listings/', 'property_listings_index', self.property_listings_index)
         self.blueprint.add_url_rule('/property-listings/sort', 'property_listings_sort', self.property_listings_sort)
@@ -81,8 +88,12 @@ class WebApp:
 
     def home(self):
         """View function for the view route."""
-        print(session)
-        return render_template("pages/home.html")
+        #print(session)
+        if session.get('logged_in'):
+            username = session['username']
+        else:
+            return redirect('/login')
+        return render_template("pages/home.html", username=username)
     
     ## User Functionalities
     def login(self):
@@ -90,6 +101,7 @@ class WebApp:
         template = 'login.html'
         
         #Request data from web page
+        print(session)
         if request.method == 'POST':
             entered_username = request.form['username']
             entered_password = request.form['password']
@@ -120,9 +132,13 @@ class WebApp:
         session.pop('username')
         session.pop('role')
         session.pop('logged_in', None)
-        session['_flashes'].clear()
-        #flash('Logout successful!', 'success')
-        return redirect('/login')
+        try:
+            session['_flashes'].clear()
+            #flash('Logout successful!', 'success')
+            print(session)
+            return redirect('/login')
+        except KeyError:
+            return redirect('/login')
 
     def profile(self, username):
         """Assign & display user profile"""
@@ -159,16 +175,16 @@ class WebApp:
             if request.method == 'POST':
                 entered_username = request.form['username']
                 entered_password = request.form['password']
-                entered_confirm_password = request.form['confirm_password']
+                entered_confirm_password = request.form['confirm-password']
                 entered_email = request.form['email']
                 entered_profile = request.form['profile']
 
                 if entered_password == entered_confirm_password:
                     # Send details to controller
-                    addAccCtl = addAccountCtl()
+                    createAccountCtl = createAccountController()
                     acc_details = [entered_username, entered_password, entered_email, entered_profile]
                     print(acc_details)
-                    created = addAccCtl.addUserAccount(session.get('username'), acc_details)
+                    created = createAccountCtl.addUserAccount(acc_details)
                     if created:
                         flash("User account created successfully!", "success")
                         return redirect('/users/')
@@ -178,42 +194,49 @@ class WebApp:
             return render_template("pages/users/create.html")
 
     #4. View user accounts
-    def view_account(self):
+    def view_account(self, account):
         """View user accounts"""
         # Check that the user is a System Admin
         while session['role'] == 1:
-            # Get form data from POST request
-            if request.method == 'POST':
-                pass
-            return render_template("pages/users/view.html")
+            viewAccCtl = viewAccountController()
+            account_data = viewAccCtl.viewUserAccount(account)
+            if account_data:
+                return render_template('pages/users/view.html', account=account_data)
+            else:
+                flash("Invalid user", "error")
+                return redirect('/users/')
         
     #5. Update user accounts
-    def update_account(self):
+    def update_account(self, account):
         """Update existing user account"""
         # Check that the user is a System Admin
         while session['role'] == 1:
+            password = request.args.get('password')
+            email = request.args.get('email')
+            role = request.args.get('role')
             # Get form data from POST request
             if request.method == 'POST':
-                pass
-            return render_template("pages/users/update.html")
+                updateAccountCtl = updateAccountController()
+                acc_details = [request.form['account_name'], request.form['username'], request.form['password'], request.form['email'], request.form['role']]
+                if updateAccountCtl.updateUserAccount(acc_details):
+                    flash("Account updated successfully!", "succcess")
+                    return redirect('/users/')
+                else:
+                    flash("Failed to update account. Please try again.", "error")
+                    return redirect('/users/')
+            return render_template("pages/users/update.html", account=account, password=password, email=email, role=role)
         
     #6. Suspend user account
-    def suspend_account(self):
+    def suspend_account(self, account):
         """Suspend a user account"""
         # Check that the user is a System Admin
         while session['role'] == 1:
-            # Get form data from POST request
-            if request.method == 'POST':
-                pass
-
-    #7. Search user account
-    def search_account(self):
-        """Search user account"""
-        # Check that the user is a System Admin
-        while session['role'] == 1:
-            # Get form data from POST request
-            if request.method == 'POST':
-                pass
+            suspendAccountCtl = suspendAccountController()
+            if suspendAccountCtl.suspendUserAccount(account):
+                flash("User account suspended!", "success")
+            else:
+                flash("System admin cannot be suspended", "error")
+            return redirect('/users/')
 
     # 8. Create user profiles
     def create_profile(self):
@@ -262,32 +285,44 @@ class WebApp:
                     return redirect('/user-profiles/update')
             return render_template('pages/user-profiles/update.html', profile=profile, profile_desc=profile_desc)
 
-    #11. Suspend user profile
+    #TODO: 11. Suspend user profile
     def suspend_profile(self, profile):
         """Suspend user profile"""
         # Check that the user is a System Admin
         while session['role'] == 1:
             suspendUserProfileCtl = suspendUserProfileController()
-            if suspendUserProfileCtl.suspendUserProfile(profile):
-                flash("User profile suspended!", "success")
+            if profile != 'System Admin':
+                if suspendUserProfileCtl.suspendUserProfile(profile):
+                    flash("User profile suspended!", "success")
+                else:
+                    flash("Error suspending user profile", "error")
             else:
-                flash("Error suspending user profile", "error")
+                flash("System Admin cannot be suspended", "error")
             return redirect('/user-profiles/')
-
-    #TODO: 12. Search user profile
-    def search_profile(self):
-        """Search user profile"""
+        
+    #TODO: 13. Reactivate user account
+    def reactivate_account(self, account):
+        """Reactivate user account"""
         # Check that the user is a System Admin
         while session['role'] == 1:
-            # Get form data from POST request
-            if request.method == 'POST':
-                entered_username = request.form['query-details']
+            reactivateAccountCtl = reactivateUserAccountController()
+            if reactivateAccountCtl.reactivateUserAccount(account):
+                flash("User account reactivated!", "success")
+            else:
+                flash("Failed to reactivate user acccount. Please try again.", "error")
+            return redirect('/users/')
+        
 
-                searchUserProfileCtl = searchUserProfileController()
-                profile_data = searchUserProfileCtl.searchUserProfile(entered_username)
-                
-                if profile_data:
-                    return render_template("pages/users/index.html", profiles=profile_data)
+    #TODO: 14. Reactivate user profile
+    def reactivate_profile(self, profile):
+        """Reactivate user profile"""
+        # Check that the user is a System Admin
+        while session['role'] == 1:
+            reactivateUserProfileCtl = reactivateUserProfileController()
+            if reactivateUserProfileCtl.reactivateUserProfile(profile):
+                flash("User profile reactivated!", "success")
+            else:
+                flash("Error reactivated user profile", "error")
             return redirect('/user-profiles/')
 
     # user tab
@@ -295,7 +330,7 @@ class WebApp:
         """users index page"""
         # Check that the user is a System Admin
         while session['role'] == 1:
-            viewAccCtl = viewAccountCtl()
+            viewAccCtl = viewAccountController()
             users = viewAccCtl.viewAllUsers()
             if users:
                 return render_template("pages/users/index.html", users=users)
@@ -315,7 +350,7 @@ class WebApp:
 
     # property listing
     def property_listings_index(self):
-        """property listing index page"""
+        """Main page for viewing property listings"""
         # Checks that the user is an REA, buyer or seller
         while session['role'] > 1 and session['role'] < 5:
             sort_option = request.args.get('sort')
@@ -329,8 +364,9 @@ class WebApp:
                 return render_template('/')
     
     def property_listings_sort(self):
+        """ Handles the sorting drop down bar for view property listings"""
         sort_option = request.args.get('sort')
-        # Call your controller or service method to fetch sorted property listings
+        # Calls controller to fetch sorted property listings
         viewPLCtl = viewPLController()
         sorted_properties = viewPLCtl.viewListing(session['username'], "", sort_option)
 
@@ -350,45 +386,41 @@ class WebApp:
 
     def property_listings_create(self):
         """Create a property listing"""
-        # if request.method == 'POST':
-        #     print(request.form)
-        #     print(request.files)
-        #     name = request.form['name']
-        #     location = request.form['location']
-        #     price = request.form['price']
-
-            # if 'image' in request.files:
-            #     print(request.files)
-            #     image_file = request.files['image']    
-            
-
-            # # Save the image file to your desired location
-            # image_filename = secure_filename(image_file.filename)
-            # image_file.save(os.path.join(self.app.config['UPLOAD_FOLDER'], image_filename))
-
-            # Save the details to database
-            # createPLCtl = createPLController()
-            # result = createPLCtl.createPropertyListing(session['username'], [name, location, image_file, price])
-
-            # if result:
-            #     flash('Property listing created successfully!', 'success')
-            #     return redirect(url_for('web_app.property_listings_index'))
-            # else:
-            #     flash('Property listing created unsuccssfully.', 'error')
-            #     return redirect("pages/property-listings/create.html")
-
-        return render_template("pages/property-listings/create.html")
+        if session['role'] == 2:
+            return render_template("pages/property-listings/create.html")
+        else:
+            flash('You do not have permission to create a property listing!', 'error')
+            return redirect("/")
 
     def property_listings_update(self):
         """Update a property listing"""
         return render_template("pages/property-listings/update.html")
+        
     
     def upload_file(self):
-        print(request.files)
+        """Handles the form submission for property_listings_create"""
         if 'image' in request.files:
-            file = request.file['image']
-            return 'File upload successfully'
-        return 'No file uploaded'
+            image_file = request.files['image']
+            name = request.form['location']
+            location = request.form['location']
+            price = request.form['price']
+
+            # Save the image file to UPLOAD_FOLDER
+            image_filename = secure_filename(image_file.filename)
+            image_filepath = os.path.normpath(os.path.join(self.app.config['UPLOAD_FOLDER'], image_filename)) 
+            image_file.save(image_filepath)
+
+            # Save new property details to database
+            createPLCtl = createPLController()
+            result = createPLCtl.createPropertyListing(session['username'], [name, location, image_filename, price])
+
+            if result:
+                flash('Property listing created successfully!', 'success')
+                return redirect(url_for('web_app.property_listings_index'))
+            else:
+                flash('Property listing created unsuccssfully.', 'error')
+                return redirect("pages/property-listings/create.html")
+        return redirect('/property-listings/create')
 
 
     # my profile

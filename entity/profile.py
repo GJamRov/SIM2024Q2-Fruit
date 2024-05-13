@@ -5,10 +5,11 @@ class userProfile:
     #Static Variable
     db = None
 
-    def __init__(self, id, type, desc):
+    def __init__(self, id, type, desc, active):
         self.id = id
         self.type = type
         self.desc = desc
+        self.active = active
 
     @staticmethod
     def connect_database(db_name):
@@ -29,13 +30,13 @@ class userProfile:
         
         if not profile_data:
             if UP[0] == 'System Admin':
-                profile = f"1, '{UP[0]}', '{UP[1]}'"
+                profile = f"1, '{UP[0]}', '{UP[1]}', 1"
             elif UP[0] == 'Real Estate Agent':
-                profile = f"2, '{UP[0]}', '{UP[1]}'"
+                profile = f"2, '{UP[0]}', '{UP[1]}', 1"
             elif UP[0] == 'Buyer':
-                profile = f"3, '{UP[0]}', '{UP[1]}'"
+                profile = f"3, '{UP[0]}', '{UP[1]}', 1"
             elif UP[0] == 'Seller':
-                profile = f"4, '{UP[0]}', '{UP[1]}'"
+                profile = f"4, '{UP[0]}', '{UP[1]}', 1"
             userProfile.db.insert_into_table("Profile", profile)
             return True
         if profile_data:
@@ -68,12 +69,18 @@ class userProfile:
         profile_data = userProfile.db.search_one("Profile", f"type = '{profile}'")
         
         if profile_data:
-            userProfile.db.delete_from_table("Profile", f"type = '{profile}'")
+            userProfile.db.update_table("Profile", f"active = 2", f"type = '{profile}'")
             return True
         if not profile_data:
             return False        
 
-    #TODO: 12. Search user profile
-    def search_profile(self, username):
-        profile_data = userProfile.db.search_by_keyword("Profile", username, ["type", "description"])
-        return profile_data
+    #TODO: 14. Reactivate user profile
+    def reactivate_profile(profile) -> bool:
+        userProfile.connect_database("SampleDatabase")
+        profile_data = userProfile.db.search_one("Profile", f"type = '{profile}'")
+
+        if profile_data:
+            userProfile.db.update_table("Profile", f"active = 1", f"type = '{profile}'")
+            return True
+        if not profile_data:
+            return False
