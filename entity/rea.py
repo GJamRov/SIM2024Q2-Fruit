@@ -15,7 +15,7 @@ class REA(User):
             details = f"NULL, '{newPropertyDetails[0]}', '{newPropertyDetails[1]}', 'Test', '{newPropertyDetails[2]}', {newPropertyDetails[3]}, {self.userID}, 0, -1, 0, 0"
             REA.db.insert_into_table("Property", details)
             return True
-            
+
         except Exception as e:
             print(f"Error creating listing: {e}")
             return False
@@ -30,6 +30,13 @@ class REA(User):
             search_param =  f"id ='{p_id}'"
             search_result = REA.db.search_one("Property", search_param=search_param)
             return list(search_result)
+        
+    def updateViewCount(self, pl):
+        """ Increments the view count of a property by one when selected """
+        p_id = pl[0]
+        updated_p_view_count = pl[-2] + 1
+        REA.db.update_table("Property", f"view_count = {updated_p_view_count}", f"id = {p_id}")
+
 
     # 17. Update property listings
     def update_listing(self, entered_details):

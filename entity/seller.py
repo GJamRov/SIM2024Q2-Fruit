@@ -26,6 +26,11 @@ class Seller(User):
         else:
             search_result = Seller.db.search_by_keyword("Property", search_param, ["location", "description"])
             return list(search_result)
+        
+    def viewOwnListing(self):
+        """View Owner's All Listings"""
+        owner_listings = Seller.db.search_by_keyword("Property", self.get_id(), ["seller_id"])
+        return list(owner_listings)
 
     # 42. View property listing views
     def view_PL_views(self, pl_name):

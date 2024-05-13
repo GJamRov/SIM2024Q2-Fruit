@@ -339,7 +339,7 @@ class WebApp:
 
     # property listing
     def property_listings_index(self):
-        """property listing index page"""
+        """Main page for viewing property listings"""
         # Checks that the user is an REA, buyer or seller
         while session['role'] > 1 and session['role'] < 5:
             sort_option = request.args.get('sort')
@@ -353,8 +353,9 @@ class WebApp:
                 return render_template('/')
     
     def property_listings_sort(self):
+        """ Handles the sorting drop down bar for view property listings"""
         sort_option = request.args.get('sort')
-        # Call your controller or service method to fetch sorted property listings
+        # Calls controller to fetch sorted property listings
         viewPLCtl = viewPLController()
         sorted_properties = viewPLCtl.viewListing(session['username'], "", sort_option)
 
@@ -374,11 +375,14 @@ class WebApp:
 
     def property_listings_create(self):
         """Create a property listing"""
-        return render_template("pages/property-listings/create.html")
+        if session['role'] == 3:
+            return render_template("pages/property-listings/create.html")
+        else:
+            flash('You do not have permission to create a property listing!', 'error')
+            return redirect("/")
     
     def upload_file(self):
-        # print(request.form)
-        # print(request.files)
+        """Handles the form submission for property_listings_create"""
         if 'image' in request.files:
             image_file = request.files['image']
             name = request.form['location']
@@ -387,9 +391,7 @@ class WebApp:
 
             # Save the image file to UPLOAD_FOLDER
             image_filename = secure_filename(image_file.filename)
-            # print(image_filename)
             image_filepath = os.path.normpath(os.path.join(self.app.config['UPLOAD_FOLDER'], image_filename)) 
-            # print(image_filepath)
             image_file.save(image_filepath)
 
             # Save new property details to database
