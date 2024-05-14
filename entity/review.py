@@ -1,93 +1,104 @@
 from database import Database
 
 class Review:
-  db = None
+    db = None
 
-  def __init__(self) -> None:
-    pass
+    def __init__(self) -> None:
+        pass
 
-  @staticmethod
-  def connect_database(db_name):
-      if not Review.db:
-          Review.db = Database(db_name)
+    @staticmethod
+    def connect_database(db_name):
+        if not Review.db:
+            Review.db = Database(db_name)
 
-  # 20. View my reviews
-  def viewReview(self, agent_id):
-      Review.connect_database("SampleDatabase")
-      #Get the whole review tuples where userNameREA = agent_id
-      review_tuples = Review.db.search_by_keyword("Review", agent_id, ["userNameREA"])
-      return review_tuples
-    
-  # Create reviews
-  def giveReview(self, new_review, agent_id, user_id):
-      Review.connect_database("SampleDatabase")
-      hasReview = False
+    # 20. View my reviews
+    def viewReview(self, agent_id, role):
+        Review.connect_database("SampleDatabase")
+        #Get the whole review tuples where userNameREA = agent_id
+        if(role == 2):
+            review_tuples = Review.db.search_by_keyword("Review", agent_id, ["userNameREA"])
+            return review_tuples
+        else:
+            review_tuples = Review.db.search_by_keyword("Review", agent_id, ["userName"])
+            return review_tuples
+        
+    # Create reviews
+    def giveReview(self, new_review, agent_id, user_id, role):
+        Review.connect_database("SampleDatabase")
+        hasReview = False
 
-      check_for_review = Review.db.search_by_keyword("Review", user_id, ["userName"])
+        check_for_review = Review.db.search_by_keyword("Review", user_id, ["userName"])
+        """ 
+        #Checks if user has given a review to REA 
+        for i in range(tuple_length):
+            current_tuple = check_for_review[i]
 
-      tuple_length = len(check_for_review)
+            if((current_tuple[2] == user_id) and (current_tuple[3] == agent_id)):
+                hasReview = True
 
-      #Checks if user has given a review to REA 
-      for i in range(tuple_length):
-          current_tuple = check_for_review[i]
+        #If user has already given a review, cannot give review again
+        if(hasReview == True):
+            return False
 
-          if((current_tuple[2] == user_id) and (current_tuple[3] == agent_id)):
-              hasReview = True
+        #If user has not given a review to this REA
+        else:
+            Review.db.insert_into_table("Review", f"NULL, '{new_review}', '{user_id}', '{agent_id}'")
+            return True
+        """
+        Review.db.insert_into_table("Review", f"NULL, '{new_review}', '{user_id}', '{agent_id}', {role}")
 
-      #If user has already given a review, cannot give review again
-      if(hasReview == True):
-          return False
-      
-      #If user has not given a review to this REA
-      else:
-          Review.db.insert_into_table("Review", f"NULL, '{new_review}', '{user_id}', '{agent_id}'")
-          return True
+        check_for_review2 = Review.db.search_by_keyword("Review", user_id, ["userName"])
 
-  # Edit reviews
-  # Assuming the user already has made a review previously to specified agent
-  def editReview(self, new_review, old_review, agent_id, user_id):
-      Review.connect_database("SampleDatabase")
-      hasReview = False
-      old_review_index = 0
+        if(len(check_for_review2) > len(check_for_review)):
+            return True
+        else:
+            return False
 
-      #Get the tuples of the old review
-      old_review_tuples = Review.db.search_by_keyword("Review", user_id, ["userName"])
+    # Edit reviews
+    # Assuming the user already has made a review previously to specified agent
+    def editReview(self, new_review, old_review, agent_id, user_id, role):
+        Review.connect_database("SampleDatabase")
+        hasReview = False
+        old_review_index = 0
 
-      #Length of tuple
-      tuple_length = len(old_review_tuples)
+        #Get the tuples of the old review
+        old_review_tuples = Review.db.search_by_keyword("Review", user_id, ["userName"])
 
-      for i in range(tuple_length):
-          current_tuple = old_review_tuples[i]
-          current_review = current_tuple[1]
-          current_agent_id = current_tuple[3]
+        #Length of tuple
+        tuple_length = len(old_review_tuples)
 
-          if(current_agent_id == agent_id):
-              old_review_index = i
-              hasReview = True
+        for i in range(tuple_length):
+            current_tuple = old_review_tuples[i]
+            current_review = current_tuple[1]
+            current_agent_id = current_tuple[3]
 
-      if(hasReview != True):
-          return False
-      
-      else:
+            if(current_agent_id == agent_id):
+                old_review_index = i
+                hasReview = True
 
-          #Remove the tuple of the old review
-          """
-          tuple_to_remove = (old_review_index, old_review, user_id, agent_id)
+        if(hasReview != True):
+            return False
 
-          new_tuple = tuple(inner_tuple for inner_tuple in old_review_tuples if inner_tuple != tuple_to_remove)
+        else:
 
-          REA.db.delete_from_table("Review", f"review = '{old_review}'")
+            #Remove the tuple of the old review
+            """
+            tuple_to_remove = (old_review_index, old_review, user_id, agent_id)
 
-          for j in range(tuple_length - 1):
-              current_tuple = new_tuple[j]
-              current_review = current_tuple[1]
-              current_user_id = current_tuple[2]
-              current_agent_id = current_tuple[3]
+            new_tuple = tuple(inner_tuple for inner_tuple in old_review_tuples if inner_tuple != tuple_to_remove)
 
-              REA.db.insert_into_table("Review", f"NULL, '{current_review}', '{current_user_id}', '{current_agent_id}'")
-          """
+            REA.db.delete_from_table("Review", f"review = '{old_review}'")
 
-          Review.db.delete_from_table("Review", f"review = '{old_review}', userName = '{user_id}', userNameREA = '{agent_id}'")
+            for j in range(tuple_length - 1):
+                current_tuple = new_tuple[j]
+                current_review = current_tuple[1]
+                current_user_id = current_tuple[2]
+                current_agent_id = current_tuple[3]
 
-          Review.db.insert_into_table("Review", f"NULL, '{new_review}', '{user_id}', '{agent_id}'")
-          return True
+                REA.db.insert_into_table("Review", f"NULL, '{current_review}', '{current_user_id}', '{current_agent_id}'")
+            """
+
+            Review.db.delete_from_table("Review", f"review = '{old_review}', userName = '{user_id}', userNameREA = '{agent_id}'")
+
+            Review.db.insert_into_table("Review", f"NULL, '{new_review}', '{user_id}', '{agent_id}'")
+            return True

@@ -32,141 +32,45 @@
           </thead>
           <tbody>
 
-
+            {% if reviewListing %}
+            {% for review in reviewListing %}
             <tr class="border-b pb-4">
               <td class="">
                   <div class="flex flex-col items-center">
                     <img src="{{ url_for('static', filename='house4.jpeg') }}" alt="product 1" class="w-12 m-4 aspect-square object-cover rounded-full">
-                    <span class="text-xs mb-3 px-2 font-semibold">Brownbear3337777777</span>
+                    {% if role == 2 %}
+                    <span class="text-xs mb-3 px-2 font-semibold">{{review[2]}}</span>
+                    
+                    {% else %}
+                    <span class="text-xs mb-3 px-2 font-semibold">{{review[3]}}</span>  
+                    {% endif %}
+                    
                   </div>
               </td>
               <td>
                   <div class="flex flex-col self-center mx-2 mt-3">
                     <div class="mx-2 flex gap-1 text-sm text-yellow-400">
                         <!-- change condition to the rating, rounded to the nearest number -->
-                        {% if true %}
-                        <!-- 5 stars -->
+                        {% for _ in range(ratingListing[loop.index0][1]) %}
                         <span><i class="fa-solid fa-star"></i></span>
-                        <span><i class="fa-solid fa-star"></i></span>
-                        <span><i class="fa-solid fa-star"></i></span>
-                        <span><i class="fa-solid fa-star"></i></span>
-                        <span><i class="fa-solid fa-star"></i></span>
-                        {% elif false %}
-                        <!-- 4 stars -->
-                        <span><i class="fa-solid fa-star"></i></span>
-                        <span><i class="fa-solid fa-star"></i></span>
-                        <span><i class="fa-solid fa-star"></i></span>
-                        <span><i class="fa-solid fa-star"></i></span>
-                        <span><i class="fa-regular fa-star"></i></span>
-                        <!-- <span><i class="fa-regular fa-star-half-stroke"></i></span> -->
-                        {% elif false %}
-                        <!-- 3 stars -->
-                        <span><i class="fa-solid fa-star"></i></span>
-                        <span><i class="fa-solid fa-star"></i></span>
-                        <span><i class="fa-solid fa-star"></i></span>
-                        <span><i class="fa-regular fa-star"></i></span>
-                        <span><i class="fa-regular fa-star"></i></span>
-                        {% elif false %}
-                        <!-- 2 stars -->
-                        <span><i class="fa-solid fa-star"></i></span>
-                        <span><i class="fa-solid fa-star"></i></span>
-                        <span><i class="fa-regular fa-star"></i></span>
-                        <span><i class="fa-regular fa-star"></i></span>
-                        <span><i class="fa-regular fa-star"></i></span>
-                        {% else %}
-                        <!-- 1 star -->
-                        <span><i class="fa-solid fa-star"></i></span>
-                        <span><i class="fa-regular fa-star"></i></span>
-                        <span><i class="fa-regular fa-star"></i></span>
-                        <span><i class="fa-regular fa-star"></i></span>
-                        <span><i class="fa-regular fa-star"></i></span>
-                        {% endif %}
+                        {% endfor %}
+                        
                     </div>
                     <div class="mx-2 my-2 text-sm">
-                      Effortless real estate transaction! Jamie provided top-notch service, guiding us smoothly through the process. Their expertise and responsiveness ensured a stress-free experience. Highly recommended!Effortless real estate transaction! Jamie provided top-notch service, guiding us smoothly through the process.
+                      {{review[1]}}
                     </div>
                   </div>
               </td>
               <td>
                 <a
-                  href="{{ url_for('web_app.my_reviews_update') }}"
+                  href="{{ url_for('web_app.my_reviews_update', review_id = review[0])}}"
                   class="button bg-transparent mx-2 hover:bg-indigo-900 text-indigo-700 font-semibold hover:text-white px-2 border border-indigo-500 hover:border-transparent rounded"
                   >Edit</a
                 >
               </td>
             </tr>
-
-
-
-
-            <tr class="border-b pb-4">
-              <td class="">
-                  <div class="flex flex-col items-center">
-                    <img src="{{ url_for('static', filename='house4.jpeg') }}" alt="product 1" class="w-12 m-4 aspect-square object-cover rounded-full">
-                    <span class="text-xs mb-3 px-2 font-semibold">Sunflower99</span>
-                  </div>
-              </td>
-              <td>
-                  <div class="flex flex-col self-center mx-2 mt-3">
-                    <div class="mx-2 flex gap-1 text-sm text-yellow-400">
-                      <span><i class="fa-solid fa-star"></i></span>
-                      <span><i class="fa-solid fa-star"></i></span>
-                      <span><i class="fa-solid fa-star"></i></span>
-                      <span><i class="fa-solid fa-star"></i></span>
-                      <span><i class="fa-regular fa-star-half-stroke"></i></span>
-                    </div>
-                    <div class="mx-2 my-2 text-sm">
-                      Effortless real estate transaction! Jamie provided top-notch service, guiding us smoothly through the process. Their expertise and responsiveness ensured a stress-free experience. Highly recommended!Effortless real estate transaction! Jamie provided top-notch service, guiding us smoothly through the process.
-                      Effortless real estate transaction! Jamie provided top-notch service, guiding us smoothly through the process. Their expertise and responsiveness ensured a stress-free experience. Highly recommended!Effortless real estate transaction! Jamie provided top-notch service, guiding us smoothly through the process.
-                      Effortless real estate transaction! Jamie provided top-notch service, guiding us smoothly through the process. Their expertise and responsiveness ensured a stress-free experience. Highly recommended!Effortless real estate transaction! Jamie provided top-notch service, guiding us smoothly through the process.
-                      Effortless real estate transaction! Jamie provided top-notch service, guiding us smoothly through the process. Their expertise and responsiveness ensured a stress-free experience. Highly recommended!Effortless real estate transaction! Jamie provided top-notch service, guiding us smoothly through the process.
-                      Effortless real estate transaction! Jamie provided top-notch service, guiding us smoothly through the process. Their expertise and responsiveness ensured a stress-free experience. Highly recommended!Effortless real estate transaction! Jamie provided top-notch service, guiding us smoothly through the process.
-                    </div>
-                  </div>
-              </td>
-              <td>
-                <a
-                  href="{{ url_for('web_app.my_reviews_update') }}"
-                  class="button bg-transparent mx-2 hover:bg-indigo-900 text-indigo-700 font-semibold hover:text-white px-2 border border-indigo-500 hover:border-transparent rounded"
-                  >Edit</a
-                >
-              </td>
-            </tr>
-
-
-            <tr class="border-b pb-4">
-              <td class="">
-                  <div class="flex flex-col items-center">
-                    <img src="{{ url_for('static', filename='house4.jpeg') }}" alt="product 1" class="w-12 m-4 aspect-square object-cover rounded-full">
-                    <span class="text-xs mb-3 px-2 font-semibold">Person134</span>
-                  </div>
-              </td>
-              <td>
-                  <div class="flex flex-col self-center mx-2 mt-3">
-                    <div class="mx-2 flex gap-1 text-sm text-yellow-400">
-                      <span><i class="fa-solid fa-star"></i></span>
-                      <span><i class="fa-solid fa-star"></i></span>
-                      <span><i class="fa-solid fa-star"></i></span>
-                      <span><i class="fa-solid fa-star"></i></span>
-                      <span><i class="fa-regular fa-star-half-stroke"></i></span>
-                    </div>
-                    <div class="mx-2 my-2 text-sm">
-                      Effortless real estate transaction! Jamie provided top-notch service, guiding us smoothly through the process. Their expertise and responsiveness ensured a stress-free experience. Highly recommended!Effortless real estate transaction! Jamie provided top-notch service, guiding us smoothly through the process.
-                      Effortless real estate transaction! Jamie provided top-notch service, guiding us smoothly through the process. Their expertise and responsiveness ensured a stress-free experience. Highly recommended!Effortless real estate transaction! Jamie provided top-notch service, guiding us smoothly through the process.
-                      Effortless real estate transaction! Jamie provided top-notch service, guiding us smoothly through the process. Their expertise and responsiveness ensured a stress-free experience. Highly recommended!Effortless real estate transaction! Jamie provided top-notch service, guiding us smoothly through the process.
-                    </div>
-                  </div>
-              </td>
-              <td>
-                <a
-                  href="{{ url_for('web_app.my_reviews_update') }}"
-                  class="button bg-transparent mx-2 hover:bg-indigo-900 text-indigo-700 font-semibold hover:text-white px-2 border border-indigo-500 hover:border-transparent rounded"
-                  >Edit</a
-                >
-              </td>
-            </tr>
-
-
+            {% endfor %}
+            {% endif %}
           
           </tbody>
         </table>
