@@ -541,26 +541,32 @@ class WebApp:
             return redirect("/")
         
         while current_role == 3 or current_role == 4:
+            index = request.args.get("review_id")
+
             if request.method == 'POST':
                 new_rating = request.form['sort']
                 new_review = request.form['profile_desc']
                 current_username = session['username']
                 profile_name = request.form['profile_name']
                 review_index = request.form['review_id']
+                print(new_review)
+                print(review_index)
+                print(profile_name)
+
 
                 updateReviewCtl = editReviewController()
                 updateRatingCtl = editRatingController()
                 updateReviewBool = updateReviewCtl.editReview(review_index, new_review, current_username, current_role)
-                #updateRatingBool = updateRatingCtl.editRating(review_index, new_rating, current_username, current_role, new_review)
+                updateRatingBool = updateRatingCtl.editRating(review_index, new_rating, current_username, current_role, new_review)
 
-                if(updateReviewBool == True):
+                if(updateReviewBool == True and updateRatingBool == True):
                     flash("Successfully edited!", "success")
                     return redirect(url_for('web_app.my_reviews_index'))
                 else:
                     flash("Error", "error")
-                    return redirect("my_reviews_update")
+                    return redirect(url_for('web_app.my_reviews_index'))
         
-            return render_template("pages/my-reviews/update.html", profile=session['username'])
+            return render_template("pages/my-reviews/update.html", profile=session['username'], review_id=index)
         return redirect("/")
     
     def my_reviews_create(self):

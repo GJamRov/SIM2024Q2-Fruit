@@ -35,23 +35,12 @@ class Rating:
                 review_index = review[0]
 
         old_rating_tuple = Rating.db.search_by_keyword("Rating", review_index, ["review_id"])
-        old_rating = old_rating_tuple[1]
 
         if old_rating_tuple:
             Rating.db.update_table("Rating", f"rating = {new_rating}", f"review_id = {review_index}")
             return True
         else:
             return False
-
-        """
-        new_rating_tuple = Rating.db.search_by_keyword("Rating", review_index, ["review_id"])
-        new_rating_view = new_rating_tuple[1]
-
-        if old_rating == new_rating_view:
-            return False
-        else:
-            return True
-        """
 
     #Create rating
     def giveRating(self, new_rating, user_id, agent_id, role, new_review):
