@@ -16,6 +16,9 @@ from controllers.suspendProfile import suspendUserProfileController
 from controllers.reactivateProfile import reactivateUserProfileController
 from controllers.viewPropertyListing import viewPLController
 from controllers.createPropertyListing import createPLController
+from controllers.wishlistView import viewFavouritesController
+from controllers.wishlistAdd import addToFavouritesController
+from controllers.wishlistRemove import removeFromFavouritesController
 
 # Entity Import
 from entity.user import User
@@ -77,6 +80,7 @@ class WebApp:
         self.blueprint.add_url_rule('/property-listings/update', 'property_listings_update', self.property_listings_update)
         self.blueprint.add_url_rule('/upload', 'upload_file', self.upload_file, methods=['GET', 'POST'])
         self.blueprint.add_url_rule('/add_to_wishlist/<int:listing_id>', view_func=self.add_to_wishlist, methods=['POST'])
+        self.blueprint.add_url_rule('/remove_from_wishlist/<int:listing_id>', view_func=self.remove_from_wishlist, methods=['POST'])
 
         # my profile
         self.blueprint.add_url_rule('/my-profile/', 'my_profile_index', self.my_profile_index)
@@ -268,7 +272,7 @@ class WebApp:
                     return redirect('/user-profiles/create')
             return render_template("pages/user-profiles/create.html")
         
-    #TODO: 9. View user profiles
+    #9. View user profiles
     def view_profile(self, profile):
         """View user profiles"""
         # Check that the user is a System Admin
@@ -281,7 +285,7 @@ class WebApp:
                 flash("Invalid user profile", "error")
                 return redirect('/user-profiles/')
 
-    #TODO: 10. Update user profiles
+    #10. Update user profiles
     def update_profile(self, profile):
         """Update user profile"""
         # Check that the user is a System Admin
@@ -298,7 +302,7 @@ class WebApp:
                     return redirect('/user-profiles/update')
             return render_template('pages/user-profiles/update.html', profile=profile, profile_desc=profile_desc)
 
-    #TODO: 11. Suspend user profile
+    #11. Suspend user profile
     def suspend_profile(self, profile):
         """Suspend user profile"""
         # Check that the user is a System Admin
@@ -313,7 +317,7 @@ class WebApp:
                 flash("System Admin cannot be suspended", "error")
             return redirect('/user-profiles/')
         
-    #TODO: 13. Reactivate user account
+    #13. Reactivate user account
     def reactivate_account(self, account):
         """Reactivate user account"""
         # Check that the user is a System Admin
@@ -326,7 +330,7 @@ class WebApp:
             return redirect('/users/')
         
 
-    #TODO: 14. Reactivate user profile
+    #14. Reactivate user profile
     def reactivate_profile(self, profile):
         """Reactivate user profile"""
         # Check that the user is a System Admin
@@ -361,7 +365,8 @@ class WebApp:
                 return render_template("pages/user-profiles/index.html", profiles=profiles)
             return render_template("pages/user-profiles/index.html")
 
-    # property listing
+    ## Property Listings Functions
+
     def property_listings_index(self):
         """Main page for viewing property listings"""
         # Checks that the user is an REA, buyer or seller
@@ -369,10 +374,15 @@ class WebApp:
             sort_option = request.args.get('sort')
             viewPLCtl = viewPLController()
             properties = viewPLCtl.viewListing(session['username'], "", sort_option)
+            viewFavCtl = viewFavouritesController()
+            favourites = viewFavCtl.viewFavourites(session['username'])
+            favs = []
+            for f_p in favourites:
+                favs.append(f_p[2])
             #print(properties, "RIGHT HERE")
             if properties:
                 # print(properties)
-                return render_template('pages/property-listings/index.html', propertyListings = properties)
+                return render_template('pages/property-listings/index.html', propertyListings = properties, favs= favs, role=session['role'])
             else:
                 return render_template('/')
     
@@ -381,6 +391,8 @@ class WebApp:
         sort_option = request.args.get('sort')
         # Calls controller to fetch sorted property listings
         viewPLCtl = viewPLController()
+        viewFavCtl = viewFavouritesController()
+        favourites = viewFavCtl.viewFavourites(session['username'])
         sorted_properties = viewPLCtl.viewListing(session['username'], "", sort_option)
 
         # Return sorted listings as JSON response
@@ -432,10 +444,26 @@ class WebApp:
         return redirect('/property-listings/create')
     
     def add_to_wishlist(self, listing_id):
+        """Adds a specific property listing to the user's wishlist"""
         data = request.json
         print(data)
-        response_data = {'message': 'Property added to wishlist successfully'}
-        return jsonify(response_data), 200  # Return a JSON response with a success status code
+        atf = addToFavouritesController()
+        if atf.addToFavourites(session["username"], listing_id):
+            response_data = {'message': 'Property added to wishlist successfully'}
+            return jsonify(response_data), 200  # Success 
+        else:
+            response_data = {'error': 'Failed to add property to wishlist'}
+            return jsonify(response_data), 400  # Bad Request
+    
+    def remove_from_wishlist(self, listing_id):
+        data = request.json
+        rtf = removeFromFavouritesController()
+        if rtf.removeFromFavourites(session['username'], listing_id):
+            response_data = {'message': 'Property removed from wishlist successfully'}
+            return jsonify(response_data), 200
+        else:
+            response_data = {'error': 'Failed to add property to wishlist'}
+            return jsonify(response_data), 400  # Bad Request
 
     def property_listings_update(self):
         """Update a property listing"""
@@ -451,11 +479,11 @@ class WebApp:
         """Main Page for Individual User Profile"""
         # Checks that the user is an REA, buyer or seller
         while session['role'] in [2,3,4]:
-            # sort_option = request.args.get('sort')
             viewPLCtl = viewPLController()
-            properties = viewPLCtl.viewListing(session['username'], propertyDetail="profile")
-            # print(properties, "RIGHT HERE")
-            return render_template("pages/my-profile/index.html", propertyListings = properties)
+            properties = []
+            if session['role'] != 3: # Buyer
+                properties = viewPLCtl.viewListing(session['username'], propertyDetail="profile")
+            return render_template("pages/my-profile/index.html", propertyListings = properties, role=session['role'])
             
         return redirect("/")
 

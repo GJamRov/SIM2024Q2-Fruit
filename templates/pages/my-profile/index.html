@@ -62,15 +62,17 @@
                         (<span>20</span> Reviews)
                     </a>
                 </div>
+                {% if role == 3 %}
                 <a href="{{ url_for('web_app.wishlists_index') }}"
                     class="text-white text-nowrap text-sm px-2 py-1 mt-8 max-w-min rounded-md bg-indigo-700 flex items-center justify-center hover:bg-gray-800 transition"
                     title="add to wishlist">
                     <i class="fa-solid fa-heart mx-1"></i>My wishlist
                 </a>
+                {% endif %}
             </div>
         </div>
         
-        {% if propertyListings %}
+        {% if role != 3 %}
         <h4 class="text-xl font-bold underline">My Listings</h4>
 
         
@@ -85,12 +87,12 @@
               aria-label="Search through content of the site"
             />
           </form>
-          <!-- <a
+          <a
           href="{{ url_for('web_app.property_listings_create') }}"
             class="flex self-center ml-auto mx-4 bg-transparent hover:bg-indigo-900 text-indigo-700 font-semibold hover:text-white py-2 px-4 border border-indigo-500 hover:border-transparent rounded"
           >
             Create Property Listings +
-          </a> -->
+          </a>
         </div>
 
         <div class="col-span-3">
@@ -103,8 +105,9 @@
                   <option value="latest">Latest product</option>
               </select>
           </div>
+        {% endif %}
 
-            
+        {% if propertyListings %}
         <div id = "propertyListingsContainer" class="grid lg:grid-cols-5 md:grid-cols-3 grid-cols-2 gap-6">
             {% for listing in propertyListings %}  
             <div class="bg-white shadow rounded overflow-hidden group">

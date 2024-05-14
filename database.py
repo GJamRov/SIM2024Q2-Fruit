@@ -37,7 +37,7 @@ class Database:
 
     def search_one(self, table_name,  search_param):
         query = f"SELECT * FROM {table_name} WHERE {search_param}"
-        print(query)
+        # print(query)
         self.cursor.execute(query)
         return self.cursor.fetchone()
     

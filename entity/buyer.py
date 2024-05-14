@@ -20,11 +20,19 @@ class Buyer(User):
         if search_param == "": # 28. View each property listings
             search_result = Buyer.db.view_table("Property")
             return list(search_result)
-        
-        else: # 29. Search property listing
-            search_result = Buyer.db.search_by_keyword("Property", search_param, ["location", "description"])
+
+        else: # View by ID
+            search_param =  f"id ='{search_param}'"
+            search_result = Buyer.db.search_one("Property", search_param=search_param)
+            self.updateViewCount(search_result)
             return list(search_result)
+        
+        # 29. Search property listing
+        # else: 
+        #     search_result = Buyer.db.search_by_keyword("Property", search_param, ["location", "description"])
+        #     return list(search_result)
     
+
     def updateViewCount(self, pl):
         """ Increments the view count of a property by one when selected """
         p_id = pl[0]
@@ -35,15 +43,17 @@ class Buyer(User):
     def view_favourites(self):
         """ Returns buyer's wishlisted properties """
         buyer_fav = Buyer.db.search_by_keyword("Favourite", self.get_id(), ["user_id"])
-        return list[buyer_fav]
+        return list(buyer_fav)
 
     # 31. Save property listings to favourite list
-    def save_favourite(self, pl_id):
+    def add_favourite(self, pl_id):
         """ Adds a new property to buyer's wishlist """
-        curr_PL = Buyer.db.search_one("Favourite", f"user_id = {self.get_id()} AND property_id = {pl_id}")
-        if curr_PL: # If property listing exists -> Has been favourited
+        fav_entry = Buyer.db.search_one("Favourite", f"user_id = {self.get_id()} AND property_id = {pl_id}")
+        curr_PL = Buyer.db.search_one("Property", f"id = {pl_id}")
+        if fav_entry: # If property listing exists -> Has been favourited
             return False
         else: 
+            print(curr_PL)
             # Add new property to Favourite table
             Buyer.db.insert_into_table("Favourite", f"NULL, {self.get_id()}, {pl_id}")
             # Update property listing's wishlist count
@@ -52,9 +62,10 @@ class Buyer(User):
             return True
     
     # Remove property listings from favourite list
-    def unfavourite(self, pl_id):
-        curr_PL = Buyer.db.search_one("Favourite", f"user_id = {self.get_id()} AND property_id = {pl_id}")
-        if curr_PL: # If property listing exists in Favourite table -> Has been favourtied
+    def remove_favourite(self, pl_id):
+        fav_entry = Buyer.db.search_one("Favourite", f"user_id = {self.get_id()} AND property_id = {pl_id}")
+        curr_PL = Buyer.db.search_one("Property", f"id = {pl_id}")
+        if fav_entry: # If property listing exists in Favourite table -> Has been favourtied
             # Delete property from Favourite table
             Buyer.db.delete_from_table("Favourite", f"user_id = {self.get_id()} AND property_id = {pl_id}")
             # Update property listing's wishlist count

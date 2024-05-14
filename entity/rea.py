@@ -21,16 +21,17 @@ class REA(User):
             return False
 
     # 16. View existing property listings
-    def viewListing(self, search_param = "") -> list:
+    def viewListing(self, search_param = "", cols=[]) -> list:
         """View Listing by ID"""
         if search_param == "": # View all accounts
             search_result = REA.db.view_table("Property")
             return list(search_result)
         
-        elif search_param == "profile": # Gets only the property listings attached to this profile
+        elif search_param == "profile": # For MY PROFILE tab
             search_result = REA.db.search_by_keyword("Property", self.get_id(), ["rea_id"])
             return list(search_result)
-        else:
+
+        else: # View by ID
             search_param =  f"id ='{search_param}'"
             search_result = REA.db.search_one("Property", search_param=search_param)
             return list(search_result)

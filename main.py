@@ -360,7 +360,6 @@ if __name__ == "__main__":
                             "active INTEGER"] 
         sample_db.create_table("Profile", profile_col)
         sample_db.insert_into_table("Profile", f"1, 'System Admin', 'FruitRealEstate system admin', 1")
-        # sample_db.insert_into_table("Profile", f"2, 'Real Estate Agent', 'FruitRealEstate system admin', 1")
 
     ## When database is already populated
     db =  database.Database("SampleDatabase")
@@ -378,16 +377,22 @@ if __name__ == "__main__":
     # db.view_table("Rating")
     # db.search_by_keyword("Review", 'user191', ["userName"])
     # db.connection.close()
-    # test_p = []
-    # for property in db.view_table("Property"):
-    #     test_p.append(property[6])
-    # test_rea = []
-    # for seller in test_p:
-    #     t_seller = db.search_by_keyword("User", seller, ["id"])[0]
-    #     test_rea.append(t_seller)
+    test_p = []
+    for property in db.view_table("Property"):
+        test_p.append(property[6])
+
+    test_sellers = []
+    for seller in test_p:
+        t_seller = db.search_by_keyword("User", seller, ["id"])[0]
+        test_sellers.append(t_seller)
     # print(test_p)
-    # print("SELLER FOR TEST", test_rea)
-    # print(os.path.dirname(os.path.abspath(__file__)))
+    print("SELLER WITH PROPERTIES", test_sellers[0])
+
+    # print(db.view_table("Favourite"))
+    user_with_favs = []
+    for f_user in db.view_table("Favourite"):
+        user_with_favs.append(db.search_one("User", f"id = {f_user[1]}"))
+    print("BUYER WITH FAVS", user_with_favs[0])
 
     # Initialise Web App
     print("--- Running App ---")
