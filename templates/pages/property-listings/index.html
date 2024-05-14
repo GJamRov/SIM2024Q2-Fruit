@@ -19,8 +19,6 @@
           
         </div>
 
-
-
         <div class="col-span-3">
           <div class="flex items-center mb-4">
                 <select name="sort" id="sort" onchange=""
@@ -29,20 +27,8 @@
                     <option value="asc">Price low to high</option>
                     <option value="desc">Price high to low</option>
                 </select>
-
-              <!-- <div class="flex gap-2 ml-auto">
-                  <div
-                      class="border border-indigo-700 w-10 h-9 flex items-center justify-center text-white bg-indigo-700 rounded cursor-pointer">
-                      <i class="fa-solid fa-grip-vertical"></i>
-                  </div>
-                  <div
-                      class="border border-gray-300 w-10 h-9 flex items-center justify-center text-gray-600 rounded cursor-pointer">
-                      <i class="fa-solid fa-list"></i>
-                  </div>
-              </div> -->
           </div>
-          
-          
+       
           <div id= "propertyListingsContainer" class="grid lg:grid-cols-5 md:grid-cols-3 grid-cols-2 gap-6">
               {% for listing in propertyListings %}
               <div id = "listing-{{listing[0]}}" class="bg-white shadow rounded overflow-hidden group">
@@ -51,7 +37,7 @@
                       <img src="{{ url_for('static', filename=listing[4]) }}" alt="{{ listing[1] }}" class="w-full aspect-square object-cover">
                       <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center 
                       justify-center gap-2 opacity-0 group-hover:opacity-100 transition">
-                          <a href="{{ url_for('web_app.property_listings_view', listing_id = listing[0])}}"
+                          <a href="{{ url_for('web_app.property_listings_view', listing_id = listing[0], faved=listing[0] in favs)}}"
                               class="text-white text-lg w-9 h-8 rounded-full bg-indigo-700 flex items-center justify-center hover:bg-gray-800 transition"
                               title="view listing">
                               <i class="fa-solid fa-magnifying-glass"></i>
@@ -75,7 +61,7 @@
                         <p class="text-xl text-indigo-700 font-semibold">$ {{ listing[5] }}</p>
                       </div>
                   </div>
-                  <a href="{{ url_for('web_app.update_wishlist', listing_id = listing[0], page='property_listing')}}"
+                  <a href="{{ url_for('web_app.property_listings_view', listing_id = listing[0], faved=listing[0] in favs)}}"
                       class="block w-full py-1 text-center text-white bg-indigo-700 border border-indigo-700 rounded-b hover:bg-transparent hover:text-indigo-700 transition">
                       View Listing</a>
               </div>
@@ -121,15 +107,15 @@
                 <img src="/static/${filename=listing[4]}" alt="${ listing[1] }" class="w-full aspect-square object-cover">
                       <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center 
                       justify-center gap-2 opacity-0 group-hover:opacity-100 transition">
-                          <a href="/property-listings/view?listing_id=${listing[0]}"
+                          <a href="/property-listings/view?listing_id=${listing[0]}&faved=${isFav}"
                               class="text-white text-lg w-9 h-8 rounded-full bg-indigo-700 flex items-center justify-center hover:bg-gray-800 transition"
                               title="view listing">
                               <i class="fa-solid fa-magnifying-glass"></i>
                           </a>`;
 
-            if (role == 3){
+            if (role == 3){ // If Buyer
               listingHtml += `
-              <a href="${ url_for('web_app.update_wishlist', listing_id = listing[0], page='property_listing')}"
+              <a href="/update_wishlist?listing_id=${listing[0]}&page='property_listing'"
                               class="text-white text-lg w-9 h-8 rounded-full bg-indigo-700 flex items-center justify-center hover:bg-gray-800 transition"
                               title="add to wishlist">
                               <i class="fa-solid ${isFav ? 'fa-heart-broken' : 'fa-heart'}"></i>
@@ -146,13 +132,13 @@
                           <p class="text-xl text-indigo-700 font-semibold">$ ${ listing[5] }</p>
                       </div>
                   </div>
-                  <a href="/property-listings/view?listing_id=${listing[0]}"
+                  <a href="/property-listings/view?listing_id=${listing[0]}&faved=${isFav}"
                       class="block w-full py-1 text-center text-white bg-indigo-700 border border-indigo-700 rounded-b hover:bg-transparent hover:text-indigo-700 transition">
                       View Listing</a>
               </div>
               `;
 
-            } else{
+            } else { // If not Buyer
               listingHtml += `
                       </div>
                   </div>

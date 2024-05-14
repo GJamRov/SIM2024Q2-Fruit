@@ -1,54 +1,20 @@
 {% extends 'base.html' %}
 
-{% block title %}Update property listing{% endblock title %}
+{% block title %}Create property listing{% endblock title %}
 
 {% block content %}
-<!-- <div class="main">
-    <a
-      href="{{url_for('web_app.user_profiles_index')}}"
-      class="bg-slate-600 text-sm text-white py-2 px-3 rounded"
-      >Back</a
-    >
-    <h3 class="text-xl font-bold underline mt-4">Update User Profile</h3>
-    <form action="">
-      <label for="first"> User profile: </label>
-      <input
-        type="text"
-        id="first"
-        name="first"
-        class="w-full md:w-[50%] xl:w-[30%]"
-        placeholder="Enter new user profile"
-        required
-      />
-
-      <label for="profile_desc"> User profile description: </label>
-      <textarea
-        id="profile_desc"
-        name="profile_desc"
-        rows="4"
-        cols="50"
-        class="border p-2"
-      ></textarea>
-
-      <div class="wrap">
-        <button type="submit" id="submit-button">
-          Update user profile
-        </button>
-      </div>
-    </form>
-  </div> -->
 
   <div class="main">
     <a
-      href="{{url_for('web_app.property_listings_index')}}"
+      href="{{url_for('web_app.my_profile_index')}}"
       class="bg-slate-600 text-sm text-white py-2 px-3 rounded"
       >Back</a
     >
     <h3 class="text-xl font-bold underline mt-4">Update Property Listing</h3>
     <form action="/upload" method="POST" enctype="multipart/form-data">
       <label for="image-preview"> Upload photo of property: </label>
+      <input id="upload" type="file" class="hidden" accept="image/*" name="image" required/>
       <div id="image-preview" class="max-w-sm p-6 mb-4 bg-gray-100 border-dashed border-2 border-gray-400 rounded-lg items-center mx-1 text-center cursor-pointer">
-          <input id="upload" type="file" class="hidden" accept="image/*" name="image" required/>
           <label for="upload" class="cursor-pointer">
               <h5 class="mb-2 text-xl font-bold tracking-tight text-gray-700">Upload picture</h5>
               <p class="font-normal text-sm text-gray-400 md:px-6">Choose photo size should be less than <b class="text-gray-600">2mb</b></p>
@@ -56,24 +22,26 @@
               <span id="filename" class="text-gray-500 bg-gray-200 z-50"></span>
           </label>
       </div>
+
       <label for="first"> Name: </label>
-      <input type="text" id="first" name="name" class="w-full md:w-[50%] xl:w-[30%]" value="<from db>" placeholder="Enter property name" required/>
+      <input type="text" id="first" name="name" class="w-full md:w-[50%] xl:w-[30%]" placeholder="Enter property name" required/>
       <label for="location"> Location: </label>
-      <input type="text" id="location" name="location" class="w-full md:w-[50%] xl:w-[30%]" value="<from db>" placeholder="Enter property location" required/>
+      <input type="text" id="location" name="location" class="w-full md:w-[50%] xl:w-[30%]" placeholder="Enter property location" required/>
       <label for="price"> Price: </label>
-      <input type="text" id="price" name="price" class="w-full md:w-[50%] xl:w-[30%]" value="<from db>" placeholder="Enter price of property" required/>
-        <label for="description">Description: </label>
-        <textarea
-          id="description"
-          name="description"
-          rows="4"
-          cols="50"
-          class="border p-2"
-        >from db</textarea>
-        <label for="seller"> Seller: </label>
-        <input type="text" id="seller" name="seller" class="w-full md:w-[50%] xl:w-[30%]" value="from db" placeholder="Enter name of Seller" required/>
-        
-        <div class="wrap">
+      <input type="text" id="price" name="price" class="w-full md:w-[50%] xl:w-[30%]" placeholder="Enter price of property" required/>
+      <label for="description">Description: </label>
+      <textarea
+        id="description"
+        name="description"
+        rows="4"
+        cols="50"
+        class="border p-2"
+        placeholder="Enter description of property"
+      ></textarea>
+      <label for="seller"> Seller: </label>
+      <input type="text" id="seller" name="seller" class="w-full md:w-[50%] xl:w-[30%]" placeholder="Enter name of Seller" required/>
+      
+      <div class="wrap">
           <button type="submit" id="submit-button">Update Property Listing</button>
       </div>
     </form>
