@@ -76,6 +76,7 @@ class WebApp:
         self.blueprint.add_url_rule('/property-listings/create', 'property_listings_create', self.property_listings_create, methods=['GET', 'POST'])
         self.blueprint.add_url_rule('/property-listings/update', 'property_listings_update', self.property_listings_update)
         self.blueprint.add_url_rule('/upload', 'upload_file', self.upload_file, methods=['GET', 'POST'])
+        self.blueprint.add_url_rule('/add_to_wishlist/<int:listing_id>', view_func=self.add_to_wishlist, methods=['POST'])
 
         # my profile
         self.blueprint.add_url_rule('/my-profile/', 'my_profile_index', self.my_profile_index)
@@ -390,6 +391,7 @@ class WebApp:
         viewPLCtl = viewPLController()
         listing_id = request.args.get("listing_id")
         listing = viewPLCtl.viewListing(session['username'], listing_id)
+        print(listing, "LISTING HERE")
         if listing:
             return render_template("pages/property-listings/view.html", listing=listing)
         else:
@@ -402,12 +404,7 @@ class WebApp:
             return render_template("pages/property-listings/create.html")
         else:
             flash('You do not have permission to create a property listing!', 'error')
-            return redirect("/")
-
-    def property_listings_update(self):
-        """Update a property listing"""
-        return render_template("pages/property-listings/update.html")
-        
+            return redirect("/")     
     
     def upload_file(self):
         """Handles the form submission for property_listings_create"""
@@ -433,24 +430,45 @@ class WebApp:
                 flash('Property listing created unsuccssfully.', 'error')
                 return redirect("pages/property-listings/create.html")
         return redirect('/property-listings/create')
+    
+    def add_to_wishlist(self, listing_id):
+        data = request.json
+        print(data)
+        response_data = {'message': 'Property added to wishlist successfully'}
+        return jsonify(response_data), 200  # Return a JSON response with a success status code
 
+    def property_listings_update(self):
+        """Update a property listing"""
+        return render_template("pages/property-listings/update.html")
+    
+    def property_listings_delete(self):
+        """Delete a property listing"""
+
+        return redirect(url_for("web_app.my_profile_index"))
 
     # my profile
     def my_profile_index(self):
-        """My profile page"""
-        return render_template("pages/my-profile/index.html")
+        """Main Page for Individual User Profile"""
+        # Checks that the user is an REA, buyer or seller
+        while session['role'] in [2,3,4]:
+            # sort_option = request.args.get('sort')
+            viewPLCtl = viewPLController()
+            properties = viewPLCtl.viewListing(session['username'], propertyDetail="profile")
+            # print(properties, "RIGHT HERE")
+            return render_template("pages/my-profile/index.html", propertyListings = properties)
+            
+        return redirect("/")
 
     def my_profile_view(self):
         """View one of my listing"""
-        return render_template("pages/my-profile/view.html")
-        # viewPLCtl = viewPLController()
-        # listing_id = request.args.get("listing_id")
-        # listing = viewPLCtl.viewListing(session['username'], listing_id)
-        # if listing:
-        #     return render_template("pages/my-profile/view.html", listing=listing)
-        # else:
-        #     flash('Listing not found', 'error')
-        #     return redirect(url_for('web_app.my_profile_index'))
+        viewPLCtl = viewPLController()
+        listing_id = request.args.get("listing_id")
+        listing = viewPLCtl.viewListing(session['username'], listing_id)
+        if listing:
+            return render_template("pages/my-profile/view.html", listing=listing)
+        else:
+            flash('Listing not found', 'error')
+            return redirect(url_for('web_app.my_profile_index'))
 
 
     # reviews

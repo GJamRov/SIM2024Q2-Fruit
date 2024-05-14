@@ -59,7 +59,7 @@ class User:
     def login(entered_username, entered_password) -> int:
         """Authenticates user to log them in"""
         user_data = User.db.search_one("User", f"username = '{entered_username}'")
-        
+        print(User.db.view_table("Profile"))
         if user_data:
             self = User(*user_data)
             if entered_username == self.username and entered_password == self.password and self.active == 1:

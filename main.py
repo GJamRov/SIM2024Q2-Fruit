@@ -335,7 +335,7 @@ if __name__ == "__main__":
             img_name = p_img_dict[house_choice]
             price = random.randint(50000, 1000000)
             rea_id = random.choice(user_dict[2])
-            seller_id = random.choice(user_dict[3])
+            seller_id = random.choice(user_dict[4])
             sold_buyer = -1
             view_count = random.randint(1, 9999)
             wishlisted = random.randint(1, 9999)
@@ -360,12 +360,13 @@ if __name__ == "__main__":
                             "active INTEGER"] 
         sample_db.create_table("Profile", profile_col)
         sample_db.insert_into_table("Profile", f"1, 'System Admin', 'FruitRealEstate system admin', 1")
+        # sample_db.insert_into_table("Profile", f"2, 'Real Estate Agent', 'FruitRealEstate system admin', 1")
 
     ## When database is already populated
     db =  database.Database("SampleDatabase")
     # print(db.search_one("User", "username = 'admin'"))
     # print("Database Initliaised!")
-    # print(db.view_table("User"))
+    #print(db.view_table("User"))
     # db.view_table("Property")
     #print(randomReview)
     #print(len(randomReview))
@@ -373,11 +374,19 @@ if __name__ == "__main__":
     
 
     # db.view_table("Profile")
-    db.view_table("Review")
-    db.view_table("Rating")
+    # db.view_table("Review")
+    # db.view_table("Rating")
     # db.search_by_keyword("Review", 'user191', ["userName"])
     # db.connection.close()
-
+    # test_p = []
+    # for property in db.view_table("Property"):
+    #     test_p.append(property[6])
+    # test_rea = []
+    # for seller in test_p:
+    #     t_seller = db.search_by_keyword("User", seller, ["id"])[0]
+    #     test_rea.append(t_seller)
+    # print(test_p)
+    # print("SELLER FOR TEST", test_rea)
     # print(os.path.dirname(os.path.abspath(__file__)))
 
     # Initialise Web App

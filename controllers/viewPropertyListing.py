@@ -13,6 +13,7 @@ class viewPLController:
         # Check if userName belongs to an existing user
         if found_user:
             role = found_user[4]
+            print(role)
             found_user = found_user[:4] + found_user[5:]
             properties = []
             
