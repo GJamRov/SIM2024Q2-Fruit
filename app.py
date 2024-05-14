@@ -452,6 +452,7 @@ class WebApp:
         listing_id = request.args.get("listing_id")
         uF = updateFavouritesController()
         if uF.updateFavouritesTable(session['username'], listing_id):
+            print(request.args.get("page"))
             if request.args.get("page") == "property_listing":
                 return redirect(url_for('web_app.property_listings_index'))
             else:
