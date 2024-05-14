@@ -17,8 +17,7 @@ from controllers.reactivateProfile import reactivateUserProfileController
 from controllers.viewPropertyListing import viewPLController
 from controllers.createPropertyListing import createPLController
 from controllers.wishlistView import viewFavouritesController
-from controllers.wishlistAdd import addToFavouritesController
-from controllers.wishlistRemove import removeFromFavouritesController
+from controllers.wishlistUpdate import updateFavouritesController
 
 # Entity Import
 from entity.user import User
@@ -79,8 +78,7 @@ class WebApp:
         self.blueprint.add_url_rule('/property-listings/create', 'property_listings_create', self.property_listings_create, methods=['GET', 'POST'])
         self.blueprint.add_url_rule('/property-listings/update', 'property_listings_update', self.property_listings_update)
         self.blueprint.add_url_rule('/upload', 'upload_file', self.upload_file, methods=['GET', 'POST'])
-        self.blueprint.add_url_rule('/add_to_wishlist/<int:listing_id>', view_func=self.add_to_wishlist, methods=['POST'])
-        self.blueprint.add_url_rule('/remove_from_wishlist/<int:listing_id>', view_func=self.remove_from_wishlist, methods=['POST'])
+        self.blueprint.add_url_rule('/update_wishlist', view_func=self.update_wishlist, methods=['GET', 'POST'])
 
         # my profile
         self.blueprint.add_url_rule('/my-profile/', 'my_profile_index', self.my_profile_index)
@@ -377,8 +375,8 @@ class WebApp:
             viewFavCtl = viewFavouritesController()
             favourites = viewFavCtl.viewFavourites(session['username'])
             favs = []
-            for f_p in favourites:
-                favs.append(f_p[2])
+            for i in favourites:
+                favs.append(i[0])
             #print(properties, "RIGHT HERE")
             if properties:
                 # print(properties)
@@ -403,7 +401,7 @@ class WebApp:
         viewPLCtl = viewPLController()
         listing_id = request.args.get("listing_id")
         listing = viewPLCtl.viewListing(session['username'], listing_id)
-        print(listing, "LISTING HERE")
+        # print(listing, "LISTING HERE")
         if listing:
             return render_template("pages/property-listings/view.html", listing=listing)
         else:
@@ -443,27 +441,19 @@ class WebApp:
                 return redirect("pages/property-listings/create.html")
         return redirect('/property-listings/create')
     
-    def add_to_wishlist(self, listing_id):
-        """Adds a specific property listing to the user's wishlist"""
-        data = request.json
-        print(data)
-        atf = addToFavouritesController()
-        if atf.addToFavourites(session["username"], listing_id):
-            response_data = {'message': 'Property added to wishlist successfully'}
-            return jsonify(response_data), 200  # Success 
+    def update_wishlist(self):
+        """ Updates user's wishlist to add or remove listing_id"""
+        listing_id = request.args.get("listing_id")
+        uF = updateFavouritesController()
+        if uF.updateFavouritesTable(session['username'], listing_id):
+            if request.args.get("page") == "property_listing":
+                return redirect(url_for('web_app.property_listings_index'))
+            else:
+                return redirect(url_for('web_app.wishlists_index'))
         else:
-            response_data = {'error': 'Failed to add property to wishlist'}
-            return jsonify(response_data), 400  # Bad Request
-    
-    def remove_from_wishlist(self, listing_id):
-        data = request.json
-        rtf = removeFromFavouritesController()
-        if rtf.removeFromFavourites(session['username'], listing_id):
-            response_data = {'message': 'Property removed from wishlist successfully'}
-            return jsonify(response_data), 200
-        else:
-            response_data = {'error': 'Failed to add property to wishlist'}
-            return jsonify(response_data), 400  # Bad Request
+            flash("Failed to update wishlist.", "error")
+            return redirect(url_for('web_app.property_listings_index'))
+
 
     def property_listings_update(self):
         """Update a property listing"""
@@ -492,6 +482,7 @@ class WebApp:
         viewPLCtl = viewPLController()
         listing_id = request.args.get("listing_id")
         listing = viewPLCtl.viewListing(session['username'], listing_id)
+        print("PROFILE LISTING:", listing)
         if listing:
             return render_template("pages/my-profile/view.html", listing=listing)
         else:
@@ -504,10 +495,23 @@ class WebApp:
         """reviews page"""
         return render_template("pages/reviews/index.html")
 
-    # wishlists
+    # Wishlist
     def wishlists_index(self):
         """wishlists page"""
-        return render_template("pages/wishlists/index.html")
+        while session['role'] > 1 and session['role'] < 5:
+            sort_option = request.args.get('sort')
+            viewFavCtl = viewFavouritesController()
+            favourites = viewFavCtl.viewFavourites(session['username'])
+            favs = []
+            for i in favourites:
+                favs.append(i[0])
+            print(favourites, "RIGHT HERE")
+            if favourites:
+                # print(properties)
+                return render_template("pages/wishlists/index.html", propertyListings = favourites, favs= favs, role=session['role'])
+            else:
+                return redirect(url_for("my_profile_index"))
+        
 
     # my reviews given - for buyers and sellers
     def my_reviews_index(self):

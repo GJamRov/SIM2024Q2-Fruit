@@ -70,3 +70,10 @@ class Database:
         highest_id = self.cursor.fetchone()[0]
         return highest_id if highest_id is not None else 0
     
+    def join_prop_fav(self, user_id):
+        """Join the properties and favorites tables to get the properties that the user has favorited"""
+        query = 'SELECT property.* FROM Property INNER JOIN Favourite ON property.id = favourite.property_id WHERE favourite.user_id = ?'
+        self.cursor.execute(query, (user_id,))
+        result = self.cursor.fetchall()
+        return result if result is not None else 0
+    

@@ -121,11 +121,6 @@
                               title="view listing">
                               <i class="fa-solid fa-magnifying-glass"></i>
                           </a>
-                          <a href="#"
-                              class="text-white text-lg w-9 h-8 rounded-full bg-indigo-700 flex items-center justify-center hover:bg-gray-800 transition"
-                              title="add to wishlist">
-                              <i class="fa-solid fa-heart"></i>
-                          </a>
                       </div>
                   </div>
                   <div class="pt-4 pb-3 px-4">
@@ -137,12 +132,8 @@
                     <div class="flex items-baseline mb-1">
                           <p class="text-xl text-indigo-700 font-semibold">$ {{ listing[5] }}</p>
                           <span class="text-sm text-gray-400 ml-auto px-2">{{listing[9]}}
-                            <!-- change condition below to if wishlisted, change number above to total number wishlisted -->
-                            {% if true %} 
-                            <i class="fa-solid fa-heart text-red-500"></i>
-                            {% else %}
-                            <i class="fa-solid fa-heart"></i>
-                            {% endif %}
+                            <!-- change condition below to if wishlisted, change number above to total number views -->
+                            <i class="fa-solid fa-eye"></i>
                         </span>
                         <span class="text-sm text-gray-400 ml-auto px-2">{{listing[10]}}
                             <!-- change condition below to if wishlisted, change number above to total number wishlisted -->
@@ -154,7 +145,7 @@
                         </span>
                       </div>
                   </div>
-                  <a href="{{ url_for('web_app.my_profile_view') }}"
+                  <a href="{{ url_for('web_app.my_profile_view', listing_id = listing[0]) }}"
                       class="block w-full py-1 text-center text-white bg-indigo-700 border border-indigo-700 rounded-b hover:bg-transparent hover:text-indigo-700 transition">
                       View Listing</a>
             </div>

@@ -39,3 +39,7 @@ class viewPLController:
         
         else:
             return []
+        
+    def getOneListing(self, p_id):
+        prop = User.db.search_one("Property", f"id = {p_id}")
+        return prop

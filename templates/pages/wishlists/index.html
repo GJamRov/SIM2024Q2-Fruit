@@ -1,14 +1,10 @@
 {% extends 'base.html' %}
 
-{% block title %}My Wishlist{% endblock title %}
+{% block title %}Property listings{% endblock title %}
 
 {% block content %}
-    <a
-        href="{{url_for('web_app.my_profile_index')}}"
-        class="bg-slate-600 text-sm text-white py-2 px-3 rounded">
-        Back
-    </a>
-    <h3 class="text-3xl font-bold underline mt-4">My Wishlist</h3>
+<!-- index.html -->
+    <h3 class="text-3xl font-bold underline">My Wishlists</h3>
         <div class="flex flex-row">
           <form class="mt-4" role="search-role" id="form">
             <input
@@ -20,25 +16,19 @@
               aria-label="Search through content of the site"
             />
           </form>
-          <!-- <a
-          href="{{ url_for('web_app.property_listings_create') }}"
-            class="flex self-center ml-auto mx-4 bg-transparent hover:bg-indigo-900 text-indigo-700 font-semibold hover:text-white py-2 px-4 border border-indigo-500 hover:border-transparent rounded"
-          >
-            Create My Wishlist +
-          </a> -->
+          
         </div>
 
 
 
         <div class="col-span-3">
           <div class="flex items-center mb-4">
-              <select name="sort" id="sort"
+                <select name="sort" id="sort" onchange=""
                   class="w-44 text-sm text-gray-600 py-3 px-4 border-gray-300 shadow-sm rounded focus:ring-indigo-700 focus:border-indigo-700">
-                  <option value="">Default sorting</option>
-                  <option value="price-low-to-high">Price low to high</option>
-                  <option value="price-high-to-low">Price high to low</option>
-                  <option value="latest">Latest product</option>
-              </select>
+                    <option value="">Default sorting</option>
+                    <option value="asc">Price low to high</option>
+                    <option value="desc">Price high to low</option>
+                </select>
 
               <!-- <div class="flex gap-2 ml-auto">
                   <div
@@ -51,120 +41,168 @@
                   </div>
               </div> -->
           </div>
-
-          <div class="grid lg:grid-cols-5 md:grid-cols-3 grid-cols-2 gap-6">
-              <div class="bg-white shadow rounded overflow-hidden group">
+          
+          
+          <div id= "propertyListingsContainer" class="grid lg:grid-cols-5 md:grid-cols-3 grid-cols-2 gap-6">
+              {% for listing in propertyListings %}
+              <div id = "listing-{{listing[0]}}" class="bg-white shadow rounded overflow-hidden group">
                   <div class="relative">
-                      <img src="{{ url_for('static', filename='house4.jpeg') }}" alt="product 1" class="w-full aspect-square object-cover">
+                      <!-- Listing Image Directory -->
+                      <img src="{{ url_for('static', filename=listing[4]) }}" alt="{{ listing[1] }}" class="w-full aspect-square object-cover">
                       <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center 
                       justify-center gap-2 opacity-0 group-hover:opacity-100 transition">
-                          <a href="{{ url_for('web_app.property_listings_view') }}"
+                          <a href="{{ url_for('web_app.property_listings_view', listing_id = listing[0])}}"
                               class="text-white text-lg w-9 h-8 rounded-full bg-indigo-700 flex items-center justify-center hover:bg-gray-800 transition"
                               title="view listing">
                               <i class="fa-solid fa-magnifying-glass"></i>
                           </a>
-                          <a href="#"
+                          {% if role == 3 %} 
+                          <a href="{{ url_for('web_app.update_wishlist', listing_id = listing[0], page='wishlist')}}"
                               class="text-white text-lg w-9 h-8 rounded-full bg-indigo-700 flex items-center justify-center hover:bg-gray-800 transition"
                               title="add to wishlist">
-                              <i class="fa-solid fa-heart"></i>
+                              <i class="fa-solid {{'fa-heart-broken' if listing[0] in favs else 'fa-heart'}}"></i>
                           </a>
+                          {% endif %}
                       </div>
                   </div>
                   <div class="pt-4 pb-3 px-4">
+                      <!-- Listing Name -->
                       <a href="#">
-                          <h4 class="uppercase font-medium text-xl mb-2 text-gray-800 hover:text-indigo-700 transition">
-                              Studio apartment</h4>
+                          <h4 class="min-h-24 uppercase font-medium text-xl mb-2 text-gray-800 hover:text-indigo-700 transition">{{ listing[1] }}</h4>
                       </a>
-                      <div class="flex items-baseline mb-1 space-x-2">
-                          <p class="text-xl text-indigo-700 font-semibold">$545,000</p>
-                          <!-- <p class="text-sm text-gray-400 line-through">$55.90</p> -->
+                      <div class="flex items-baseline mb-1">
+                        <!-- Listing Price -->
+                        <p class="text-xl text-indigo-700 font-semibold">$ {{ listing[5] }}</p>
                       </div>
-                      <!-- <div class="flex items-center">
-                          <div class="flex gap-1 text-sm text-yellow-400">
-                              <span><i class="fa-solid fa-star"></i></span>
-                              <span><i class="fa-solid fa-star"></i></span>
-                              <span><i class="fa-solid fa-star"></i></span>
-                              <span><i class="fa-solid fa-star"></i></span>
-                              <span><i class="fa-solid fa-star"></i></span>
-                          </div>
-                          <div class="text-xs text-gray-500 ml-3">(150)</div>
-                      </div> -->
                   </div>
-                  <a href="{{ url_for('web_app.property_listings_view') }}"
+                  <a href="{{ url_for('web_app.property_listings_view', listing_id = listing[0])}}"
                       class="block w-full py-1 text-center text-white bg-indigo-700 border border-indigo-700 rounded-b hover:bg-transparent hover:text-indigo-700 transition">
                       View Listing</a>
               </div>
-
-              
-
-              
-
-              <div class="bg-white shadow rounded overflow-hidden group">
-                  <div class="relative">
-                    <img src="{{ url_for('static', filename='house5.jpeg') }}" alt="product 1" class="w-full aspect-square object-cover">
-                      <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center 
-                      justify-center gap-2 opacity-0 group-hover:opacity-100 transition">
-                          <a href="#"
-                              class="text-white text-lg w-9 h-8 rounded-full bg-indigo-700 flex items-center justify-center hover:bg-gray-800 transition"
-                              title="view listing">
-                              <i class="fa-solid fa-magnifying-glass"></i>
-                          </a>
-                          <a href="#"
-                              class="text-white text-lg w-9 h-8 rounded-full bg-indigo-700 flex items-center justify-center hover:bg-gray-800 transition"
-                              title="add to wishlist">
-                              <i class="fa-solid fa-heart"></i>
-                          </a>
-                      </div>
-                  </div>
-                  <div class="pt-4 pb-3 px-4">
-                      <a href="#">
-                          <h4 class="uppercase font-medium text-xl mb-2 text-gray-800 hover:text-indigo-700 transition">
-                              5BR HDB</h4>
-                      </a>
-                      <div class="flex items-baseline mb-1 space-x-2">
-                        <p class="text-xl text-indigo-700 font-semibold">$45.00</p>
-                    </div>
-                  </div>
-                  <a href="{{ url_for('web_app.property_listings_view') }}"
-                      class="block w-full py-1 text-center text-white bg-indigo-700 border border-indigo-700 rounded-b hover:bg-transparent hover:text-indigo-700 transition">
-                      View Listing</a>
-              </div>
-
-              <div class="bg-white shadow rounded overflow-hidden group">
-                  <div class="relative">
-                    <img src="{{ url_for('static', filename='house6.jpeg') }}" alt="product 1" class="w-full aspect-square object-cover">
-                      <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center 
-                      justify-center gap-2 opacity-0 group-hover:opacity-100 transition">
-                          <a href="#"
-                              class="text-white text-lg w-9 h-8 rounded-full bg-indigo-700 flex items-center justify-center hover:bg-gray-800 transition"
-                              title="view listing">
-                              <i class="fa-solid fa-magnifying-glass"></i>
-                          </a>
-                          <a href="#"
-                              class="text-white text-lg w-9 h-8 rounded-full bg-indigo-700 flex items-center justify-center hover:bg-gray-800 transition"
-                              title="add to wishlist">
-                              <i class="fa-solid fa-heart"></i>
-                          </a>
-                      </div>
-                  </div>
-                  <div class="pt-4 pb-3 px-4">
-                      <a href="#">
-                          <h4 class="uppercase font-medium text-xl mb-2 text-gray-800 hover:text-indigo-700 transition">
-                              3BR HDB</h4>
-                      </a>
-                      <div class="flex items-baseline mb-1 space-x-2">
-                        <p class="text-xl text-indigo-700 font-semibold">$45.00</p>
-                    </div>
-                  </div>
-                  <a href="{{ url_for('web_app.property_listings_view') }}"
-                      class="block w-full py-1 text-center text-white bg-indigo-700 border border-indigo-700 rounded-b hover:bg-transparent hover:text-indigo-700 transition">
-                      View Listing</a>
-              </div>
-
-
-
+              {% endfor %}
           </div>
       </div>
 
         
 {% endblock content %}
+
+{% block script %}
+<script>
+    var favs = {{ favs|tojson }};
+    console.log(favs);
+    var role = {{ role|tojson }};
+
+    // Function to sort listings after sort option has been selected
+    function sortListings() {
+        var sortOption = document.getElementById('sort').value;
+
+        // Send AJAX request to update listings based on sort option
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', '/property-listings/sort?sort=' + sortOption, true);
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                var listingsData = JSON.parse(xhr.responseText);
+                updateListings(listingsData);
+            }
+        };
+        xhr.send();
+    }
+
+    function updateListings(listingsData) {
+        var listingsContainer = document.getElementById('propertyListingsContainer');
+        listingsContainer.innerHTML = ''; // Clear existing listings
+
+        listingsData.forEach(function(listing) {
+            var isFav = favs.includes(listing[0]);
+            var listingHtml = `
+            <div class="bg-white shadow rounded overflow-hidden group">
+              <div class="relative">
+                <!-- Listing Image Directory -->
+                <img src="/static/${filename=listing[4]}" alt="${ listing[1] }" class="w-full aspect-square object-cover">
+                      <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center 
+                      justify-center gap-2 opacity-0 group-hover:opacity-100 transition">
+                          <a href="/property-listings/view?listing_id=${listing[0]}"
+                              class="text-white text-lg w-9 h-8 rounded-full bg-indigo-700 flex items-center justify-center hover:bg-gray-800 transition"
+                              title="view listing">
+                              <i class="fa-solid fa-magnifying-glass"></i>
+                          </a>`;
+
+            if (role == 3){
+              listingHtml += `
+              <a href="${ url_for('web_app.update_wishlist', listing_id = listing[0], page='wishlist')}"
+                              class="text-white text-lg w-9 h-8 rounded-full bg-indigo-700 flex items-center justify-center hover:bg-gray-800 transition"
+                              title="add to wishlist">
+                              <i class="fa-solid ${isFav ? 'fa-heart-broken' : 'fa-heart'}"></i>
+                          </a>
+                      </div>
+                  </div>
+                  <div class="pt-4 pb-3 px-4">
+                      <!-- Listing Name -->
+                      <a href="#">
+                          <h4 class="min-h-24 uppercase font-medium text-xl mb-2 text-gray-800 hover:text-indigo-700 transition">${ listing[1] }</h4>
+                      </a>
+                      <div class="flex items-baseline mb-1">
+                        <!-- Listing Price -->
+                          <p class="text-xl text-indigo-700 font-semibold">$ ${ listing[5] }</p>
+                      </div>
+                  </div>
+                  <a href="/property-listings/view?listing_id=${listing[0]}"
+                      class="block w-full py-1 text-center text-white bg-indigo-700 border border-indigo-700 rounded-b hover:bg-transparent hover:text-indigo-700 transition">
+                      View Listing</a>
+              </div>
+              `;
+
+            } else{
+              listingHtml += `
+                      </div>
+                  </div>
+                  <div class="pt-4 pb-3 px-4">
+                      <!-- Listing Name -->
+                      <a href="#">
+                          <h4 class="min-h-24 uppercase font-medium text-xl mb-2 text-gray-800 hover:text-indigo-700 transition">${ listing[1] }</h4>
+                      </a>
+                      <div class="flex items-baseline mb-1">
+                        <!-- Listing Price -->
+                          <p class="text-xl text-indigo-700 font-semibold">$ ${ listing[5] }</p>
+                      </div>
+                  </div>
+                  <a href="/property-listings/view?listing_id=${listing[0]}"
+                      class="block w-full py-1 text-center text-white bg-indigo-700 border border-indigo-700 rounded-b hover:bg-transparent hover:text-indigo-700 transition">
+                      View Listing</a>
+              </div>
+              `;
+
+            }
+            listingsContainer.innerHTML += listingHtml;
+        });
+    }
+
+    // Attach event listener to input field
+    document.getElementById('sort').addEventListener('change', sortListings);
+
+  function searchListings() {
+    // Declare variables
+    var input, filter, cards, cardTitle, i, txtValue;
+    input = document.getElementById('query-details');
+    filter = input.value.toUpperCase();
+    cards = document.querySelectorAll('.grid .bg-white');
+
+    // Loop through all cards, and hide those that don't match the search query
+    cards.forEach(function(card) {
+      cardTitle = card.querySelector('.uppercase');
+      if (cardTitle) {
+        txtValue = cardTitle.textContent || cardTitle.innerText;
+        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+          card.style.display = '';
+        } else {
+          card.style.display = 'none';
+        }
+      }
+    });
+  }
+
+  // Attach event listener to input field
+  document.getElementById('query-details').addEventListener('input', searchListings);
+
+</script>
+{% endblock script %}

@@ -42,7 +42,7 @@ class Buyer(User):
     # 30. View propety listings in favourite list
     def view_favourites(self):
         """ Returns buyer's wishlisted properties """
-        buyer_fav = Buyer.db.search_by_keyword("Favourite", self.get_id(), ["user_id"])
+        buyer_fav = Buyer.db.join_prop_fav(self.get_id())
         return list(buyer_fav)
 
     # 31. Save property listings to favourite list

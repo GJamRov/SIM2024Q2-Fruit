@@ -16,14 +16,7 @@
               aria-label="Search through content of the site"
             />
           </form>
-          <!-- Transfer to my Profile-->
-          <!-- <a
-          href="{{ url_for('web_app.property_listings_create') }}"
-            class="flex self-center ml-auto mx-4 bg-transparent hover:bg-indigo-900 text-indigo-700 font-semibold hover:text-white py-2 px-4 border border-indigo-500 hover:border-transparent rounded"
-          >
-            Create Property Listings +
-          </a>
-          -->
+          
         </div>
 
 
@@ -52,7 +45,7 @@
           
           <div id= "propertyListingsContainer" class="grid lg:grid-cols-5 md:grid-cols-3 grid-cols-2 gap-6">
               {% for listing in propertyListings %}
-              <div class="bg-white shadow rounded overflow-hidden group">
+              <div id = "listing-{{listing[0]}}" class="bg-white shadow rounded overflow-hidden group">
                   <div class="relative">
                       <!-- Listing Image Directory -->
                       <img src="{{ url_for('static', filename=listing[4]) }}" alt="{{ listing[1] }}" class="w-full aspect-square object-cover">
@@ -64,7 +57,7 @@
                               <i class="fa-solid fa-magnifying-glass"></i>
                           </a>
                           {% if role == 3 %} 
-                          <a href="#" onclick="toggleWishlist(event, '{{ listing[0] }}')"
+                          <a href="{{ url_for('web_app.update_wishlist', listing_id = listing[0])}}"
                               class="text-white text-lg w-9 h-8 rounded-full bg-indigo-700 flex items-center justify-center hover:bg-gray-800 transition"
                               title="add to wishlist">
                               <i class="fa-solid {{'fa-heart-broken' if listing[0] in favs else 'fa-heart'}}"></i>
@@ -82,7 +75,7 @@
                         <p class="text-xl text-indigo-700 font-semibold">$ {{ listing[5] }}</p>
                       </div>
                   </div>
-                  <a href="{{ url_for('web_app.property_listings_view', listing_id = listing[0])}}"
+                  <a href="{{ url_for('web_app.update_wishlist', listing_id = listing[0], page='property_listing')}}"
                       class="block w-full py-1 text-center text-white bg-indigo-700 border border-indigo-700 rounded-b hover:bg-transparent hover:text-indigo-700 transition">
                       View Listing</a>
               </div>
@@ -96,7 +89,7 @@
 {% block script %}
 <script>
     var favs = {{ favs|tojson }};
-    console.log(favs)
+    console.log(favs);
     var role = {{ role|tojson }};
 
     // Function to sort listings after sort option has been selected
@@ -136,7 +129,7 @@
 
             if (role == 3){
               listingHtml += `
-              <a href="#" onclick="toggleWishlist(event, '${listing[0]}')" 
+              <a href="${ url_for('web_app.update_wishlist', listing_id = listing[0], page='property_listing')}"
                               class="text-white text-lg w-9 h-8 rounded-full bg-indigo-700 flex items-center justify-center hover:bg-gray-800 transition"
                               title="add to wishlist">
                               <i class="fa-solid ${isFav ? 'fa-heart-broken' : 'fa-heart'}"></i>
@@ -211,38 +204,5 @@
   // Attach event listener to input field
   document.getElementById('query-details').addEventListener('input', searchListings);
 
-  function toggleWishlist(event, listingId) {
-    event.preventDefault();
-
-    var isFav = favs.includes(listingId);
-    var url = isFav ? `/add_to_wishlist/${listingId}` : `/remove_from_wishlist/${listingId}`;
-    var method = isFav ? 'DELETE' : 'POST';
-    console.log(url)
-
-    fetch(url, {
-        method: method,
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ listing_id: listingId })
-    })
-    .then(response => {
-        if (response.ok) {
-            if (isFav) {
-                favs = favs.filter(id => id !== listingId);
-            } else {
-                favs.push(listingId);
-            }
-            // Update the specific listing's favorite icon directly
-            var favIcon = document.querySelector(`[onclick="toggleWishlist(event, '${listingId}')"]`);
-            favIcon.innerHTML = `<i class="fa-solid ${isFav ? 'fa-heart-broken' : 'fa-heart'}"></i>`;
-        } else {
-            console.error('Error updating wishlist');
-        }
-    })
-    .catch(error => {
-        console.error('Network error:', error);
-    });
-  }
 </script>
 {% endblock script %}

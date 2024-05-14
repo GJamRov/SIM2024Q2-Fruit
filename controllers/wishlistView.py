@@ -17,7 +17,7 @@ class viewFavouritesController:
             if role == 3: # Buyer has favourites
                 t_Buyer = Buyer(*found_user)
                 favs = t_Buyer.view_favourites()
-                print(favs)
+                # print(favs)
                 return favs
 
             else:
