@@ -10,9 +10,10 @@
       >Back</a
     >
     <h3 class="text-xl font-bold underline mt-4">Update Review</h3>
-    <form action="/user-profiles/update/<profile>" method = "POST">
+    <form action="/my-reviews/update" method = "POST">
       
       <input type="hidden" id="profile_name" name="profile_name" value="{{ profile }}">
+      <input type="hidden" id="review_id" name="review_id" value="{{ review_id }}">
       
       <label for="first"> Rating: </label>
       <!-- <div id="profile_display" class="w-full md:w-[50%] xl:w-[30%] border p-2">

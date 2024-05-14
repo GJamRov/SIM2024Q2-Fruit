@@ -88,7 +88,7 @@ if __name__ == "__main__":
                         "userName TEXT",
                         "userNameREA TEXT",
                         "actorRole INTEGER",
-                        "review TEXT"]
+                        "review_id INTEGER"]
         
         sample_db.create_table("Rating", rating_col)
 
@@ -153,7 +153,15 @@ if __name__ == "__main__":
             current_role = current_user_tuple[4]
 
             sample_db.insert_into_table("Review", f"NULL, '{review}', '{current_user}', '{current_rea}', {current_role}")
-            sample_db.insert_into_table("Rating", f"NULL, {rating}, '{current_user}', '{current_rea}', {current_role}, '{review}'")
+
+            new_review_tuple = sample_db.search_by_keyword("Review", review, ['review'])
+            review_index = 0
+
+            for reviews in new_review_tuple:
+                if reviews[2] == current_user and reviews[3] == current_rea:
+                    review_index = reviews[0
+                                           ]
+            sample_db.insert_into_table("Rating", f"NULL, {rating}, '{current_user}', '{current_rea}', {current_role}, {review_index}")
 
         counter = 0
         #Populate the REVIEW and RATING table
@@ -273,7 +281,7 @@ if __name__ == "__main__":
     # print(db.search_by_keyword("User", 2, ['role']))
     # print(db.search_by_keyword("Review", 'user50', ['userNameREA']))
     # print(db.search_by_keyword("User", 'user50', ['username']))
-    #print(db.view_table("Review"))
+    print(db.view_table("Rating"))
     #print(db.search_by_keyword("User", 'user42', ['username']))
     #print(db.search_by_keyword("Review", 'user42', ['userNameREA']))
     #print(db.search_by_keyword("User", 'user83', ['username']))
