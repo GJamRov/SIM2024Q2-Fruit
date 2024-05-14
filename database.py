@@ -53,7 +53,7 @@ class Database:
 
         self.cursor.execute(query, [keyword_with_wildcard] * len(search_columns))
         rows = self.cursor.fetchall()
-        print(rows)
+        #print(rows)
         return rows
     
     def delete_from_table(self, table_name, condition):

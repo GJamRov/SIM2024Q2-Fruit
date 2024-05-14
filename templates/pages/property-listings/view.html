@@ -117,10 +117,18 @@
         </div> -->
 
         <div class="mt-6 flex gap-3 border-b border-gray-200 pb-5 pt-5">
+            <!-- if sold -->
+            {% if false %}
             <a href="#"
+                class="opacity-40 pointer-events-none bg-indigo-700 border border-indigo-700 text-white px-8 py-2 font-medium rounded uppercase flex items-center gap-2 hover:bg-transparent hover:text-indigo-700 transition">
+                <i class="fa-regular fa-circle-xmark"></i> Sold
+            </a>
+            {% else %}
+            <a href="{{ url_for('web_app.my_reviews_create') }}"
                 class="bg-indigo-700 border border-indigo-700 text-white px-8 py-2 font-medium rounded uppercase flex items-center gap-2 hover:bg-transparent hover:text-indigo-700 transition">
                 <i class="fa-solid fa-bag-shopping"></i> Buy
             </a>
+            {% endif %}
             <a href="#"
                 class="border border-gray-300 text-gray-600 px-8 py-2 font-medium rounded uppercase flex items-center gap-2 hover:text-indigo-700 transition">
                 <i class="fa-solid fa-heart"></i> Wishlist
@@ -142,15 +150,59 @@
             </a>
         </div> -->
         <div class="flex">
-            <div class="mt-4 bg-gray-100 border flex flex-col px-3 py-2 max-w-min h-32">
-                <a href="#" class="hover:text-blue-600 max-w-min text-nowrap py-2 px-1">
-                    <span class="my-3">Zach Ho<span class="ml-2 font-bold italic">@ReaZach001</span></span>
-                </a>
-                <!-- <a href="#" class="max-w-min bg-red-200 px-2 py-1 rounded-md my-3 hover:bg-red-300">Chat</a> -->
-                <form class="flex">
-                    <input type="text" placeholder="Enter offer..">
-                    <button type="submit" class="mt-1 max-w-min text-nowrap ml-2">Make offer</button>
-                </form>
+            <div class="mt-4 bg-gray-100 border flex flex-col px-3 py-2 min-w-max h-32">
+                <div class="flex mt-1 mx-2">
+                    <img src="{{ url_for('static', filename=listing[4]) }}" alt=listing[1] class="self-center w-16 h-16 aspect-square object-cover rounded-full">
+                    <div class="flex flex-col mx-2">
+                        <span class="px-2">Zach Ho</span>
+                        <a href="#" class="hover:text-blue-600 max-w-min text-nowrap py-1 px-1 mb-1">
+                            <span class="font-bold italic">@ReaZach001</span>
+                        </a>
+                        <div class="mx-2 flex gap-1 text-sm text-yellow-400">
+                            <span class="text-black mr-1">5.0</span>
+                            <!-- change condition to the rating, rounded to the nearest number -->
+                            {% if true %}
+                            <!-- 5 stars -->
+                            <span><i class="fa-solid fa-star"></i></span>
+                            <span><i class="fa-solid fa-star"></i></span>
+                            <span><i class="fa-solid fa-star"></i></span>
+                            <span><i class="fa-solid fa-star"></i></span>
+                            <span><i class="fa-solid fa-star"></i></span>
+                            {% elif false %}
+                            <!-- 4 stars -->
+                            <span><i class="fa-solid fa-star"></i></span>
+                            <span><i class="fa-solid fa-star"></i></span>
+                            <span><i class="fa-solid fa-star"></i></span>
+                            <span><i class="fa-solid fa-star"></i></span>
+                            <span><i class="fa-regular fa-star"></i></span>
+                            <!-- <span><i class="fa-regular fa-star-half-stroke"></i></span> -->
+                            {% elif false %}
+                            <!-- 3 stars -->
+                            <span><i class="fa-solid fa-star"></i></span>
+                            <span><i class="fa-solid fa-star"></i></span>
+                            <span><i class="fa-solid fa-star"></i></span>
+                            <span><i class="fa-regular fa-star"></i></span>
+                            <span><i class="fa-regular fa-star"></i></span>
+                            {% elif false %}
+                            <!-- 2 stars -->
+                            <span><i class="fa-solid fa-star"></i></span>
+                            <span><i class="fa-solid fa-star"></i></span>
+                            <span><i class="fa-regular fa-star"></i></span>
+                            <span><i class="fa-regular fa-star"></i></span>
+                            <span><i class="fa-regular fa-star"></i></span>
+                            {% else %}
+                            <!-- 1 star -->
+                            <span><i class="fa-solid fa-star"></i></span>
+                            <span><i class="fa-regular fa-star"></i></span>
+                            <span><i class="fa-regular fa-star"></i></span>
+                            <span><i class="fa-regular fa-star"></i></span>
+                            <span><i class="fa-regular fa-star"></i></span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                </div>
+                
             </div>
             <div class="border p-4 mt-4 ml-2">
                 <form>

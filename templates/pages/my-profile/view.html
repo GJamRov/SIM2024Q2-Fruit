@@ -18,27 +18,27 @@
     </div>
 
     <div>
-        <h2 class="text-3xl font-medium uppercase mb-2">House with pool</h2>
+        <h2 class="text-3xl font-medium uppercase mb-2">{{listing[1]}}</h2>
         <div class="space-y-2">
             <p class="space-x-2">
                 <span class="text-gray-800 font-semibold">Location: </span>
-                <span class="text-gray-600">Pasir Ris</span>
+                <span class="text-gray-600">{{listing[2]}}</span>
             </p>
             <p class="space-x-2">
                 <span class="text-gray-800 font-semibold">ID: </span>
-                <span class="text-gray-600">100</span>
+                <span class="text-gray-600">{{listing[0]}}</span>
             </p>
         </div>
         <div class="flex items-baseline mb-1 space-x-2 font-roboto mt-4">
-            <p class="text-xl text-indigo-700 font-semibold">$1,300,000</p>
+            <p class="text-xl text-indigo-700 font-semibold">${{listing[5]}}</p>
         </div>
 
         <p class="mt-4 text-gray-600">
-            This beautiful white bungalow offers a peaceful retreat with a private pool and spacious backyard garden, perfect for family gatherings and relaxation. The interior features a modern design with open living spaces and ample natural light, creating a welcoming atmosphere for residents.
+           {{listing[3]}}
         </p>
 
         <div class="mt-6 flex gap-3 border-b border-gray-200 pb-5 pt-5">
-            <a href="#"
+            <a href="{{ url_for('web_app.property_listings_update') }}"
                 class="bg-indigo-700 border border-indigo-700 text-white px-8 py-2 font-medium rounded uppercase flex items-center gap-2 hover:bg-transparent hover:text-indigo-700 transition">
                 <i class="fa-solid fa-pencil"></i>
                 Update
@@ -74,7 +74,7 @@
     <div class="w-3/5 pt-6">
         <div class="text-gray-600">
             <p>
-                This beautiful white bungalow offers a peaceful retreat with a private pool and spacious backyard garden, perfect for family gatherings and relaxation. The interior features a modern design with open living spaces and ample natural light, creating a welcoming atmosphere for residents.
+                {{listing[3]}}
             </p>
         </div>
     </div>
