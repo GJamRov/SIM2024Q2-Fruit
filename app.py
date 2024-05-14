@@ -1,6 +1,7 @@
 from flask import Flask, Blueprint, render_template, request, redirect, session, flash, url_for, jsonify
 from werkzeug.utils import secure_filename
 import os
+app = Flask(__name__)
 
 # Controller Imports
 from controllers.login import LoginController
@@ -18,6 +19,11 @@ from controllers.viewPropertyListing import viewPLController
 from controllers.createPropertyListing import createPLController
 from controllers.wishlistView import viewFavouritesController
 from controllers.wishlistUpdate import updateFavouritesController
+from controllers.viewReview import viewReviewController
+from controllers.viewRating import viewRatingController
+from controllers.editReview import editReviewController
+from controllers.giveReview import giveReviewController
+from controllers.giveRating import giveRatingController
 
 # Entity Import
 from entity.user import User
@@ -92,7 +98,7 @@ class WebApp:
 
         # my reviews - for buyers and sellers
         self.blueprint.add_url_rule('/my-reviews/', 'my_reviews_index', self.my_reviews_index)
-        self.blueprint.add_url_rule('/my-reviews/create', 'my_reviews_create', self.my_reviews_create)
+        self.blueprint.add_url_rule('/my-reviews/create', 'my_reviews_create', self.my_reviews_create, methods=['GET', 'POST'])
         self.blueprint.add_url_rule('/my-reviews/update', 'my_reviews_update', self.my_reviews_update)
 
         self.app.register_blueprint(self.blueprint)
@@ -491,9 +497,28 @@ class WebApp:
 
 
     # reviews
+    
     def reviews_index(self):
-        """reviews page"""
-        return render_template("pages/reviews/index.html")
+        current_role = session['role']
+        
+        if current_role == 1:
+            flash("You do not have access", "error")
+            return redirect("/")
+
+        while session['role'] > 1 and session['role'] < 5:
+
+            sort_option = request.args.get('sort')
+            viewReviewCtl = viewReviewController()
+            current_user = session['username']
+            reviews = viewReviewCtl.viewReview(user_id=current_user, role=current_role)
+
+            viewRatingCtl = viewRatingController()
+            ratings = viewRatingCtl.viewRating(agent_id=current_user, role=current_role)
+            if reviews:
+                return render_template('pages/my-reviews/index.html', reviewListing = reviews, ratingListing = ratings, role=current_role)
+            else:
+                flash("No Reviews!", "error")
+                return redirect("/")
 
     # Wishlist
     def wishlists_index(self):
@@ -516,19 +541,108 @@ class WebApp:
     # my reviews given - for buyers and sellers
     def my_reviews_index(self):
         """my reviews page"""
-        return render_template("pages/my-reviews/index.html")
+        # Checks that the user is an REA, buyer or seller
+        current_role = session['role']
 
-    def my_reviews_create(self):
-        """create reviews page"""
-        return render_template("pages/my-reviews/create.html")
+        if current_role == 1:
+            flash("You do not have access to view", "error")
+            return redirect("/")
+
+        while session['role'] > 1 and session['role'] < 5:
+
+            viewReviewCtl = viewReviewController()
+            current_user = session['username']
+            reviews = viewReviewCtl.viewReview(user_id=current_user, role=current_role)
+
+            viewRatingCtl = viewRatingController()
+            ratings = viewRatingCtl.viewRating(agent_id=current_user, role=current_role)
+            if reviews:
+                return render_template('pages/my-reviews/index.html', reviewListing = reviews, ratingListing = ratings, role=current_role)
+            else:
+                flash("No Reviews!", "error")
+                return redirect("/")
 
     def my_reviews_update(self):
         """update my reviews page"""
         return render_template("pages/my-reviews/update.html")
     
-    # give review
-    def give_review(self, my_review):
-        #Check user is either buyer or seller
-        while ((session['role'] == 3) or session['role'] == 4):
+    #@app.route('/my-reviews/create', methods=['GET', 'POST'])
+    def my_reviews_create(self):
+        """create reviews page"""
+        current_role = session['role']
 
-            return None
+        """
+        if(current_role == 1 or current_role == 2):
+            flash("You do not have access to create reviews")
+            return redirect("/")
+        """
+        
+        while current_role == 3 or current_role == 4:
+            current_user = session['username']
+
+            if request.method == 'POST':
+                new_review = request.form['profile_desc']
+                new_rating = request.form['sort']
+                agent_profile = request.form['userNameREA']
+                
+                giveReviewCtl = giveReviewController()
+                giveRatingCtl = giveRatingController()
+
+                successReview = giveReviewCtl.giveReview(new_review, agent_profile, current_user, current_role)
+                successRating = giveRatingCtl.giveRating(new_rating, current_user, agent_profile, current_role, new_review)
+
+                if((successRating == True) and (successReview == True)):
+                    flash("Successfully reviewed", "success")
+                    #return redirect(url_for('web_app.my_reviews_index'))
+                    #return redirect("/")
+                    #return redirect(url_for("my_reviews_index"))
+                    return redirect("/my-reviews/")
+                else:
+                    flash("Error", "error")
+                    return redirect("my_reviews_create")
+
+            return render_template("pages/my-reviews/create.html", profile=session['username'])
+        return redirect("/")
+    
+    def create_profile(self):
+        """Create new user profile"""
+        # Check that the user is a System Admin
+        while session['role'] == 1:
+            # Get form data from POST request
+            if request.method == 'POST':
+                UP = [request.form['profile_type'], request.form['profile_desc']]
+                createProfileCtl = createUserProfileController()
+                if createProfileCtl.createUserProfile(UP):
+                    flash("User profile created successfully!", "success")
+                    return redirect('/user-profiles/')
+                else:
+                    flash("User profile already exists! Please try again", "error")
+                    return redirect('/user-profiles/create')
+            return render_template("pages/user-profiles/create.html")
+        
+        def upload_file(self):
+            """Handles the form submission for property_listings_create"""
+            if 'image' in request.files:
+                image_file = request.files['image']
+                name = request.form['location']
+                location = request.form['location']
+                price = request.form['price']
+
+                # Save the image file to UPLOAD_FOLDER
+                image_filename = secure_filename(image_file.filename)
+                image_filepath = os.path.normpath(os.path.join(self.app.config['UPLOAD_FOLDER'], image_filename)) 
+                image_file.save(image_filepath)
+
+                # Save new property details to database
+                createPLCtl = createPLController()
+                result = createPLCtl.createPropertyListing(session['username'], [name, location, image_filename, price])
+
+                if result:
+                    flash('Property listing created successfully!', 'success')
+                    return redirect(url_for('web_app.property_listings_index'))
+                else:
+                    flash('Property listing created unsuccssfully.', 'error')
+                    return redirect("pages/property-listings/create.html")
+            return redirect('/property-listings/create')
+
+   

@@ -5,13 +5,18 @@
 {% block content %}
 <div class="main">
     <a
-      href="{{url_for('web_app.my_reviews_index')}}"
+      href="{{url_for('web_app.my_reviews_create')}}"
       class="bg-slate-600 text-sm text-white py-2 px-3 rounded"
       >Back</a
     >
     <h3 class="text-xl font-bold underline mt-4">Create Review</h3>
-    <form action="/user-profiles/create/<profile>" method = "POST">
+    <form action="/my-reviews/create" method = "POST">
       <input type="hidden" id="profile_name" name="profile_name" value="{{ profile }}">
+
+       <!-- Real Estate Agent Username -->
+       <label for="userNameREA">Real Estate Agent Username:</label>
+       <input type="text" id="userNameREA" name="userNameREA" class="border p-2" required />
+
       <label for="first"> Rating: </label>
       <!-- <div id="profile_display" class="w-full md:w-[50%] xl:w-[30%] border p-2">
         <span>{{profile}}</span>
