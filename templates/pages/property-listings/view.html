@@ -134,26 +134,26 @@
                 
             </div>
             <div class="border p-4 mt-4 ml-2">
-                <form>
+                <form id="mortgage-form">
                     <div class="flex">
                         <div>
-                            <span class="">Mortgage Calculator:</span>
+                            <span>Mortgage Calculator:</span>
                             <label for="property">Property type: </label>
-                            <select name="property" id=""
+                            <select name="property" id="property"
                                 class="w-44 border text-sm text-gray-600 py-3 px-4 border-gray-300 shadow-sm rounded focus:ring-indigo-700 focus:border-indigo-700">
                                 <option value="hdb">HDB</option>
                                 <option value="condo">Condo</option>
                             </select>
                             <label for="loan">Loan Amount:</label>
-                            <input type="text" name="loan" placeholder="$">
+                            <input type="text" name="loan" id="loan" placeholder="$">
                             <label for="interest">Interest Rate:</label>
-                            <input type="text" name="interest" placeholder="%">
+                            <input type="text" name="interest" id="interest" placeholder="%">
                             <label for="tenure">Loan Tenure:</label>
-                            <input type="text" name="tenure" placeholder="years">
+                            <input type="text" name="tenure" id="tenure" placeholder="years">
                         </div>
                         <div class="px-2 ml-24 self-center">
                             <span class="text-nowrap">Your monthly payment is:</span>
-                            <span class="font-bold">$3200</span>
+                            <span class="font-bold" id="monthly-payment">$0</span>
                             <button type="submit">calculate</button>
                         </div>
                     </div>
@@ -172,5 +172,23 @@
         </div>
     </div>
 </div>
-        
+
+<script>
+    document.getElementById('mortgage-form').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent the form from submitting
+
+        // Get the input values
+        const loanAmount = parseFloat(document.getElementById('loan').value);
+        const interestRate = parseFloat(document.getElementById('interest').value) / 100 / 12;
+        const loanTenure = parseInt(document.getElementById('tenure').value) * 12;
+
+        // Calculate the monthly payment
+        const monthlyPayment = (loanAmount * interestRate) / (1 - Math.pow((1 + interestRate), -loanTenure));
+
+        // Update the monthly payment display
+        document.getElementById('monthly-payment').textContent = `$${monthlyPayment.toFixed(2)}`;
+    });
+</script>
+
 {% endblock content %}
+
