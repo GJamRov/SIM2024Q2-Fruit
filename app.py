@@ -118,9 +118,10 @@ class WebApp:
 
     def home(self):
         """View function for the view route."""
-        username = session['username']
-        return render_template("pages/home.html", username=username)
-    
+        #username = session['username']
+        #return render_template("pages/home.html", username=username)
+        return redirect('/my-profile/')
+
     ## User Functionalities
     def login(self):
         """User login route"""
