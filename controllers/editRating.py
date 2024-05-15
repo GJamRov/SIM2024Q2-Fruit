@@ -4,6 +4,6 @@ class editRatingController:
   def __init__(self) -> None:
     pass
 
-  def editRating(self, new_rating, user_id, agent_id):
-    successBool = Rating.editRating(new_rating=new_rating, user_id=user_id, agent_id=agent_id)
+  def editRating(self, review_id, new_rating, user_id, current_role, new_review):
+    successBool = Rating.editRating(self, int(review_id), new_rating, user_id, current_role, new_review)
     return successBool

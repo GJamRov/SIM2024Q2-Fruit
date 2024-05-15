@@ -93,3 +93,12 @@ class REA(User):
             return True
         else:
             return False
+        
+    def viewREATable(self):
+        rea_table = REA.db.search_by_keyword("User", 2, ["role"])
+        return rea_table
+
+    
+
+
+    
