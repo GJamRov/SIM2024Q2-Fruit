@@ -275,16 +275,18 @@ if __name__ == "__main__":
     
 
     # db.view_table("Profile")
-    db.view_table("Review")
-    db.view_table("Rating")
+    #db.view_table("Review")
+    #db.view_table("Rating")
     # db.search_by_keyword("Review", 'user191', ["userName"])
     # print(db.search_by_keyword("User", 2, ['role']))
-    # print(db.search_by_keyword("Review", 'user50', ['userNameREA']))
+    print(db.search_by_keyword("Review", 'user50', ['userNameREA']))
     # print(db.search_by_keyword("User", 'user50', ['username']))
-    print(db.view_table("Rating"))
+    #print(db.view_table("Rating"))
     #print(db.search_by_keyword("User", 'user42', ['username']))
     #print(db.search_by_keyword("Review", 'user42', ['userNameREA']))
     #print(db.search_by_keyword("User", 'user83', ['username']))
+    print(db.search_by_keyword("User", 2, ['role']))
+
 
     # db.connection.close()
     # test_p = []
@@ -297,6 +299,10 @@ if __name__ == "__main__":
     # print(test_p)
     # print("SELLER FOR TEST", test_rea)
     # print(os.path.dirname(os.path.abspath(__file__)))
+
+    temp_d = {1:"YES", 2:"NO"}
+    
+    print((1,2) + (1,))
 
     # Initialise Web App
     print("--- Running App ---")

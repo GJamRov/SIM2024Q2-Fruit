@@ -24,6 +24,7 @@ from controllers.giveReview import giveReviewController
 from controllers.giveRating import giveRatingController
 from controllers.editReview import editReviewController
 from controllers.editRating import editRatingController
+from controllers.viewREA import viewREA
 
 # Entity Import
 from entity.user import User
@@ -91,7 +92,7 @@ class WebApp:
         self.blueprint.add_url_rule('/my-profile/view', 'my_profile_view', self.my_profile_view)
 
         # reviews
-        self.blueprint.add_url_rule('/reviews/', 'reviews_index', self.reviews_index)
+        self.blueprint.add_url_rule('/reviews/', 'reviews_index', self.reviews_index, methods=['GET', 'POST'])
 
         # wishlists
         self.blueprint.add_url_rule('/wishlists/', 'wishlists_index', self.wishlists_index)
@@ -100,6 +101,8 @@ class WebApp:
         self.blueprint.add_url_rule('/my-reviews/', 'my_reviews_index', self.my_reviews_index)
         self.blueprint.add_url_rule('/my-reviews/create', 'my_reviews_create', self.my_reviews_create, methods=['GET', 'POST'])
         self.blueprint.add_url_rule('/my-reviews/update', 'my_reviews_update', self.my_reviews_update, methods=['GET', 'POST'])
+        self.blueprint.add_url_rule('/my-reviews/rea', 'my_reviews_rea', self.my_reviews_rea, methods=['GET', 'POST'])
+
 
         self.app.register_blueprint(self.blueprint)
         User.connect_database("SampleDatabase")
@@ -491,14 +494,76 @@ class WebApp:
         while session['role'] > 1 and session['role'] < 5:
 
             sort_option = request.args.get('sort')
-            viewReviewCtl = viewReviewController()
             current_user = session['username']
-            reviews = viewReviewCtl.viewReview(user_id=current_user, role=current_role)
+            viewREACtl = viewREA()
+            rea_table = viewREACtl.viewREATable()
 
-            viewRatingCtl = viewRatingController()
-            ratings = viewRatingCtl.viewRating(agent_id=current_user, role=current_role)
-            if reviews:
-                return render_template('pages/my-reviews/index.html', reviewListing = reviews, ratingListing = ratings, role=current_role)
+            viewRatingCtl = viewREA()
+            ratings = viewRatingCtl.viewREATable()
+            print(ratings)
+
+            rea_array = {}
+            rating_table = ()
+            agent_table = {}
+            counter = 0
+            agent_table2 = {}
+
+            """
+            for rating in ratings:
+                #The current agent
+                current_agent = rating[3]
+
+                #If the current agent has not been added to the dictionary
+                if(current_agent not in agent_table.keys()):
+                    total_rating = 0
+                    rating_count = 0
+                    
+                    #Tabulate the total rating of current agent
+                    for rating2 in ratings:
+                        if rating2[3] == current_agent:
+                            total_rating += rating2[1]
+                            rating_count += 1
+                    
+                    #Calculate average rating and add it to rating_table
+                    average_rating = int(total_rating / rating_count)
+                    add_tuple = (counter, current_agent, average_rating)
+                    rating_table += (add_tuple, )
+
+                    counter += 1
+                agent_table[current_agent] = 1  
+            """
+
+            for rating in ratings:
+                current_agent = rating[3]
+                
+                if(current_agent not in agent_table2.keys()):
+                    current_rating = rating[1]
+                    current_tuple = (current_rating, 1)
+                    agent_table2[current_agent] = current_tuple
+
+                else:
+                    current_tuple = agent_table2[current_agent]
+                    current_rating = current_tuple[0] + rating[1]
+                    current_count = 1 + current_tuple[1]
+                    current_tuple = (current_rating, current_count)
+                    agent_table2[current_agent] = current_tuple
+
+            for key in agent_table2:
+                current_tuple2 = agent_table2.get(key)
+                total_rating = current_tuple2[0]
+                total_count = current_tuple2[1]
+                average_rating = int(total_rating/total_count)
+                add_tuple = (counter, key, average_rating)
+
+                rating_table += (add_tuple, )
+                counter += 1
+            
+            print("AGENT TABLE 2", agent_table2)
+            print("RATING TABLE", rating_table)
+
+
+            if rating_table:
+                return render_template('pages/my-reviews/rea.html', rating_table = rating_table)
             else:
                 flash("No Reviews!", "error")
                 return redirect("/")
@@ -507,6 +572,21 @@ class WebApp:
     def wishlists_index(self):
         """wishlists page"""
         return render_template("pages/wishlists/index.html")
+    
+    def my_reviews_rea(self):
+        userName = request.args.get("userName")
+        viewReviewCtl = viewReviewController()
+        current_user = session['username']
+        reviews = viewReviewCtl.viewReview(user_id=userName, role=2)
+
+        viewRatingCtl = viewRatingController()
+        ratings = viewRatingCtl.viewRating(agent_id=userName, role=2)
+        if reviews:
+            return render_template('pages/my-reviews/index.html', userName=userName, reviewListing=reviews, ratingListing=ratings)
+        else:
+            flash("No Reviews!", "error")
+            return redirect("/")
+
 
     # my reviews given - for buyers and sellers
     def my_reviews_index(self):

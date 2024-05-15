@@ -60,3 +60,8 @@ class Rating:
             return True
         else:
             return False
+        
+    def returnRatingTable(self):
+        Rating.connect_database("SampleDatabase")
+
+        return Rating.db.view_table("Rating")
