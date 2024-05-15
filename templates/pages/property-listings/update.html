@@ -11,7 +11,7 @@
       >Back</a
     >
     <h3 class="text-xl font-bold underline mt-4">Update Property Listing</h3>
-    <form action="/upload" method="POST" enctype="multipart/form-data">
+    <form action="/property-listings/update" method="POST" enctype="multipart/form-data">
       <label for="image-preview"> Upload photo of property: </label>
       <input id="upload" type="file" class="hidden" accept="image/*" name="image" required/>
       <div id="image-preview" class="max-w-sm p-6 mb-4 bg-gray-100 border-dashed border-2 border-gray-400 rounded-lg items-center mx-1 text-center cursor-pointer">
@@ -24,11 +24,11 @@
       </div>
 
       <label for="first"> Name: </label>
-      <input type="text" id="first" name="name" class="w-full md:w-[50%] xl:w-[30%]" placeholder="Enter property name" required/>
+      <input type="text" id="first" name="name" class="w-full md:w-[50%] xl:w-[30%]" placeholder="Enter property name" value="{{listing[1]}}" required/>
       <label for="location"> Location: </label>
-      <input type="text" id="location" name="location" class="w-full md:w-[50%] xl:w-[30%]" placeholder="Enter property location" required/>
+      <input type="text" id="location" name="location" class="w-full md:w-[50%] xl:w-[30%]" placeholder="Enter property location" value="{{listing[2]}}" required/>
       <label for="price"> Price: </label>
-      <input type="text" id="price" name="price" class="w-full md:w-[50%] xl:w-[30%]" placeholder="Enter price of property" required/>
+      <input type="text" id="price" name="price" class="w-full md:w-[50%] xl:w-[30%]" placeholder="Enter price of property" value={{listing[5]}} required/>
       <label for="description">Description: </label>
       <textarea
         id="description"
@@ -37,9 +37,9 @@
         cols="50"
         class="border p-2"
         placeholder="Enter description of property"
-      ></textarea>
+      >{{listing[3]}}</textarea>
       <label for="seller"> Seller: </label>
-      <input type="text" id="seller" name="seller" class="w-full md:w-[50%] xl:w-[30%]" placeholder="Enter name of Seller" required/>
+      <input type="text" id="seller" name="seller" class="w-full md:w-[50%] xl:w-[30%]" placeholder="Enter name of Seller" value={{curr_seller[1]}} required/>
       
       <div class="wrap">
           <button type="submit" id="submit-button">Update Property Listing</button>

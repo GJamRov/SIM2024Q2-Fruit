@@ -8,11 +8,12 @@ class REA(User):
     # 15. Create new property listings
     def createListing(self, newPropertyDetails):
         """Inserts a property listing into database"""
-        if not newPropertyDetails or len(newPropertyDetails) != 4:
+        if not newPropertyDetails or len(newPropertyDetails) != 6:
             return False  # Input validation failed
         try:
             # f"NULL, '{p_name}', '{location}', '{description}', '{img_name}', {price}, {rea_id}, {seller_id}, {sold_buyer}, {view_count}, {wishlisted}"
-            details = f"NULL, '{newPropertyDetails[0]}', '{newPropertyDetails[1]}', 'Test', '{newPropertyDetails[2]}', {newPropertyDetails[3]}, {self.get_id()}, 0, -1, 0, 0"
+            seller_id = User.db.search_one("User", f"username = '{newPropertyDetails[5]}'")[0]
+            details = f"NULL, '{newPropertyDetails[0]}', '{newPropertyDetails[1]}', '{newPropertyDetails[4]}', '{newPropertyDetails[2]}', {newPropertyDetails[3]}, {self.get_id()}, {seller_id}, -1, 0, 0"
             REA.db.insert_into_table("Property", details)
             return True
 

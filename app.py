@@ -16,6 +16,7 @@ from controllers.updateProfile import updateUserProfileController
 from controllers.suspendProfile import suspendUserProfileController
 from controllers.reactivateProfile import reactivateUserProfileController
 from controllers.viewPropertyListing import viewPLController
+from controllers.propertyListingUpdate import updatePLController
 from controllers.createPropertyListing import createPLController
 from controllers.wishlistView import viewFavouritesController
 from controllers.wishlistUpdate import updateFavouritesController
@@ -82,9 +83,8 @@ class WebApp:
         self.blueprint.add_url_rule('/property-listings/sort', 'property_listings_sort', self.property_listings_sort)
         self.blueprint.add_url_rule('/property-listings/view', 'property_listings_view', self.property_listings_view)
         self.blueprint.add_url_rule('/property-listings/create', 'property_listings_create', self.property_listings_create, methods=['GET', 'POST'])
-        self.blueprint.add_url_rule('/property-listings/update', 'property_listings_update', self.property_listings_update)
+        self.blueprint.add_url_rule('/property-listings/update', 'property_listings_update', self.property_listings_update, methods=['GET', 'POST'])
         self.blueprint.add_url_rule('/upload', 'upload_file', self.upload_file, methods=['GET', 'POST'])
-        self.blueprint.add_url_rule('/update', 'update_property', self.update_property, methods=['GET', 'POST'])
         self.blueprint.add_url_rule('/update_wishlist', view_func=self.update_wishlist, methods=['GET', 'POST'])
 
         # my profile
@@ -431,6 +431,8 @@ class WebApp:
             name = request.form['location']
             location = request.form['location']
             price = request.form['price']
+            description = request.form['description']
+            seller = request.form['seller']
 
             # Save the image file to UPLOAD_FOLDER
             image_filename = secure_filename(image_file.filename)
@@ -439,7 +441,7 @@ class WebApp:
 
             # Save new property details to database
             createPLCtl = createPLController()
-            result = createPLCtl.createPropertyListing(session['username'], [name, location, image_filename, price])
+            result = createPLCtl.createPropertyListing(session['username'], [name, location, image_filename, price, description, seller])
 
             if result:
                 flash('Property listing created successfully!', 'success')
@@ -481,6 +483,14 @@ class WebApp:
 
     def property_listings_update(self):
         """Update a property listing"""
+        # Get current listing
+        listing_id = request.args.get("listing_id")
+        viewPLCtl = viewPLController()
+        curr_listing = viewPLCtl.getOneListing(listing_id)
+        # Get Current Seller for Current Property
+        updatePLC = updatePLController()
+        curr_seller = updatePLC.getOneSeller(curr_listing[7])
+
         if 'image' in request.files:
             image_file = request.files['image']
             name = request.form['location']
@@ -502,7 +512,7 @@ class WebApp:
             else:
                 flash('Property listing created unsuccssfully.', 'error')
                 return redirect("pages/property-listings/create.html")
-        return render_template("pages/property-listings/update.html")
+        return render_template("pages/property-listings/update.html", listing=curr_listing, curr_seller=curr_seller)
         
     
     def property_listings_delete(self):
