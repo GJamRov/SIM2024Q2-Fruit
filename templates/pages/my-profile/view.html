@@ -43,7 +43,7 @@
                 <i class="fa-solid fa-pencil"></i>
                 Update
             </a>
-            <a href="#"
+            <a href="{{ url_for('web_app.property_listings_delete', listing_id=listing[0]) }}"  onclick="return confirmDelete();"
                 class="border border-red-300 text-red-600 px-8 py-2 font-medium rounded uppercase flex items-center gap-2 hover:bg-red-100 transition">
                 <i class="fa-solid fa-trash-can"></i>
                 Delete
@@ -68,3 +68,10 @@
 
         
 {% endblock content %}
+{% block script %}
+<script type="text/javascript">
+    function confirmDelete() {
+        return confirm("Are you sure you want to delete this listing?");
+    }
+</script>
+{% endblock script %}

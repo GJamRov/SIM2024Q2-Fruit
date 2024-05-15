@@ -18,6 +18,7 @@ from controllers.reactivateProfile import reactivateUserProfileController
 from controllers.viewPropertyListing import viewPLController
 from controllers.propertyListingUpdate import updatePLController
 from controllers.createPropertyListing import createPLController
+from controllers.deletePropertyListing import deletePLController
 from controllers.wishlistView import viewFavouritesController
 from controllers.wishlistUpdate import updateFavouritesController
 from controllers.viewReview import viewReviewController
@@ -85,7 +86,9 @@ class WebApp:
         self.blueprint.add_url_rule('/property-listings/create', 'property_listings_create', self.property_listings_create, methods=['GET', 'POST'])
         self.blueprint.add_url_rule('/property-listings/update', 'property_listings_update', self.property_listings_update, methods=['GET', 'POST'])
         self.blueprint.add_url_rule('/upload', 'upload_file', self.upload_file, methods=['GET', 'POST'])
+        self.blueprint.add_url_rule('/delete-listing', 'property_listings_delete', self.property_listings_delete, methods=["GET", "POST"])
         self.blueprint.add_url_rule('/update_wishlist', view_func=self.update_wishlist, methods=['GET', 'POST'])
+        self.blueprint.add_url_rule('/update', 'update_listing', self.update_listing, methods=["GET", "POST"])
 
         # my profile
         self.blueprint.add_url_rule('/my-profile/', 'my_profile_index', self.my_profile_index)
@@ -480,44 +483,63 @@ class WebApp:
             flash("Failed to update wishlist.", "error")
             return redirect(url_for('web_app.property_listings_index'))
 
-
     def property_listings_update(self):
         """Update a property listing"""
         # Get current listing
         listing_id = request.args.get("listing_id")
+        print("RETRIEVED", listing_id)
         viewPLCtl = viewPLController()
         curr_listing = viewPLCtl.getOneListing(listing_id)
         # Get Current Seller for Current Property
         updatePLC = updatePLController()
         curr_seller = updatePLC.getOneSeller(curr_listing[7])
-
+        if session['role'] == 2:
+            return render_template("pages/property-listings/update.html", listing=curr_listing, curr_seller=curr_seller)
+        else:
+            flash('You do not have permission to update a property listing!', 'error')
+            return redirect("/")   
+    
+    def update_listing(self):
+        """Handles updating the listing"""
+        #print("FILES", request.files)
         if 'image' in request.files:
-            image_file = request.files['image']
-            name = request.form['location']
+            # print(request.form)
+            id = request.form["id"]
+            name = request.form['name']
             location = request.form['location']
             price = request.form['price']
+            description = request.form['description']
+            seller_name = request.form['seller']
 
-            # Save the image file to UPLOAD_FOLDER
+            # If image file changes, save the new image file to UPLOAD_FOLDER
+            image_file = request.files['image']
             image_filename = secure_filename(image_file.filename)
-            image_filepath = os.path.normpath(os.path.join(self.app.config['UPLOAD_FOLDER'], image_filename)) 
-            image_file.save(image_filepath)
+            if image_filename == '':
+                pass
+            else:
+                image_filepath = os.path.normpath(os.path.join(self.app.config['UPLOAD_FOLDER'], image_filename)) 
+                image_file.save(image_filepath)
 
             # Save new property details to database
-            createPLCtl = createPLController()
-            result = createPLCtl.createPropertyListing(session['username'], [name, location, image_filename, price])
-
+            updatePLCtl = updatePLController()
+            result = updatePLCtl.update_listing(session['username'], [id, name, location, image_filename, price, description, seller_name])
+            #print("UPDATE:", result)
             if result:
-                flash('Property listing created successfully!', 'success')
-                return redirect(url_for('web_app.property_listings_index'))
+                flash('Property listing updated successfully!', 'success')
+                return redirect(url_for('web_app.my_profile_index'))
             else:
-                flash('Property listing created unsuccssfully.', 'error')
-                return redirect("pages/property-listings/create.html")
-        return render_template("pages/property-listings/update.html", listing=curr_listing, curr_seller=curr_seller)
-        
+                flash('Property listing update fail.', 'error')
+                return redirect(url_for('web_app.my_profile_index'))
+        else:
+            flash("Error", "error")
+            return redirect(url_for('web_app.my_profile_index'))
+
     
     def property_listings_delete(self):
         """Delete a property listing"""
-
+        deletePLCtl = deletePLController()
+        listing_id = request.args.get("listing_id")
+        deletePLCtl.delete_listing(session["username"], listing_id)
         return redirect(url_for("web_app.my_profile_index"))
 
     # my profile

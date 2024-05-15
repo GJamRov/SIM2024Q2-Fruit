@@ -12,6 +12,7 @@ class REA(User):
             return False  # Input validation failed
         try:
             # f"NULL, '{p_name}', '{location}', '{description}', '{img_name}', {price}, {rea_id}, {seller_id}, {sold_buyer}, {view_count}, {wishlisted}"
+            # Sample newPropertyDetails: [name, location, image_filename, price, description, seller]
             seller_id = User.db.search_one("User", f"username = '{newPropertyDetails[5]}'")[0]
             details = f"NULL, '{newPropertyDetails[0]}', '{newPropertyDetails[1]}', '{newPropertyDetails[4]}', '{newPropertyDetails[2]}', {newPropertyDetails[3]}, {self.get_id()}, {seller_id}, -1, 0, 0"
             REA.db.insert_into_table("Property", details)
@@ -45,27 +46,50 @@ class REA(User):
 
 
     # 17. Update property listings
-    def update_listing(self, entered_details):
-        target_property = REA.db.search_one("Property", f"p_name = '{entered_details[0]}'")
-        if target_property:
-            update_details = ""
-            # Update target_account with remaining information
-            REA.db.update_table("Property", update_details, f"p_name = '{entered_details[0]}'")
+    def update_listing(self, entered_details:list):
+        """Updates a property listing"""
+        if not entered_details or len(entered_details) != 7:
+            return False
+        
+        try:
+            curr_property = REA.db.search_one("Property", f"id = {entered_details[0]}")
+            # print(curr_property)
+            # f"NULL, '{p_name}', '{location}', '{description}', '{img_name}', {price}, {rea_id}, {seller_id}, {sold_buyer}, {view_count}, {wishlisted}"
+            """
+            "id INTEGER PRIMARY KEY AUTOINCREMENT",
+                                "name TEXT",
+                                "location TEXT",
+                                "description TEXT",
+                                "img TEXT",
+                                "price INTEGER",
+                                "rea_id INTEGER",
+                                "seller_id INTEGER",
+                                "buyer_id INTEGER",
+                                "view_count INTEGER",
+                                "wishlisted INTEGER"
+            """
+            # Sample entered_details: [id, name, location, image_filename, price, description, seller]
+            seller_id = User.db.search_one("User", f"username = '{entered_details[6]}'")[0]
+            update_params = ''
+            # print("IMAGE SOURCE",entered_details[3])
+            if entered_details[3] == '':
+                update_params = f"name='{entered_details[1]}', location='{entered_details[2]}', description='{entered_details[5]}', img='{curr_property[4]}', price={entered_details[4]}, seller_id={seller_id}"
+            else:
+                update_params = f"name='{entered_details[1]}', location='{entered_details[2]}', description='{entered_details[5]}', img='{entered_details[3]}', price={entered_details[4]}, seller_id={seller_id}"
+            # print("UPDATING WITH", update_params)
+            REA.db.update_table("Property", update_params, f"id = {int(entered_details[0])}")
             return True
-        else:
+
+        except Exception as e:
+            print(f"Error updating listing: {e}")
             return False
 
     # 18. Delete property listings
     def delete_listing(self, p_id):
         """Delete property listing"""
-        target_property  = REA.db.search_one("Property", f"p_id = {p_id}")
+        target_property  = REA.db.search_one("Property", f"id = {p_id}")
         if target_property:
-            REA.db.delete_from_table("Property", f"p_id = {p_id}")
+            REA.db.delete_from_table("Property", f"id = {p_id}")
             return True
         else:
             return False
-
-    
-
-
-    
