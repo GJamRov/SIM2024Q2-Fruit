@@ -14,26 +14,11 @@
     <div>
         <img src="{{ url_for('static', filename=listing[4]) }}" alt=listing[1] class="w-full">
         <div class="grid grid-cols-5 gap-4 mt-4">
-            <!-- <img src="{{ url_for('static', filename=listing[4]) }}" alt=listing[1] class="w-full cursor-pointer border border-indigo-700">
-            <img src="{{ url_for('static', filename=listing[4]) }}" alt=listing[1] class="w-full cursor-pointer border">
-            <img src="{{ url_for('static', filename=listing[4]) }}" alt=listing[1] class="w-full cursor-pointer border">
-            <img src="{{ url_for('static', filename=listing[4]) }}" alt=listing[1] class="w-full cursor-pointer border">
-            <img src="{{ url_for('static', filename=listing[4]) }}" alt=listing[1] class="w-full cursor-pointer border"> -->
         </div>
     </div>
 
     <div>
         <h2 class="text-3xl font-medium uppercase mb-2">{{listing[1]}}</h2>
-        <!-- <div class="flex items-center mb-4">
-            <div class="flex gap-1 text-sm text-yellow-400">
-                <span><i class="fa-solid fa-star"></i></span>
-                <span><i class="fa-solid fa-star"></i></span>
-                <span><i class="fa-solid fa-star"></i></span>
-                <span><i class="fa-solid fa-star"></i></span>
-                <span><i class="fa-solid fa-star"></i></span>
-            </div>
-            <div class="text-xs text-gray-500 ml-3">(150 Reviews)</div>
-        </div> -->
         <div class="space-y-2">
             <p class="space-x-2">
                 <span class="text-gray-800 font-semibold">Location: </span>
@@ -81,23 +66,23 @@
         <div class="flex">
             <div class="mt-4 bg-gray-100 border flex flex-col px-3 py-2 min-w-max h-32">
                 <div class="flex mt-1 mx-2">
-                    <img src="{{ url_for('static', filename=listing[4]) }}" alt=listing[1] class="self-center w-16 h-16 aspect-square object-cover rounded-full">
+                    <img src="{{ url_for('static', filename='Generic-Profile-Image.png') }}" alt=listing[1] class="self-center w-16 h-16 aspect-square object-cover rounded-full">
                     <div class="flex flex-col mx-2">
-                        <span class="px-2">Zach Ho</span>
+                        <span class="px-2">{{rea[1]}}</span>
                         <a href="#" class="hover:text-blue-600 max-w-min text-nowrap py-1 px-1 mb-1">
-                            <span class="font-bold italic">@ReaZach001</span>
+                            <span class="font-bold italic">@{{rea[3]}}</span>
                         </a>
                         <div class="mx-2 flex gap-1 text-sm text-yellow-400">
-                            <span class="text-black mr-1">5.0</span>
+                            <span class="text-black mr-1">{{rea_rating}}</span>
                             <!-- change condition to the rating, rounded to the nearest number -->
-                            {% if true %}
+                            {% if rea_rating == 5 %}
                             <!-- 5 stars -->
                             <span><i class="fa-solid fa-star"></i></span>
                             <span><i class="fa-solid fa-star"></i></span>
                             <span><i class="fa-solid fa-star"></i></span>
                             <span><i class="fa-solid fa-star"></i></span>
                             <span><i class="fa-solid fa-star"></i></span>
-                            {% elif false %}
+                            {% elif rea_rating == 4 %}
                             <!-- 4 stars -->
                             <span><i class="fa-solid fa-star"></i></span>
                             <span><i class="fa-solid fa-star"></i></span>
@@ -105,23 +90,30 @@
                             <span><i class="fa-solid fa-star"></i></span>
                             <span><i class="fa-regular fa-star"></i></span>
                             <!-- <span><i class="fa-regular fa-star-half-stroke"></i></span> -->
-                            {% elif false %}
+                            {% elif rea_rating == 3 %}
                             <!-- 3 stars -->
                             <span><i class="fa-solid fa-star"></i></span>
                             <span><i class="fa-solid fa-star"></i></span>
                             <span><i class="fa-solid fa-star"></i></span>
                             <span><i class="fa-regular fa-star"></i></span>
                             <span><i class="fa-regular fa-star"></i></span>
-                            {% elif false %}
+                            {% elif rea_rating == 2 %}
                             <!-- 2 stars -->
                             <span><i class="fa-solid fa-star"></i></span>
                             <span><i class="fa-solid fa-star"></i></span>
                             <span><i class="fa-regular fa-star"></i></span>
                             <span><i class="fa-regular fa-star"></i></span>
                             <span><i class="fa-regular fa-star"></i></span>
-                            {% else %}
+                            {% elif rea_rating == 1 %}
                             <!-- 1 star -->
                             <span><i class="fa-solid fa-star"></i></span>
+                            <span><i class="fa-regular fa-star"></i></span>
+                            <span><i class="fa-regular fa-star"></i></span>
+                            <span><i class="fa-regular fa-star"></i></span>
+                            <span><i class="fa-regular fa-star"></i></span>
+                            {% else %}
+                            <!-- 1 star -->
+                            <span><i class="fa-regular fa-star"></i></span>
                             <span><i class="fa-regular fa-star"></i></span>
                             <span><i class="fa-regular fa-star"></i></span>
                             <span><i class="fa-regular fa-star"></i></span>

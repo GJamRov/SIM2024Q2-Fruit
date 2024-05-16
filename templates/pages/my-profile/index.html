@@ -3,70 +3,79 @@
 {% block title %}My profile{% endblock title %}
 
 {% block content %}
-    <h3 class="text-3xl font-bold underline">My profile</h3>
+    <h3 class="text-3xl font-bold underline">My Profile</h3>
 
 
         <div class="flex col-span-1 my-4 border bg-gray-100 rounded-md">
             <div class="">
-                <img src="{{ url_for('static', filename='house4.jpeg') }}" alt="product 1" class="w-48 m-4 aspect-square object-cover rounded-full">
+                <img src="{{ url_for('static', filename='Generic-Profile-Image.png') }}" alt="product 1" class="w-48 m-4 aspect-square object-cover rounded-full">
             </div>
             <div class="p-8 self-center flex flex-col">
                 <div class="text-3xl font-bold">
-                    Username123
+                    {{ username }}
                 </div>
                 <div class="flex items-center">
+                    {% if role == 2 %}
                     <span>Rating: </span>
                     <div class="mx-2 flex gap-1 text-sm text-yellow-400">
-                        <span class="text-black mr-1">5.0</span>
-                        <!-- change condition to the rating, rounded to the nearest number -->
-                        {% if true %}
-                        <!-- 5 stars -->
-                        <span><i class="fa-solid fa-star"></i></span>
-                        <span><i class="fa-solid fa-star"></i></span>
-                        <span><i class="fa-solid fa-star"></i></span>
-                        <span><i class="fa-solid fa-star"></i></span>
-                        <span><i class="fa-solid fa-star"></i></span>
-                        {% elif false %}
-                        <!-- 4 stars -->
-                        <span><i class="fa-solid fa-star"></i></span>
-                        <span><i class="fa-solid fa-star"></i></span>
-                        <span><i class="fa-solid fa-star"></i></span>
-                        <span><i class="fa-solid fa-star"></i></span>
-                        <span><i class="fa-regular fa-star"></i></span>
-                        <!-- <span><i class="fa-regular fa-star-half-stroke"></i></span> -->
-                        {% elif false %}
-                        <!-- 3 stars -->
-                        <span><i class="fa-solid fa-star"></i></span>
-                        <span><i class="fa-solid fa-star"></i></span>
-                        <span><i class="fa-solid fa-star"></i></span>
-                        <span><i class="fa-regular fa-star"></i></span>
-                        <span><i class="fa-regular fa-star"></i></span>
-                        {% elif false %}
-                        <!-- 2 stars -->
-                        <span><i class="fa-solid fa-star"></i></span>
-                        <span><i class="fa-solid fa-star"></i></span>
-                        <span><i class="fa-regular fa-star"></i></span>
-                        <span><i class="fa-regular fa-star"></i></span>
-                        <span><i class="fa-regular fa-star"></i></span>
-                        {% else %}
-                        <!-- 1 star -->
-                        <span><i class="fa-solid fa-star"></i></span>
-                        <span><i class="fa-regular fa-star"></i></span>
-                        <span><i class="fa-regular fa-star"></i></span>
-                        <span><i class="fa-regular fa-star"></i></span>
-                        <span><i class="fa-regular fa-star"></i></span>
-                        {% endif %}
+                        <span class="text-black mr-1">{{rea_rating}}</span>
+                            <!-- change condition to the rating, rounded to the nearest number -->
+                            {% if rea_rating == 5 %}
+                            <!-- 5 stars -->
+                            <span><i class="fa-solid fa-star"></i></span>
+                            <span><i class="fa-solid fa-star"></i></span>
+                            <span><i class="fa-solid fa-star"></i></span>
+                            <span><i class="fa-solid fa-star"></i></span>
+                            <span><i class="fa-solid fa-star"></i></span>
+                            {% elif rea_rating == 4 %}
+                            <!-- 4 stars -->
+                            <span><i class="fa-solid fa-star"></i></span>
+                            <span><i class="fa-solid fa-star"></i></span>
+                            <span><i class="fa-solid fa-star"></i></span>
+                            <span><i class="fa-solid fa-star"></i></span>
+                            <span><i class="fa-regular fa-star"></i></span>
+                            <!-- <span><i class="fa-regular fa-star-half-stroke"></i></span> -->
+                            {% elif rea_rating == 3 %}
+                            <!-- 3 stars -->
+                            <span><i class="fa-solid fa-star"></i></span>
+                            <span><i class="fa-solid fa-star"></i></span>
+                            <span><i class="fa-solid fa-star"></i></span>
+                            <span><i class="fa-regular fa-star"></i></span>
+                            <span><i class="fa-regular fa-star"></i></span>
+                            {% elif rea_rating == 2 %}
+                            <!-- 2 stars -->
+                            <span><i class="fa-solid fa-star"></i></span>
+                            <span><i class="fa-solid fa-star"></i></span>
+                            <span><i class="fa-regular fa-star"></i></span>
+                            <span><i class="fa-regular fa-star"></i></span>
+                            <span><i class="fa-regular fa-star"></i></span>
+                            {% elif rea_rating == 1 %}
+                            <!-- 1 star -->
+                            <span><i class="fa-solid fa-star"></i></span>
+                            <span><i class="fa-regular fa-star"></i></span>
+                            <span><i class="fa-regular fa-star"></i></span>
+                            <span><i class="fa-regular fa-star"></i></span>
+                            <span><i class="fa-regular fa-star"></i></span>
+                            {% else %}
+                            <!-- 1 star -->
+                            <span><i class="fa-regular fa-star"></i></span>
+                            <span><i class="fa-regular fa-star"></i></span>
+                            <span><i class="fa-regular fa-star"></i></span>
+                            <span><i class="fa-regular fa-star"></i></span>
+                            <span><i class="fa-regular fa-star"></i></span>
+                            {% endif %}
                     </div>
                     <a href="{{ url_for('web_app.reviews_index') }}" 
                         class="text-xs text-gray-500 hover:text-blue-500 underline underline-offset-2">
-                        (<span>20</span> Reviews)
+                        (<span>{{num_reviews}}</span> Reviews)
                     </a>
+                    {% endif %}
                 </div>
                 {% if role == 3 %}
                 <a href="{{ url_for('web_app.wishlists_index') }}"
                     class="text-white text-nowrap text-sm px-2 py-1 mt-8 max-w-min rounded-md bg-indigo-700 flex items-center justify-center hover:bg-gray-800 transition"
                     title="add to wishlist">
-                    <i class="fa-solid fa-heart mx-1"></i>My wishlist
+                    <i class="fa-solid fa-heart mx-1"></i>My Wishlist
                 </a>
                 {% endif %}
             </div>

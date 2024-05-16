@@ -17,7 +17,7 @@ def generate_random_email(domain="example.com"):
     return email
 
 if __name__ == "__main__":
-    # print(os.path.exists("SampleDatabase.db"))
+
     # When Database hasnt been created
     if not os.path.exists('SampleDatabase.db'):
         # Create new database
@@ -61,19 +61,17 @@ if __name__ == "__main__":
         
         # Actor accounts for test case use
         sample_db.insert_into_table("User", "0, 'admin', '123', 'admin@example.com', 1, 1")
-        user_dict[1].append(len(user_dict[1]) + 1)
+        user_dict[1].append(0)
         sample_db.insert_into_table("User", "201, 'admin1', '123', 'admin1@example.com', 1, 2")
-        user_dict[1].append(len(user_dict[1]) + 1)
+        user_dict[1].append(201)
         sample_db.insert_into_table("User", "202, 'rea', '123', 'rea@example.com', 2, 1")
-        user_dict[2].append(len(user_dict[2]) + 1)
+        user_dict[2].append(202)
         sample_db.insert_into_table("User", "203, 'buyer', '123', 'buyer@example.com', 3, 1")
-        user_dict[3].append(len(user_dict[3]) + 1)
+        user_dict[3].append(203)
         sample_db.insert_into_table("User", "204, 'seller', '123', 'seller@example.com', 4, 1")
-        user_dict[4].append(len(user_dict[4]) + 1)
-        #sample_db.view_table("User")
-        print(sample_db.search_one("User", "username = 'admin'"))
+        user_dict[4].append(204)
 
-        #Review Table
+        #Review & Rating Table
         review_col = ["id INTEGER PRIMARY KEY AUTOINCREMENT",
                         "review TEXT",
                         "userName TEXT",
@@ -82,7 +80,6 @@ if __name__ == "__main__":
         
         sample_db.create_table("Review", review_col)
 
-        #Rating Table
         rating_col = ["id INTEGER PRIMARY KEY AUTOINCREMENT",
                         "rating INTEGER",
                         "userName TEXT",
@@ -111,7 +108,6 @@ if __name__ == "__main__":
         
         #Function to randomly generate a review
         def generate_random_review():
-            
             reviewNum = random.randint(1, 5)
             review = review_phrases[reviewNum]
             review_and_num = str(reviewNum) + " " + review
@@ -159,8 +155,7 @@ if __name__ == "__main__":
 
             for reviews in new_review_tuple:
                 if reviews[2] == current_user and reviews[3] == current_rea:
-                    review_index = reviews[0
-                                           ]
+                    review_index = reviews[0]
             sample_db.insert_into_table("Rating", f"NULL, {rating}, '{current_user}', '{current_rea}', {current_role}, {review_index}")
 
         counter = 0
@@ -260,33 +255,15 @@ if __name__ == "__main__":
         sample_db.create_table("Profile", profile_col)
         sample_db.insert_into_table("Profile", f"1, 'System Admin', 'FruitRealEstate system admin', 1")
 
-        print(user_dict[2])
+        #print(user_dict[2])
 
     ## When database is already populated
     db = database.Database("SampleDatabase")
-    # print(db.search_one("User", "username = 'admin'"))
-    # print("Database Initliaised!")
-    #print(print(db.view_table("User")))
-    # db.view_table("Property")
-    #print(randomReview)
-    #print(len(randomReview))
-    #print(randomReview[2: len(randomReview)])
-    
 
-    # db.view_table("Profile")
-    #db.view_table("Review")
-    #db.view_table("Rating")
-    # db.search_by_keyword("Review", 'user191', ["userName"])
-    # print(db.search_by_keyword("User", 2, ['role']))
-    print(db.search_by_keyword("Review", 'user50', ['userNameREA']))
-    # print(db.search_by_keyword("User", 'user50', ['username']))
-    #print(db.view_table("Rating"))
-    #print(db.search_by_keyword("User", 'user42', ['username']))
-    #print(db.search_by_keyword("Review", 'user42', ['userNameREA']))
-    #print(db.search_by_keyword("User", 'user83', ['username']))
-    print(db.search_by_keyword("User", 2, ['role']))
-
-
+    test_r = set()
+    for review in db.view_table("Review"):
+        test_r.add(review[3])
+    print(test_r)
     # db.connection.close()
     test_p = []
     for property in db.view_table("Property"):
@@ -297,13 +274,13 @@ if __name__ == "__main__":
         t_seller = db.search_by_keyword("User", seller, ["id"])[0]
         test_sellers.append(t_seller)
     # print(test_p)
-    print("SELLER WITH PROPERTIES", test_sellers[0])
+    print("SELLER WITH PROPERTIES:", test_sellers[0])
 
     # print(db.view_table("Favourite"))
     user_with_favs = []
     for f_user in db.view_table("Favourite"):
         user_with_favs.append(db.search_one("User", f"id = {f_user[1]}"))
-    print("BUYER WITH FAVS", user_with_favs[0])
+    print("BUYER WITH FAVS:", user_with_favs[0])
 
     # Initialise Web App
     print("--- Running App ---")

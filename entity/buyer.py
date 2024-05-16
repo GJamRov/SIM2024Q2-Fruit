@@ -75,8 +75,9 @@ class Buyer(User):
         else:
             return False
 
-    # 32. Calculate mortage of property
-    def calc_mortage(self):
-        pass
+    def get_agent(self, rea_id):
+        """ Returns agent object with matching name """
+        agent = Buyer.db.search_one("User", f"id = '{rea_id}'")
+        return agent
 
     

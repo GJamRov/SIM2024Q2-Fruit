@@ -13,10 +13,8 @@ class viewPLController:
         # Check if userName belongs to an existing user
         if found_user:
             role = found_user[4]
-            print(role)
             found_user = found_user[:4] + found_user[5:]
             properties = []
-            
             # Checks that user is an REA, buyer or seller
             if role == 2:
                 tREA = REA(*found_user)
@@ -44,3 +42,26 @@ class viewPLController:
         prop = User.db.search_one("Property", f"id = {p_id}")
         return prop
     
+    def getAgent(self, userName, rea_id):
+        found_user = User.db.search_one("User", f"username = '{userName}'")
+        # Check if userName belongs to an existing user
+        if found_user:
+            role = found_user[4]
+            found_user = found_user[:4] + found_user[5:]
+            # Checks that user is an REA, buyer or seller
+            if role == 3:
+                tBuyer = Buyer(*found_user)
+                found_rea = tBuyer.get_agent(rea_id)
+                return found_rea
+            
+            elif role == 2:
+                tREA = REA(*found_user)
+                return (tREA.get_rating(), len(tREA.get_reviews()))
+        
+        else:
+            return None
+        
+    def getRating(self, rea):
+        details = rea[:4] + rea[5:]
+        tRea = REA(*details)
+        return tRea.get_rating()

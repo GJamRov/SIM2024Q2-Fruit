@@ -419,9 +419,11 @@ class WebApp:
         viewPLCtl = viewPLController()
         listing_id = request.args.get("listing_id")
         listing = viewPLCtl.viewListing(session['username'], listing_id)
+        curr_rea = viewPLCtl.getAgent(session['username'], listing[6])
+        rea_rating = viewPLCtl.getRating(curr_rea)
         faved = request.args.get("faved")
         if listing:
-            return render_template("pages/property-listings/view.html", listing=listing, faved=faved)
+            return render_template("pages/property-listings/view.html", listing=listing, faved=faved, rea=curr_rea, rea_rating = rea_rating)
         else:
             flash('Listing not found', 'error')
             return redirect(url_for('web_app.property_listings_index'))
@@ -455,7 +457,7 @@ class WebApp:
 
             if result:
                 flash('Property listing created successfully!', 'success')
-                return redirect(url_for('web_app.property_listings_index'))
+                return redirect(url_for('web_app.my_profile_index'))
             else:
                 flash('Property listing created unsuccssfully.', 'error')
                 return redirect("pages/property-listings/create.html")
@@ -549,16 +551,19 @@ class WebApp:
         deletePLCtl.delete_listing(session["username"], listing_id)
         return redirect(url_for("web_app.my_profile_index"))
 
-    # my profile
+    # My Profile Functions
     def my_profile_index(self):
         """Main Page for Individual User Profile"""
         # Checks that the user is an REA, buyer or seller
         while session['role'] in [2,3,4]:
+            curr_username = session['username']
             viewPLCtl = viewPLController()
             properties = []
-            if session['role'] != 3: # Buyer
-                properties = viewPLCtl.viewListing(session['username'], propertyDetail="profile")
-            return render_template("pages/my-profile/index.html", propertyListings = properties, role=session['role'])
+            rea_rr = (0, 0)
+            if session['role'] == 2:
+                properties = viewPLCtl.viewListing(curr_username, propertyDetail="profile")
+                rea_rr = viewPLCtl.getAgent(curr_username, properties[0][6])
+            return render_template("pages/my-profile/index.html", propertyListings = properties, role = session['role'], username=curr_username, rea_rating=rea_rr[0], num_reviews = rea_rr[1])
             
         return redirect("/")
 
@@ -651,8 +656,8 @@ class WebApp:
                 rating_table += (add_tuple, )
                 counter += 1
             
-            print("AGENT TABLE 2", agent_table2)
-            print("RATING TABLE", rating_table)
+            # print("AGENT TABLE 2", agent_table2)
+            # print("RATING TABLE", rating_table)
 
 
             if rating_table:
@@ -674,7 +679,8 @@ class WebApp:
             if favourites:
                 return render_template("pages/wishlists/index.html", propertyListings=favourites, favs=favs, role=session['role'])
             else:
-                return redirect(url_for("my_profile_index"))
+                flash("No Favourites!", "error")
+                return redirect(url_for("web_app.my_profile_index"))
             
     
     def wishlists_sort(self):

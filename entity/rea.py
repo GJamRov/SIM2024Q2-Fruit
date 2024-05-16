@@ -98,7 +98,24 @@ class REA(User):
         rea_table = REA.db.search_by_keyword("User", 2, ["role"])
         return rea_table
 
+    def get_rating(self) -> int:
+        ratings = REA.db.search_by_keyword("Rating", self.get_username(), ["userNameREA"])
+        if ratings:
+            total = 0
+            count = 0
+            for rate in ratings:
+                total += rate[1]
+                count += 1
+            return round(total/count)
+        else:
+            return 0
     
+    def get_reviews(self) -> list:
+        reviews = REA.db.search_by_keyword("Review", self.get_username(), ["userNameREA"])
+        if reviews:
+            return list(reviews)
+        else:
+            return []
 
 
     
