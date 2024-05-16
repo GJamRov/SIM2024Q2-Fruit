@@ -138,12 +138,6 @@
                     <div class="flex">
                         <div>
                             <span>Mortgage Calculator:</span>
-                            <label for="property">Property type: </label>
-                            <select name="property" id="property"
-                                class="w-44 border text-sm text-gray-600 py-3 px-4 border-gray-300 shadow-sm rounded focus:ring-indigo-700 focus:border-indigo-700">
-                                <option value="hdb">HDB</option>
-                                <option value="condo">Condo</option>
-                            </select>
                             <label for="loan">Loan Amount:</label>
                             <input type="text" name="loan" id="loan" placeholder="$">
                             <label for="interest">Interest Rate:</label>
@@ -172,7 +166,7 @@
         </div>
     </div>
 </div>
-
+        
 <script>
     document.getElementById('mortgage-form').addEventListener('submit', function(event) {
         event.preventDefault(); // Prevent the form from submitting
