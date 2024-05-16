@@ -56,49 +56,35 @@ class Review:
 
     # Edit reviews
     # Assuming the user already has made a review previously to specified agent
-    def editReview(self, new_review, old_review, agent_id, user_id, role):
+    def editReview(self, review_id, new_review, user_id, role):
         Review.connect_database("SampleDatabase")
-        hasReview = False
-        old_review_index = 0
-
+        
         #Get the tuples of the old review
-        old_review_tuples = Review.db.search_by_keyword("Review", user_id, ["userName"])
+        #old_review_tuples = Review.db.search_by_keyword("Review", review_id, ["id"])
+        #old_review = old_review_tuples[1]
 
-        #Length of tuple
-        tuple_length = len(old_review_tuples)
-
-        for i in range(tuple_length):
-            current_tuple = old_review_tuples[i]
-            current_review = current_tuple[1]
-            current_agent_id = current_tuple[3]
-
-            if(current_agent_id == agent_id):
-                old_review_index = i
-                hasReview = True
-
-        if(hasReview != True):
-            return False
-
-        else:
-
-            #Remove the tuple of the old review
-            """
-            tuple_to_remove = (old_review_index, old_review, user_id, agent_id)
-
-            new_tuple = tuple(inner_tuple for inner_tuple in old_review_tuples if inner_tuple != tuple_to_remove)
-
-            REA.db.delete_from_table("Review", f"review = '{old_review}'")
-
-            for j in range(tuple_length - 1):
-                current_tuple = new_tuple[j]
-                current_review = current_tuple[1]
-                current_user_id = current_tuple[2]
-                current_agent_id = current_tuple[3]
-
-                REA.db.insert_into_table("Review", f"NULL, '{current_review}', '{current_user_id}', '{current_agent_id}'")
-            """
-
-            Review.db.delete_from_table("Review", f"review = '{old_review}', userName = '{user_id}', userNameREA = '{agent_id}'")
-
-            Review.db.insert_into_table("Review", f"NULL, '{new_review}', '{user_id}', '{agent_id}'")
+        """
+        if old_review_tuples:
+            Review.db.update_table("Review", f"review = '{new_review}'", f"id = {review_id}")
             return True
+        else:
+            return False
+        """
+        Review.db.update_table("Review", f"review = '{new_review}'", f"id = {review_id}")
+        review_tuple = Review.db.search_by_keyword("Review", review_id, ["id"])
+
+        for review in review_tuple:
+            if review[1] == new_review and review[0] == review_id:
+                return True
+            else:
+                return False
+
+        """
+        new_review_tuples = Review.db.search_by_keyword("Review", review_id, ["id"])
+        new_review_view = new_review_tuples[1]
+
+        if old_review == new_review_view:
+            return False
+        else:
+            return True
+        """

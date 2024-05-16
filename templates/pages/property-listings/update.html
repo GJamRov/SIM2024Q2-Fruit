@@ -11,9 +11,9 @@
       >Back</a
     >
     <h3 class="text-xl font-bold underline mt-4">Update Property Listing</h3>
-    <form action="/property-listings/update" method="POST" enctype="multipart/form-data">
+    <form action="/update" method="POST" enctype="multipart/form-data">
       <label for="image-preview"> Upload photo of property: </label>
-      <input id="upload" type="file" class="hidden" accept="image/*" name="image" required/>
+      <input id="upload" type="file" class="hidden" accept="image/*" name="image"/>
       <div id="image-preview" class="max-w-sm p-6 mb-4 bg-gray-100 border-dashed border-2 border-gray-400 rounded-lg items-center mx-1 text-center cursor-pointer">
           <label for="upload" class="cursor-pointer">
               <h5 class="mb-2 text-xl font-bold tracking-tight text-gray-700">Upload picture</h5>
@@ -23,6 +23,7 @@
           </label>
       </div>
 
+      <input type="text" id="id" name="id" class="hidden" value="{{listing[0]}}"/>
       <label for="first"> Name: </label>
       <input type="text" id="first" name="name" class="w-full md:w-[50%] xl:w-[30%]" placeholder="Enter property name" value="{{listing[1]}}" required/>
       <label for="location"> Location: </label>

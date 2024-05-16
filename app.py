@@ -18,6 +18,7 @@ from controllers.reactivateProfile import reactivateUserProfileController
 from controllers.viewPropertyListing import viewPLController
 from controllers.propertyListingUpdate import updatePLController
 from controllers.createPropertyListing import createPLController
+from controllers.deletePropertyListing import deletePLController
 from controllers.wishlistView import viewFavouritesController
 from controllers.wishlistUpdate import updateFavouritesController
 from controllers.viewReview import viewReviewController
@@ -25,6 +26,9 @@ from controllers.viewRating import viewRatingController
 from controllers.editReview import editReviewController
 from controllers.giveReview import giveReviewController
 from controllers.giveRating import giveRatingController
+from controllers.editReview import editReviewController
+from controllers.editRating import editRatingController
+from controllers.viewREA import viewREA
 
 # Entity Import
 from entity.user import User
@@ -85,14 +89,16 @@ class WebApp:
         self.blueprint.add_url_rule('/property-listings/create', 'property_listings_create', self.property_listings_create, methods=['GET', 'POST'])
         self.blueprint.add_url_rule('/property-listings/update', 'property_listings_update', self.property_listings_update, methods=['GET', 'POST'])
         self.blueprint.add_url_rule('/upload', 'upload_file', self.upload_file, methods=['GET', 'POST'])
+        self.blueprint.add_url_rule('/delete-listing', 'property_listings_delete', self.property_listings_delete, methods=["GET", "POST"])
         self.blueprint.add_url_rule('/update_wishlist', view_func=self.update_wishlist, methods=['GET', 'POST'])
+        self.blueprint.add_url_rule('/update', 'update_listing', self.update_listing, methods=["GET", "POST"])
 
         # my profile
         self.blueprint.add_url_rule('/my-profile/', 'my_profile_index', self.my_profile_index)
         self.blueprint.add_url_rule('/my-profile/view', 'my_profile_view', self.my_profile_view)
 
         # reviews
-        self.blueprint.add_url_rule('/reviews/', 'reviews_index', self.reviews_index)
+        self.blueprint.add_url_rule('/reviews/', 'reviews_index', self.reviews_index, methods=['GET', 'POST'])
 
         # wishlists
         self.blueprint.add_url_rule('/wishlists/', 'wishlists_index', self.wishlists_index)
@@ -102,7 +108,9 @@ class WebApp:
         # my reviews - for buyers and sellers
         self.blueprint.add_url_rule('/my-reviews/', 'my_reviews_index', self.my_reviews_index)
         self.blueprint.add_url_rule('/my-reviews/create', 'my_reviews_create', self.my_reviews_create, methods=['GET', 'POST'])
-        self.blueprint.add_url_rule('/my-reviews/update', 'my_reviews_update', self.my_reviews_update)
+        self.blueprint.add_url_rule('/my-reviews/update', 'my_reviews_update', self.my_reviews_update, methods=['GET', 'POST'])
+        self.blueprint.add_url_rule('/my-reviews/rea', 'my_reviews_rea', self.my_reviews_rea, methods=['GET', 'POST'])
+
 
         self.app.register_blueprint(self.blueprint)
         User.connect_database("SampleDatabase")
@@ -481,44 +489,63 @@ class WebApp:
             flash("Failed to update wishlist.", "error")
             return redirect(url_for('web_app.property_listings_index'))
 
-
     def property_listings_update(self):
         """Update a property listing"""
         # Get current listing
         listing_id = request.args.get("listing_id")
+        print("RETRIEVED", listing_id)
         viewPLCtl = viewPLController()
         curr_listing = viewPLCtl.getOneListing(listing_id)
         # Get Current Seller for Current Property
         updatePLC = updatePLController()
         curr_seller = updatePLC.getOneSeller(curr_listing[7])
-
+        if session['role'] == 2:
+            return render_template("pages/property-listings/update.html", listing=curr_listing, curr_seller=curr_seller)
+        else:
+            flash('You do not have permission to update a property listing!', 'error')
+            return redirect("/")   
+    
+    def update_listing(self):
+        """Handles updating the listing"""
+        #print("FILES", request.files)
         if 'image' in request.files:
-            image_file = request.files['image']
-            name = request.form['location']
+            # print(request.form)
+            id = request.form["id"]
+            name = request.form['name']
             location = request.form['location']
             price = request.form['price']
+            description = request.form['description']
+            seller_name = request.form['seller']
 
-            # Save the image file to UPLOAD_FOLDER
+            # If image file changes, save the new image file to UPLOAD_FOLDER
+            image_file = request.files['image']
             image_filename = secure_filename(image_file.filename)
-            image_filepath = os.path.normpath(os.path.join(self.app.config['UPLOAD_FOLDER'], image_filename)) 
-            image_file.save(image_filepath)
+            if image_filename == '':
+                pass
+            else:
+                image_filepath = os.path.normpath(os.path.join(self.app.config['UPLOAD_FOLDER'], image_filename)) 
+                image_file.save(image_filepath)
 
             # Save new property details to database
-            createPLCtl = createPLController()
-            result = createPLCtl.createPropertyListing(session['username'], [name, location, image_filename, price])
-
+            updatePLCtl = updatePLController()
+            result = updatePLCtl.update_listing(session['username'], [id, name, location, image_filename, price, description, seller_name])
+            #print("UPDATE:", result)
             if result:
-                flash('Property listing created successfully!', 'success')
-                return redirect(url_for('web_app.property_listings_index'))
+                flash('Property listing updated successfully!', 'success')
+                return redirect(url_for('web_app.my_profile_index'))
             else:
-                flash('Property listing created unsuccssfully.', 'error')
-                return redirect("pages/property-listings/create.html")
-        return render_template("pages/property-listings/update.html", listing=curr_listing, curr_seller=curr_seller)
-        
+                flash('Property listing update fail.', 'error')
+                return redirect(url_for('web_app.my_profile_index'))
+        else:
+            flash("Error", "error")
+            return redirect(url_for('web_app.my_profile_index'))
+
     
     def property_listings_delete(self):
         """Delete a property listing"""
-
+        deletePLCtl = deletePLController()
+        listing_id = request.args.get("listing_id")
+        deletePLCtl.delete_listing(session["username"], listing_id)
         return redirect(url_for("web_app.my_profile_index"))
 
     # my profile
@@ -559,14 +586,76 @@ class WebApp:
         while session['role'] > 1 and session['role'] < 5:
 
             sort_option = request.args.get('sort')
-            viewReviewCtl = viewReviewController()
             current_user = session['username']
-            reviews = viewReviewCtl.viewReview(user_id=current_user, role=current_role)
+            viewREACtl = viewREA()
+            rea_table = viewREACtl.viewREATable()
 
-            viewRatingCtl = viewRatingController()
-            ratings = viewRatingCtl.viewRating(agent_id=current_user, role=current_role)
-            if reviews:
-                return render_template('pages/my-reviews/index.html', reviewListing = reviews, ratingListing = ratings, role=current_role)
+            viewRatingCtl = viewREA()
+            ratings = viewRatingCtl.viewREATable()
+            print(ratings)
+
+            rea_array = {}
+            rating_table = ()
+            agent_table = {}
+            counter = 0
+            agent_table2 = {}
+
+            """
+            for rating in ratings:
+                #The current agent
+                current_agent = rating[3]
+
+                #If the current agent has not been added to the dictionary
+                if(current_agent not in agent_table.keys()):
+                    total_rating = 0
+                    rating_count = 0
+                    
+                    #Tabulate the total rating of current agent
+                    for rating2 in ratings:
+                        if rating2[3] == current_agent:
+                            total_rating += rating2[1]
+                            rating_count += 1
+                    
+                    #Calculate average rating and add it to rating_table
+                    average_rating = int(total_rating / rating_count)
+                    add_tuple = (counter, current_agent, average_rating)
+                    rating_table += (add_tuple, )
+
+                    counter += 1
+                agent_table[current_agent] = 1  
+            """
+
+            for rating in ratings:
+                current_agent = rating[3]
+                
+                if(current_agent not in agent_table2.keys()):
+                    current_rating = rating[1]
+                    current_tuple = (current_rating, 1)
+                    agent_table2[current_agent] = current_tuple
+
+                else:
+                    current_tuple = agent_table2[current_agent]
+                    current_rating = current_tuple[0] + rating[1]
+                    current_count = 1 + current_tuple[1]
+                    current_tuple = (current_rating, current_count)
+                    agent_table2[current_agent] = current_tuple
+
+            for key in agent_table2:
+                current_tuple2 = agent_table2.get(key)
+                total_rating = current_tuple2[0]
+                total_count = current_tuple2[1]
+                average_rating = int(total_rating/total_count)
+                add_tuple = (counter, key, average_rating)
+
+                rating_table += (add_tuple, )
+                counter += 1
+            
+            print("AGENT TABLE 2", agent_table2)
+            print("RATING TABLE", rating_table)
+
+
+            if rating_table:
+                return render_template('pages/my-reviews/rea.html', rating_table = rating_table)
             else:
                 flash("No Reviews!", "error")
                 return redirect("/")
@@ -608,6 +697,21 @@ class WebApp:
             flash('Wish not found', 'error')
             return redirect(url_for('web_app.wishlists_index'))
         
+    
+    def my_reviews_rea(self):
+        userName = request.args.get("userName")
+        viewReviewCtl = viewReviewController()
+        current_user = session['username']
+        reviews = viewReviewCtl.viewReview(user_id=userName, role=2)
+
+        viewRatingCtl = viewRatingController()
+        ratings = viewRatingCtl.viewRating(agent_id=userName, role=2)
+        if reviews:
+            return render_template('pages/my-reviews/index.html', userName=userName, reviewListing=reviews, ratingListing=ratings)
+        else:
+            flash("No Reviews!", "error")
+            return redirect("/")
+
 
     # my reviews given - for buyers and sellers
     def my_reviews_index(self):
@@ -616,7 +720,7 @@ class WebApp:
         current_role = session['role']
 
         if current_role == 1:
-            flash("You do not have access to view", "error")
+            flash("ERROR 101: You DO NOT have permission to view", "error")
             return redirect("/")
 
         while session['role'] > 1 and session['role'] < 5:
@@ -635,18 +739,48 @@ class WebApp:
 
     def my_reviews_update(self):
         """update my reviews page"""
-        return render_template("pages/my-reviews/update.html")
+        current_role = session['role']
+
+        if current_role == 1 or current_role == 2:
+            flash("ERROR 101: You DO NOT have permission to edit!!!", "error")
+            return redirect("/")
+        
+        while current_role == 3 or current_role == 4:
+            index = request.args.get("review_id")
+
+            if request.method == 'POST':
+                new_rating = request.form['sort']
+                new_review = request.form['profile_desc']
+                current_username = session['username']
+                profile_name = request.form['profile_name']
+                review_index = request.form['review_id']
+                print(new_review)
+                print(review_index)
+                print(profile_name)
+
+
+                updateReviewCtl = editReviewController()
+                updateRatingCtl = editRatingController()
+                updateReviewBool = updateReviewCtl.editReview(review_index, new_review, current_username, current_role)
+                updateRatingBool = updateRatingCtl.editRating(review_index, new_rating, current_username, current_role, new_review)
+
+                if(updateReviewBool == True and updateRatingBool == True):
+                    flash("Successfully edited!", "success")
+                    return redirect(url_for('web_app.my_reviews_index'))
+                else:
+                    flash("Error", "error")
+                    return redirect(url_for('web_app.my_reviews_index'))
+        
+            return render_template("pages/my-reviews/update.html", profile=session['username'], review_id=index)
+        return redirect("/")
     
-    #@app.route('/my-reviews/create', methods=['GET', 'POST'])
     def my_reviews_create(self):
         """create reviews page"""
         current_role = session['role']
 
-        """
         if(current_role == 1 or current_role == 2):
-            flash("You do not have access to create reviews")
+            flash("ERROR 101: You DO NOT have permission to create reviews")
             return redirect("/")
-        """
         
         while current_role == 3 or current_role == 4:
             current_user = session['username']
@@ -660,60 +794,18 @@ class WebApp:
                 giveRatingCtl = giveRatingController()
 
                 successReview = giveReviewCtl.giveReview(new_review, agent_profile, current_user, current_role)
+
                 successRating = giveRatingCtl.giveRating(new_rating, current_user, agent_profile, current_role, new_review)
 
                 if((successRating == True) and (successReview == True)):
                     flash("Successfully reviewed", "success")
-                    #return redirect(url_for('web_app.my_reviews_index'))
+                    return redirect(url_for('web_app.my_reviews_index'))
                     #return redirect("/")
                     #return redirect(url_for("my_reviews_index"))
-                    return redirect("/my-reviews/")
+                    #return redirect("/my-reviews/")
                 else:
                     flash("Error", "error")
                     return redirect("my_reviews_create")
 
             return render_template("pages/my-reviews/create.html", profile=session['username'])
         return redirect("/")
-    
-    def create_profile(self):
-        """Create new user profile"""
-        # Check that the user is a System Admin
-        while session['role'] == 1:
-            # Get form data from POST request
-            if request.method == 'POST':
-                UP = [request.form['profile_type'], request.form['profile_desc']]
-                createProfileCtl = createUserProfileController()
-                if createProfileCtl.createUserProfile(UP):
-                    flash("User profile created successfully!", "success")
-                    return redirect('/user-profiles/')
-                else:
-                    flash("User profile already exists! Please try again", "error")
-                    return redirect('/user-profiles/create')
-            return render_template("pages/user-profiles/create.html")
-        
-        def upload_file(self):
-            """Handles the form submission for property_listings_create"""
-            if 'image' in request.files:
-                image_file = request.files['image']
-                name = request.form['location']
-                location = request.form['location']
-                price = request.form['price']
-
-                # Save the image file to UPLOAD_FOLDER
-                image_filename = secure_filename(image_file.filename)
-                image_filepath = os.path.normpath(os.path.join(self.app.config['UPLOAD_FOLDER'], image_filename)) 
-                image_file.save(image_filepath)
-
-                # Save new property details to database
-                createPLCtl = createPLController()
-                result = createPLCtl.createPropertyListing(session['username'], [name, location, image_filename, price])
-
-                if result:
-                    flash('Property listing created successfully!', 'success')
-                    return redirect(url_for('web_app.property_listings_index'))
-                else:
-                    flash('Property listing created unsuccssfully.', 'error')
-                    return redirect("pages/property-listings/create.html")
-            return redirect('/property-listings/create')
-
-   

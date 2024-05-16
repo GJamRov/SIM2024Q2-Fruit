@@ -32,6 +32,7 @@ class Database:
     def update_table(self, table_name, set_values, condition):
         """ Updates table with new values"""
         query = f"UPDATE {table_name} SET {set_values} WHERE {condition}"
+        print(query)
         self.cursor.execute(query)
         self.connection.commit()
 
@@ -59,6 +60,7 @@ class Database:
     def delete_from_table(self, table_name, condition):
         """Delete records from a table based on a condition."""
         query = f"DELETE FROM {table_name} WHERE {condition}"
+        print(query)
         self.cursor.execute(query)
         self.connection.commit()
         print(f"Deleted rows from {table_name} where {condition}")
