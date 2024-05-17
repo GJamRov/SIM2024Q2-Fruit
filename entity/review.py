@@ -25,9 +25,10 @@ class Review:
     # Create reviews
     def giveReview(self, new_review, agent_id, user_id, role):
         Review.connect_database("SampleDatabase")
-        hasReview = False
+        isREA = False
 
         check_for_review = Review.db.search_by_keyword("Review", user_id, ["userName"])
+        agent_tuple = Review.db.search_by_keyword("User", 2, ["role"])
         """ 
         #Checks if user has given a review to REA 
         for i in range(tuple_length):
@@ -45,14 +46,25 @@ class Review:
             Review.db.insert_into_table("Review", f"NULL, '{new_review}', '{user_id}', '{agent_id}'")
             return True
         """
-        Review.db.insert_into_table("Review", f"NULL, '{new_review}', '{user_id}', '{agent_id}', {role}")
 
+        for agent in agent_tuple:
+            if agent[1] == agent_id:
+                isREA = True
+
+        if(isREA == True):
+            Review.db.insert_into_table("Review", f"NULL, '{new_review}', '{user_id}', '{agent_id}', {role}")
+            return True
+        else:
+            return False
+
+        """        
         check_for_review2 = Review.db.search_by_keyword("Review", user_id, ["userName"])
 
         if(len(check_for_review2) > len(check_for_review)):
             return True
         else:
             return False
+        """
 
     # Edit reviews
     # Assuming the user already has made a review previously to specified agent
