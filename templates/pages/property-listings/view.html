@@ -31,7 +31,6 @@
         </div>
         <div class="flex items-baseline mb-1 space-x-2 font-roboto mt-4">
             <p class="text-xl text-indigo-700 font-semibold">${{listing[5]}}</p>
-            <!-- <p class="text-base text-gray-400 line-through">$55.00</p> -->
         </div>
 
         <p class="mt-4 text-gray-600">{{listing[3]}}</p>
@@ -69,7 +68,7 @@
                     <img src="{{ url_for('static', filename='Generic-Profile-Image.png') }}" alt=listing[1] class="self-center w-16 h-16 aspect-square object-cover rounded-full">
                     <div class="flex flex-col mx-2">
                         <span class="px-2">{{rea[1]}}</span>
-                        <a href="#" class="hover:text-blue-600 max-w-min text-nowrap py-1 px-1 mb-1">
+                        <a class="hover:text-blue-600 max-w-min text-nowrap py-1 px-1 mb-1">
                             <span class="font-bold italic">@{{rea[3]}}</span>
                         </a>
                         <div class="mx-2 flex gap-1 text-sm text-yellow-400">

@@ -23,7 +23,6 @@ from controllers.wishlistView import viewFavouritesController
 from controllers.wishlistUpdate import updateFavouritesController
 from controllers.viewReview import viewReviewController
 from controllers.viewRating import viewRatingController
-from controllers.editReview import editReviewController
 from controllers.giveReview import giveReviewController
 from controllers.giveRating import giveRatingController
 from controllers.editReview import editReviewController
@@ -578,7 +577,6 @@ class WebApp:
             flash('Listing not found', 'error')
             return redirect(url_for('web_app.my_profile_index'))
 
-
     # reviews
     
     def reviews_index(self):
@@ -698,7 +696,6 @@ class WebApp:
         else:
             flash('Wish not found', 'error')
             return redirect(url_for('web_app.wishlists_index'))
-        
     
     def my_reviews_rea(self):
         userName = request.args.get("userName")
@@ -713,7 +710,6 @@ class WebApp:
         else:
             flash("No Reviews!", "error")
             return redirect("/")
-
 
     # my reviews given - for buyers and sellers
     def my_reviews_index(self):
@@ -745,21 +741,17 @@ class WebApp:
         current_username = session['username']
 
         if current_role == 1 or current_role == 2:
-            flash("ERROR 101: You DO NOT have permission to edit!!!", "error")
-            return redirect("/")
+            flash("You do not have permission to edit reviews.", "error")
+            return redirect(url_for('web_app.my_reviews_index'))
         
         while current_role == 3 or current_role == 4:
             index = request.args.get("review_id")
 
             if request.method == 'POST':
-                new_rating = request.form['sort']
-                new_review = request.form['profile_desc']
-                profile_name = request.form['profile_name']
+                new_rating = request.form['rating']
+                new_review = request.form['review']
+                profile_name = request.form['username']
                 review_index = request.form['review_id']
-                print(new_review)
-                print(review_index)
-                print(profile_name)
-
 
                 updateReviewCtl = editReviewController()
                 updateRatingCtl = editRatingController()
@@ -767,13 +759,13 @@ class WebApp:
                 updateRatingBool = updateRatingCtl.editRating(review_index, new_rating, current_username, current_role, new_review)
 
                 if(updateReviewBool == True and updateRatingBool == True):
-                    flash("Successfully edited!", "success")
+                    flash("Successfully updated!", "success")
                     return redirect(url_for('web_app.my_reviews_index'))
                 else:
-                    flash("Error", "error")
-                    return redirect(url_for('web_app.my_reviews_index'))
+                    flash("Error updating rating and review. Please try again.", "error")
+                    return redirect(url_for('web_app.my_reviews_update'))
         
-            return render_template("pages/my-reviews/update.html", profile=session['username'], review_id=index)
+            return render_template("pages/my-reviews/update.html", username=session['username'], review_id=index)
         return redirect("/")
     
     def my_reviews_create(self):
@@ -781,15 +773,15 @@ class WebApp:
         current_role = session['role']
 
         if(current_role == 1 or current_role == 2):
-            flash("ERROR 101: You DO NOT have permission to create reviews")
-            return redirect("/")
+            flash("You do not have permission to create reviews.", "error")
+            return redirect(url_for('web_app.my_reviews_index'))
         
         while current_role == 3 or current_role == 4:
             current_user = session['username']
 
             if request.method == 'POST':
-                new_review = request.form['profile_desc']
-                new_rating = request.form['sort']
+                new_review = request.form['review']
+                new_rating = request.form['rating']
                 agent_profile = request.form['userNameREA']
                 
                 giveReviewCtl = giveReviewController()
@@ -800,15 +792,12 @@ class WebApp:
                 successRating = giveRatingCtl.giveRating(new_rating, current_user, agent_profile, current_role, new_review)
 
                 if((successRating == True) and (successReview == True)):
-                    flash("Successfully reviewed", "success")
+                    flash("Successfully reviewed!", "success")
                     return redirect(url_for('web_app.my_reviews_index'))
-                    #return redirect("/")
-                    #return redirect(url_for("my_reviews_index"))
-                    #return redirect("/my-reviews/")
                 else:
-                    flash("Error", "error")
+                    flash("Error creating review. Please try again.", "error")
                     #return redirect("my_reviews_create")
                     return redirect(url_for('web_app.my_reviews_create'))
 
-            return render_template("pages/my-reviews/create.html", profile=session['username'])
+            return render_template("pages/my-reviews/create.html", username=session['username'])
         return redirect("/")
