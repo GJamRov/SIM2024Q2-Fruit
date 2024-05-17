@@ -62,7 +62,7 @@
       <label for="location"> Location: </label>
       <input type="text" id="location" name="location" class="w-full md:w-[50%] xl:w-[30%]" placeholder="Enter property location" required/>
       <label for="price"> Price: </label>
-      <input type="text" id="price" name="price" class="w-full md:w-[50%] xl:w-[30%]" placeholder="Enter price of property" required/>
+      <input type="number" id="price" name="price" class="w-full md:w-[50%] xl:w-[30%]" placeholder="Enter price of property" min="0" max="9999999999999999999" required/>
       <label for="description">Description: </label>
       <textarea
         id="description"

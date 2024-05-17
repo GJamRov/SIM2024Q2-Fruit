@@ -445,22 +445,21 @@ class WebApp:
             price = request.form['price']
             description = request.form['description']
             seller = request.form['seller']
-
-            # Save the image file to UPLOAD_FOLDER
-            image_filename = secure_filename(image_file.filename)
-            image_filepath = os.path.normpath(os.path.join(self.app.config['UPLOAD_FOLDER'], image_filename)) 
-            image_file.save(image_filepath)
-
-            # Save new property details to database
+            
             createPLCtl = createPLController()
+            # Save new property details to database
+            image_filename = secure_filename(image_file.filename)
             result = createPLCtl.createPropertyListing(session['username'], [name, location, image_filename, price, description, seller])
-
             if result:
+                 # Save the image file to UPLOAD_FOLDER
+                image_filepath = os.path.normpath(os.path.join(self.app.config['UPLOAD_FOLDER'], image_filename)) 
+                image_file.save(image_filepath)
+
                 flash('Property listing created successfully!', 'success')
                 return redirect(url_for('web_app.my_profile_index'))
             else:
                 flash('Property listing created unsuccssfully.', 'error')
-                return redirect("pages/property-listings/create.html")
+                return redirect(url_for('web_app.property_listings_create'))
         return redirect('/property-listings/create')
     
     def update_wishlist(self):

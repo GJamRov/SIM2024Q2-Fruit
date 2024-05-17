@@ -13,4 +13,3 @@ class createPLController:
             return tREA.createListing(propertyDetails)
         else:
             return False
-        
