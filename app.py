@@ -676,7 +676,8 @@ class WebApp:
                     #return redirect("/my-reviews/")
                 else:
                     flash("Error", "error")
-                    return redirect("my_reviews_create")
+                    #return redirect("my_reviews_create")
+                    return redirect(url_for('web_app.my_reviews_create'))
 
             return render_template("pages/my-reviews/create.html", profile=session['username'])
         return redirect("/")

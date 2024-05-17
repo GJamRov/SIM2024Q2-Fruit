@@ -57,19 +57,32 @@ class Rating:
         Rating.connect_database("SampleDatabase")
         rating_tuples = Rating.db.search_by_keyword("Rating", user_id, ["userName"])
         review_tuples = Rating.db.search_by_keyword("Review", new_review, ["review"])
+        agent_tuples = Rating.db.search_by_keyword("User", 2, ["role"])
         review_index = 0
+        isREA = False
+
+        for agent in agent_tuples:
+            if agent[1] == agent_id:
+                isREA = True
 
         for review in review_tuples:
             if review[2] == user_id and review[3] == agent_id:
                 review_index = review[0]
-        
-        Rating.db.insert_into_table("Rating", f"NULL, {new_rating}, '{user_id}', '{agent_id}', {role}, {review_index}")
+
+        if(isREA == True):
+            Rating.db.insert_into_table("Rating", f"NULL, {new_rating}, '{user_id}', '{agent_id}', {role}, {review_index}")
+            return True
+        else:
+            return False
+
+        """   
         rating_tuples2 = Rating.db.search_by_keyword("Rating", user_id, ["userName"])
         
         if(len(rating_tuples2) > len(rating_tuples)):
             return True
         else:
             return False
+        """
         
     def returnRatingTable(self):
         Rating.connect_database("SampleDatabase")
