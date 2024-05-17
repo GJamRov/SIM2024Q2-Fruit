@@ -80,4 +80,11 @@ class Buyer(User):
         agent = Buyer.db.search_one("User", f"id = '{rea_id}'")
         return agent
 
-    
+    def buy_property(self, listing_id):
+        """ Buys a property and updates the property's status """
+        found_property = Buyer.db.search_one("Property", f"id = {listing_id}")
+        if found_property:
+            Buyer.db.update_table("Property", f"buyer_id = {self.get_id()}", f"id = {listing_id}")
+            return True
+        else:
+            return False

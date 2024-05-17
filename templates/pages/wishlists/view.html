@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}View property listing{% endblock title %}
+{% block title %}View Wishlisted PL{% endblock title %}
 
 {% block content %}
     
@@ -14,26 +14,11 @@
     <div>
         <img src="{{ url_for('static', filename=listing[4]) }}" alt=listing[1] class="w-full">
         <div class="grid grid-cols-5 gap-4 mt-4">
-            <!-- <img src="{{ url_for('static', filename=listing[4]) }}" alt=listing[1] class="w-full cursor-pointer border border-indigo-700">
-            <img src="{{ url_for('static', filename=listing[4]) }}" alt=listing[1] class="w-full cursor-pointer border">
-            <img src="{{ url_for('static', filename=listing[4]) }}" alt=listing[1] class="w-full cursor-pointer border">
-            <img src="{{ url_for('static', filename=listing[4]) }}" alt=listing[1] class="w-full cursor-pointer border">
-            <img src="{{ url_for('static', filename=listing[4]) }}" alt=listing[1] class="w-full cursor-pointer border"> -->
         </div>
     </div>
 
     <div>
         <h2 class="text-3xl font-medium uppercase mb-2">{{listing[1]}}</h2>
-        <!-- <div class="flex items-center mb-4">
-            <div class="flex gap-1 text-sm text-yellow-400">
-                <span><i class="fa-solid fa-star"></i></span>
-                <span><i class="fa-solid fa-star"></i></span>
-                <span><i class="fa-solid fa-star"></i></span>
-                <span><i class="fa-solid fa-star"></i></span>
-                <span><i class="fa-solid fa-star"></i></span>
-            </div>
-            <div class="text-xs text-gray-500 ml-3">(150 Reviews)</div>
-        </div> -->
         <div class="space-y-2">
             <p class="space-x-2">
                 <span class="text-gray-800 font-semibold">Location: </span>
@@ -50,16 +35,17 @@
         </div>
 
         <p class="mt-4 text-gray-600">{{listing[3]}}</p>
-
+        
         <div class="mt-6 flex gap-3 border-b border-gray-200 pb-5 pt-5">
+            {% if role == 3 %}
             <!-- Buy / Sold -->
-            {% if false %}
+            {% if bought %}
             <a href="#"
                 class="opacity-40 pointer-events-none bg-indigo-700 border border-indigo-700 text-white px-8 py-2 font-medium rounded uppercase flex items-center gap-2 hover:bg-transparent hover:text-indigo-700 transition">
                 <i class="fa-regular fa-circle-xmark"></i> Sold
             </a>
             {% else %}
-            <a href="{{ url_for('web_app.my_reviews_create') }}"
+            <a href="{{ url_for('web_app.property_buy', listing_id=listing[0]) }}"  onclick="return confirmBuy();"
                 class="bg-indigo-700 border border-indigo-700 text-white px-8 py-2 font-medium rounded uppercase flex items-center gap-2 hover:bg-transparent hover:text-indigo-700 transition">
                 <i class="fa-solid fa-bag-shopping"></i> Buy
             </a>
@@ -67,37 +53,39 @@
 
             <!-- Un-Wishlist-->
             {% if faved == 'True'%}
-            <a href="{{ url_for('web_app.update_wishlist', listing_id = listing[0], page='w_view')}}"
+            <a href="{{ url_for('web_app.update_wishlist', listing_id = listing[0], page='pl_view')}}"
                 class="border border-gray-300 text-gray-600 px-8 py-2 font-medium rounded uppercase flex items-center gap-2 hover:text-indigo-700 transition">
                 <i class="fa-solid fa-heart-broken"></i> Un-Wishlist
             </a>
             {% elif faved == 'False' %}
-            <a href="{{ url_for('web_app.update_wishlist', listing_id = listing[0], page='w_view')}}"
+            <a href="{{ url_for('web_app.update_wishlist', listing_id = listing[0], page='pl_view')}}"
                 class="border border-gray-300 text-gray-600 px-8 py-2 font-medium rounded uppercase flex items-center gap-2 hover:text-indigo-700 transition">
                 <i class="fa-solid fa-heart"></i> Wishlist
             </a>
             {% endif %}
+            {% endif %}
         </div>
+        
         <div class="flex">
             <div class="mt-4 bg-gray-100 border flex flex-col px-3 py-2 min-w-max h-32">
                 <div class="flex mt-1 mx-2">
-                    <img src="{{ url_for('static', filename=listing[4]) }}" alt=listing[1] class="self-center w-16 h-16 aspect-square object-cover rounded-full">
+                    <img src="{{ url_for('static', filename='Generic-Profile-Image.png') }}" alt=listing[1] class="self-center w-16 h-16 aspect-square object-cover rounded-full">
                     <div class="flex flex-col mx-2">
-                        <span class="px-2">Zach Ho</span>
+                        <span class="px-2">{{rea[1]}}</span>
                         <a href="#" class="hover:text-blue-600 max-w-min text-nowrap py-1 px-1 mb-1">
-                            <span class="font-bold italic">@ReaZach001</span>
+                            <span class="font-bold italic">@{{rea[3]}}</span>
                         </a>
                         <div class="mx-2 flex gap-1 text-sm text-yellow-400">
-                            <span class="text-black mr-1">5.0</span>
+                            <span class="text-black mr-1">{{rea_rating}}</span>
                             <!-- change condition to the rating, rounded to the nearest number -->
-                            {% if true %}
+                            {% if rea_rating == 5 %}
                             <!-- 5 stars -->
                             <span><i class="fa-solid fa-star"></i></span>
                             <span><i class="fa-solid fa-star"></i></span>
                             <span><i class="fa-solid fa-star"></i></span>
                             <span><i class="fa-solid fa-star"></i></span>
                             <span><i class="fa-solid fa-star"></i></span>
-                            {% elif false %}
+                            {% elif rea_rating == 4 %}
                             <!-- 4 stars -->
                             <span><i class="fa-solid fa-star"></i></span>
                             <span><i class="fa-solid fa-star"></i></span>
@@ -105,23 +93,30 @@
                             <span><i class="fa-solid fa-star"></i></span>
                             <span><i class="fa-regular fa-star"></i></span>
                             <!-- <span><i class="fa-regular fa-star-half-stroke"></i></span> -->
-                            {% elif false %}
+                            {% elif rea_rating == 3 %}
                             <!-- 3 stars -->
                             <span><i class="fa-solid fa-star"></i></span>
                             <span><i class="fa-solid fa-star"></i></span>
                             <span><i class="fa-solid fa-star"></i></span>
                             <span><i class="fa-regular fa-star"></i></span>
                             <span><i class="fa-regular fa-star"></i></span>
-                            {% elif false %}
+                            {% elif rea_rating == 2 %}
                             <!-- 2 stars -->
                             <span><i class="fa-solid fa-star"></i></span>
                             <span><i class="fa-solid fa-star"></i></span>
                             <span><i class="fa-regular fa-star"></i></span>
                             <span><i class="fa-regular fa-star"></i></span>
                             <span><i class="fa-regular fa-star"></i></span>
-                            {% else %}
+                            {% elif rea_rating == 1 %}
                             <!-- 1 star -->
                             <span><i class="fa-solid fa-star"></i></span>
+                            <span><i class="fa-regular fa-star"></i></span>
+                            <span><i class="fa-regular fa-star"></i></span>
+                            <span><i class="fa-regular fa-star"></i></span>
+                            <span><i class="fa-regular fa-star"></i></span>
+                            {% else %}
+                            <!-- 1 star -->
+                            <span><i class="fa-regular fa-star"></i></span>
                             <span><i class="fa-regular fa-star"></i></span>
                             <span><i class="fa-regular fa-star"></i></span>
                             <span><i class="fa-regular fa-star"></i></span>
@@ -134,26 +129,20 @@
                 
             </div>
             <div class="border p-4 mt-4 ml-2">
-                <form>
+                <form id="mortgage-form">
                     <div class="flex">
                         <div>
-                            <span class="">Mortgage Calculator:</span>
-                            <label for="property">Property type: </label>
-                            <select name="property" id=""
-                                class="w-44 border text-sm text-gray-600 py-3 px-4 border-gray-300 shadow-sm rounded focus:ring-indigo-700 focus:border-indigo-700">
-                                <option value="hdb">HDB</option>
-                                <option value="condo">Condo</option>
-                            </select>
+                            <span>Mortgage Calculator:</span>
                             <label for="loan">Loan Amount:</label>
-                            <input type="text" name="loan" placeholder="$">
+                            <input type="text" name="loan" id="loan" placeholder="$">
                             <label for="interest">Interest Rate:</label>
-                            <input type="text" name="interest" placeholder="%">
+                            <input type="text" name="interest" id="interest" placeholder="%">
                             <label for="tenure">Loan Tenure:</label>
-                            <input type="text" name="tenure" placeholder="years">
+                            <input type="text" name="tenure" id="tenure" placeholder="years">
                         </div>
                         <div class="px-2 ml-24 self-center">
                             <span class="text-nowrap">Your monthly payment is:</span>
-                            <span class="font-bold">$3200</span>
+                            <span class="font-bold" id="monthly-payment">$0</span>
                             <button type="submit">calculate</button>
                         </div>
                     </div>
@@ -165,12 +154,31 @@
 
 <!-- Property Details -->
 <div class="container pb-16 pt-16">
-    <h3 class="border-b border-gray-200 font-roboto text-gray-800 pb-3 font-medium">Property Details</h3>
-    <div class="w-3/5 pt-6">
-        <div class="text-gray-600">
-            <p>{{listing[3]}}</p>
-        </div>
-    </div>
+
 </div>
         
+<script>
+    document.getElementById('mortgage-form').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent the form from submitting
+
+        // Get the input values
+        const loanAmount = parseFloat(document.getElementById('loan').value);
+        const interestRate = parseFloat(document.getElementById('interest').value) / 100 / 12;
+        const loanTenure = parseInt(document.getElementById('tenure').value) * 12;
+
+        // Calculate the monthly payment
+        const monthlyPayment = (loanAmount * interestRate) / (1 - Math.pow((1 + interestRate), -loanTenure));
+
+        // Update the monthly payment display
+        document.getElementById('monthly-payment').textContent = `$${monthlyPayment.toFixed(2)}`;
+    });
+</script>
+
 {% endblock content %}
+{% block script %}
+<script type="text/javascript">
+    function confirmBuy() {
+        return confirm("Are you sure you want to buy this listing?");
+    }
+</script>
+{% endblock script %}

@@ -49,19 +49,33 @@ class viewPLController:
             role = found_user[4]
             found_user = found_user[:4] + found_user[5:]
             # Checks that user is an REA, buyer or seller
-            if role == 3:
+            if role == 3 or role == 2:
                 tBuyer = Buyer(*found_user)
                 found_rea = tBuyer.get_agent(rea_id)
                 return found_rea
-            
-            elif role == 2:
-                tREA = REA(*found_user)
-                return (tREA.get_rating(), len(tREA.get_reviews()))
         
         else:
             return None
         
+
     def getRating(self, rea):
-        details = rea[:4] + rea[5:]
-        tRea = REA(*details)
-        return tRea.get_rating()
+        if type(rea) == tuple:
+            details = rea[:4] + rea[5:]
+            tREA = REA(*details)
+            return tREA.get_rating()
+        elif type(rea) == str:
+            found_rea = User.db.search_one("User", f"username='{rea}'")
+            details = found_rea[:4] + found_rea[5:]
+            tREA = REA(*details)
+            return tREA.get_rating()
+    
+    def getReview(self, rea):
+        if type(rea) == tuple:
+            details = rea[:4] + rea[5:]
+            tREA = REA(*details)
+            return tREA.get_reviews()
+        elif type(rea) == str:
+            found_rea = User.db.search_one("User", f"username='{rea}'")
+            details = found_rea[:4] + found_rea[5:]
+            tREA = REA(*details)
+            return tREA.get_reviews()

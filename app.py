@@ -92,6 +92,7 @@ class WebApp:
         self.blueprint.add_url_rule('/delete-listing', 'property_listings_delete', self.property_listings_delete, methods=["GET", "POST"])
         self.blueprint.add_url_rule('/update_wishlist', view_func=self.update_wishlist, methods=['GET', 'POST'])
         self.blueprint.add_url_rule('/update', 'update_listing', self.update_listing, methods=["GET", "POST"])
+        self.blueprint.add_url_rule('/buy', 'property_buy', self.property_buy, methods=["GET", "POST"])
 
         # my profile
         self.blueprint.add_url_rule('/my-profile/', 'my_profile_index', self.my_profile_index)
@@ -422,8 +423,10 @@ class WebApp:
         curr_rea = viewPLCtl.getAgent(session['username'], listing[6])
         rea_rating = viewPLCtl.getRating(curr_rea)
         faved = request.args.get("faved")
+        bought = (listing[8] >= 0)
+        print(bought)
         if listing:
-            return render_template("pages/property-listings/view.html", listing=listing, faved=faved, rea=curr_rea, rea_rating = rea_rating)
+            return render_template("pages/property-listings/view.html", listing=listing, faved=faved, rea=curr_rea, rea_rating = rea_rating, bought=bought, role=session['role'])
         else:
             flash('Listing not found', 'error')
             return redirect(url_for('web_app.property_listings_index'))
@@ -476,10 +479,10 @@ class WebApp:
             if listing[0] == i[0]:
                 faved_update = True
                 break
-        
+        print("RESULT HERE", result)
         if result:
-            print(request.args.get("page"))
             if request.args.get("page") == "property_listing":
+                print(request.args.get("page"))
                 return redirect(url_for('web_app.property_listings_index'))
             elif request.args.get("page") == "wishlist":
                 return redirect(url_for('web_app.wishlists_index'))
@@ -541,7 +544,6 @@ class WebApp:
         else:
             flash("Error", "error")
             return redirect(url_for('web_app.my_profile_index'))
-
     
     def property_listings_delete(self):
         """Delete a property listing"""
@@ -549,6 +551,17 @@ class WebApp:
         listing_id = request.args.get("listing_id")
         deletePLCtl.delete_listing(session["username"], listing_id)
         return redirect(url_for("web_app.my_profile_index"))
+
+    def property_buy(self):
+        """Buy a property listing"""
+        # Update buyer_id to property
+        updatePLCtl = updatePLController()
+        buyer_name = session['username']
+        listing_id = request.args.get("listing_id")
+        if updatePLCtl.buy_property(buyer_name, listing_id):
+            return redirect(url_for('web_app.my_reviews_create'))
+        else:
+            flash("Purchase could not be made.", "error")
 
     # My Profile Functions
     def my_profile_index(self):
@@ -561,7 +574,9 @@ class WebApp:
             rea_rr = (0, 0)
             if session['role'] == 2:
                 properties = viewPLCtl.viewListing(curr_username, propertyDetail="profile")
-                rea_rr = viewPLCtl.getAgent(curr_username, properties[0][6])
+                rea_rr = (viewPLCtl.getRating(curr_username), len(viewPLCtl.getReview(curr_username)))
+            elif session['role'] == 4:
+                properties = viewPLCtl.viewListing(curr_username, propertyDetail="profile")
             return render_template("pages/my-profile/index.html", propertyListings = properties, role = session['role'], username=curr_username, rea_rating=rea_rr[0], num_reviews = rea_rr[1])
             
         return redirect("/")
@@ -692,9 +707,12 @@ class WebApp:
         viewPLCtl = viewPLController()
         listing_id = request.args.get("listing_id")
         listing = viewPLCtl.viewListing(session['username'], listing_id)
+        curr_rea = viewPLCtl.getAgent(session['username'], listing[6])
+        rea_rating = viewPLCtl.getRating(curr_rea)
         faved = request.args.get("faved")
+        bought = (listing[8] >= 0)
         if listing:
-            return render_template("pages/wishlists/view.html", listing=listing, faved=faved)
+            return render_template("pages/wishlists/view.html", listing=listing, faved=faved, rea=curr_rea, rea_rating = rea_rating, bought=bought, role=session['role'])
         else:
             flash('Wish not found', 'error')
             return redirect(url_for('web_app.wishlists_index'))
