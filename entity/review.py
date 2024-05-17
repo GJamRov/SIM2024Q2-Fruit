@@ -70,11 +70,12 @@ class Review:
         else:
             return False
         """
-        Review.db.update_table("Review", f"review = '{new_review}'", f"id = {review_id}")
+        #Review.db.update_table("Review", f"review = '{new_review}'", f"id = {review_id}")
         review_tuple = Review.db.search_by_keyword("Review", review_id, ["id"])
 
         for review in review_tuple:
-            if review[1] == new_review and review[0] == review_id:
+            if review[0] == review_id and review[2] == user_id:
+                Review.db.update_table("Review", f"review = '{new_review}'", f"id = {review_id}")
                 return True
             else:
                 return False

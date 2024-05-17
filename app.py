@@ -655,10 +655,6 @@ class WebApp:
 
                 rating_table += (add_tuple, )
                 counter += 1
-            
-            # print("AGENT TABLE 2", agent_table2)
-            # print("RATING TABLE", rating_table)
-
 
             if rating_table:
                 return render_template('pages/my-reviews/rea.html', rating_table = rating_table)
@@ -747,6 +743,7 @@ class WebApp:
     def my_reviews_update(self):
         """update my reviews page"""
         current_role = session['role']
+        current_username = session['username']
 
         if current_role == 1 or current_role == 2:
             flash("ERROR 101: You DO NOT have permission to edit!!!", "error")
@@ -758,7 +755,6 @@ class WebApp:
             if request.method == 'POST':
                 new_rating = request.form['sort']
                 new_review = request.form['profile_desc']
-                current_username = session['username']
                 profile_name = request.form['profile_name']
                 review_index = request.form['review_id']
                 print(new_review)
