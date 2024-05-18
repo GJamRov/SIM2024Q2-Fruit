@@ -40,7 +40,7 @@
             {% if role == 3 %}
             <!-- Buy / Sold -->
             {% if bought %}
-            <a href="#"
+            <a href="{{url_for('web_app.my_reviews_create')}}"
                 class="opacity-40 pointer-events-none bg-indigo-700 border border-indigo-700 text-white px-8 py-2 font-medium rounded uppercase flex items-center gap-2 hover:bg-transparent hover:text-indigo-700 transition">
                 <i class="fa-regular fa-circle-xmark"></i> Sold
             </a>
