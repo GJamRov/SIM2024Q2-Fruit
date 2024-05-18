@@ -35,15 +35,6 @@ class Rating:
                 review_index = review[0]
 
         old_rating_tuple = Rating.db.search_by_keyword("Rating", review_index, ["review_id"])
-
-        """
-        if old_rating_tuple:
-
-            Rating.db.update_table("Rating", f"rating = {new_rating}", f"review_id = {review_index}")
-            return True
-        else:
-            return False
-        """
         
         for rating in old_rating_tuple:
             if rating[5] == review_id and rating[2] == user_id:
@@ -74,15 +65,6 @@ class Rating:
             return True
         else:
             return False
-
-        """   
-        rating_tuples2 = Rating.db.search_by_keyword("Rating", user_id, ["userName"])
-        
-        if(len(rating_tuples2) > len(rating_tuples)):
-            return True
-        else:
-            return False
-        """
         
     def returnRatingTable(self):
         Rating.connect_database("SampleDatabase")

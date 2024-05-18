@@ -263,7 +263,7 @@ if __name__ == "__main__":
     test_r = set()
     for review in db.view_table("Review"):
         test_r.add(review[3])
-    print(test_r)
+    # print(test_r)
     # db.connection.close()
     test_p = []
     for property in db.view_table("Property"):
@@ -274,13 +274,13 @@ if __name__ == "__main__":
         t_seller = db.search_by_keyword("User", seller, ["id"])[0]
         test_sellers.append(t_seller)
     # print(test_p)
-    print("SELLER WITH PROPERTIES:", test_sellers[0])
+    # print("SELLER WITH PROPERTIES:", test_sellers[0])
 
     # print(db.view_table("Favourite"))
     user_with_favs = []
     for f_user in db.view_table("Favourite"):
         user_with_favs.append(db.search_one("User", f"id = {f_user[1]}"))
-    print("BUYER WITH FAVS:", user_with_favs[0])
+    # print("BUYER WITH FAVS:", user_with_favs[0])
 
     # Initialise Web App
     print("--- Running App ---")

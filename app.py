@@ -65,7 +65,6 @@ class WebApp:
         self.blueprint.add_url_rule('/', 'home', self.home)
         self.blueprint.add_url_rule('/login', 'login', self.login, methods=['GET', 'POST'])
         self.blueprint.add_url_rule('/logout', 'logout', self.logout, methods=['GET', 'POST'])
-        self.blueprint.add_url_rule('/profile/<username>', 'profile', self.profile, methods=['GET', 'POST'])
 
         # User Account Pages
         self.blueprint.add_url_rule('/users/', 'users_index', self.users_index, methods=['GET', 'POST'])
@@ -133,13 +132,11 @@ class WebApp:
             loginCtl = LoginController()
             role = loginCtl.validateLogin(entered_username, entered_password)
 
-            #Session data assignment and page redirect on successful login
+            #Session data assignment and page redirect on successful login / error messages on unsuccessful login
             if 0 < role < 5:
                 session['username'] = entered_username
                 session['role'] = role
                 session['logged_in'] = True
-                # flash('Login successful!', 'success')
-                # return redirect(url_for('web_app.profile', username=session['username']))
                 return redirect("/")
             elif role == 5:
                 flash('Account is suspended', 'error')
@@ -147,7 +144,6 @@ class WebApp:
                 flash('Invalid username or password', 'error')   
             elif role == 7:
                 flash('User profile is suspended', 'error')          
-        
         return render_template(template)      
 
     def logout(self):
@@ -159,34 +155,8 @@ class WebApp:
         session.pop('logged_in', None)
         try:
             session['_flashes'].clear()
-            #flash('Logout successful!', 'success')
             return redirect('/login')
         except KeyError:
-            return redirect('/login')
-
-    def profile(self, username):
-        """Assign & display user profile"""
-
-        role = session.get('role')
-
-        try:
-            #User profile assignment if successfully logged in
-            if session.get('logged_in'):
-                if role == 1:
-                    template = 'profile_admin.html'
-                elif role == 2:              
-                    template = 'profile_rea.html'
-                elif role == 3:          
-                    template = 'profile_buyer.html'
-                elif role == 4:             
-                    template = 'profile_seller.html'
-            else:
-                #If 'logged_in' key is not found in session, redirect to login page
-                return redirect('/login')
-            
-            return render_template(template, username=username)
-        except KeyError:
-            #If 'role' key is not found in session, redirect to login page
             return redirect('/login')
     
     ## System Admin Functionalities
@@ -222,6 +192,7 @@ class WebApp:
         """View user accounts"""
         # Check that the user is a System Admin
         while session['role'] == 1:
+            # Initialise controller and return web page with user information
             viewAccCtl = viewAccountController()
             account_data = viewAccCtl.viewUserAccount(account)
             if account_data:
@@ -259,11 +230,12 @@ class WebApp:
         # Check that the user is a System Admin
         while session['role'] == 1:
             suspendAccountCtl = suspendAccountController()
+            # Error checking and disabling suspension of admin
             if account != 'admin':
                 if suspendAccountCtl.suspendUserAccount(account):
                     flash("User account suspended!", "success")
                 else:
-                    flash("System admin cannot be suspended", "error")
+                    flash("Error suspending user account!", "error")
             else:
                 flash("admin cannot be suspended", "error")
             return redirect('/users/')
@@ -341,7 +313,6 @@ class WebApp:
             else:
                 flash("Failed to reactivate user acccount. Please try again.", "error")
             return redirect('/users/')
-        
 
     #14. Reactivate user profile
     def reactivate_profile(self, profile):
@@ -379,7 +350,6 @@ class WebApp:
             return render_template("pages/user-profiles/index.html")
 
     ## Property Listings Functions
-
     def property_listings_index(self):
         """Main page for viewing property listings"""
         # Checks that the user is an REA, buyer or seller
@@ -392,7 +362,6 @@ class WebApp:
             favs = []
             for i in favourites:
                 favs.append(i[0])
-            #print(properties, "RIGHT HERE")
             if properties:
                 return render_template('pages/property-listings/index.html', propertyListings = properties, favs= favs, role=session['role'])
             else:
@@ -630,10 +599,8 @@ class WebApp:
         else:
             flash('Listing not found', 'error')
             return redirect(url_for('web_app.my_profile_index'))
-        
 
     # Reviews Functions
-    
     def reviews_index(self):
         current_role = session['role']
         
@@ -650,38 +617,12 @@ class WebApp:
 
             viewRatingCtl = viewREA()
             ratings = viewRatingCtl.viewREATable()
-            print(ratings)
 
             rea_array = {}
             rating_table = ()
             agent_table = {}
             counter = 0
             agent_table2 = {}
-
-            """
-            for rating in ratings:
-                #The current agent
-                current_agent = rating[3]
-
-                #If the current agent has not been added to the dictionary
-                if(current_agent not in agent_table.keys()):
-                    total_rating = 0
-                    rating_count = 0
-                    
-                    #Tabulate the total rating of current agent
-                    for rating2 in ratings:
-                        if rating2[3] == current_agent:
-                            total_rating += rating2[1]
-                            rating_count += 1
-                    
-                    #Calculate average rating and add it to rating_table
-                    average_rating = int(total_rating / rating_count)
-                    add_tuple = (counter, current_agent, average_rating)
-                    rating_table += (add_tuple, )
-
-                    counter += 1
-                agent_table[current_agent] = 1  
-            """
 
             for rating in ratings:
                 current_agent = rating[3]
@@ -713,18 +654,19 @@ class WebApp:
             else:
                 flash("No Reviews!", "error")
                 return redirect("/")
-
     
     def my_reviews_rea(self):
         userName = request.args.get("userName")
         viewReviewCtl = viewReviewController()
         current_user = session['username']
         reviews = viewReviewCtl.viewReview(user_id=userName, role=2)
+        hide = True
+        title = "REA Reviews"
 
         viewRatingCtl = viewRatingController()
         ratings = viewRatingCtl.viewRating(agent_id=userName, role=2)
         if reviews:
-            return render_template('pages/my-reviews/index.html', userName=userName, reviewListing=reviews, ratingListing=ratings)
+            return render_template('pages/my-reviews/index.html', userName=userName, reviewListing=reviews, ratingListing=ratings, hide=hide, title=title)
         else:
             flash("No Reviews!", "error")
             return redirect("/")
@@ -744,11 +686,13 @@ class WebApp:
             viewReviewCtl = viewReviewController()
             current_user = session['username']
             reviews = viewReviewCtl.viewReview(user_id=current_user, role=current_role)
+            hide = False
+            title = "My Reviews"
 
             viewRatingCtl = viewRatingController()
             ratings = viewRatingCtl.viewRating(agent_id=current_user, role=current_role)
             if reviews:
-                return render_template('pages/my-reviews/index.html', reviewListing = reviews, ratingListing = ratings, role=current_role)
+                return render_template('pages/my-reviews/index.html', reviewListing = reviews, ratingListing = ratings, role=current_role, hide=hide, title=title)
             else:
                 flash("No Reviews!", "error")
                 return redirect("/")
@@ -821,7 +765,7 @@ class WebApp:
                     flash("Successfully reviewed!", "success")
                     return redirect(url_for('web_app.my_reviews_index'))
                 elif not REA_exist:
-                    flash("Error: Real Estate Agent does not exist!", "error")
+                    flash("Real Estate Agent does not exist!", "error")
                     return redirect(url_for('web_app.my_reviews_create'))
                 else:
                     flash("Error creating review. Please try again.", "error")

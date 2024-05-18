@@ -5,18 +5,6 @@ class Seller(User):
     def __init__(self, userID, username, password, email, active):
         super().__init__(userID, username, password, email, 4, active)
 
-    # 36. Rate REA
-
-    # 37. Review REA
-
-    # 38. View review of REA
-
-    # 39. Edit rating of REA
-
-    # 40. Edit Review of REA
-
-    # 41. View rating of REA
-
     def viewListing(self, search_param = "") -> list:
         """View Listing by serach_param"""
         if search_param == "":

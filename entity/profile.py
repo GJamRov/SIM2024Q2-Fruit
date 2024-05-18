@@ -23,7 +23,7 @@ class userProfile:
         profiles = userProfile.db.cursor.fetchall()
         return profiles
 
-    #TODO: 8. Create user profiles
+    # 8. Create user profiles
     def create_profile(UP) -> bool:
         userProfile.connect_database("SampleDatabase")
         profile_data = userProfile.db.search_one("Profile", f"type = '{UP[0]}'")
@@ -42,7 +42,7 @@ class userProfile:
         if profile_data:
             return False
 
-    #TODO: 9. View user profiles
+    # 9. View user profiles
     def view_profile(profile):
         userProfile.connect_database("SampleDatabase")
         profile_data = userProfile.db.search_one("Profile", f"type = '{profile}'")
@@ -52,7 +52,7 @@ class userProfile:
             if profile == self.type:
                 return profile_data
 
-    #TODO: 10. Update user profile
+    # 10. Update user profile
     def update_profile(profile, entered_desc):
         userProfile.connect_database("SampleDatabase")
         profile_data = userProfile.db.search_one("Profile", f"type = '{profile}'")
@@ -63,7 +63,7 @@ class userProfile:
         if not profile_data:
             return False
 
-    #TODO: 11. Suspend user profile
+    # 11. Suspend user profile
     def suspend_profile(profile) -> bool:
         userProfile.connect_database("SampleDatabase")
         profile_data = userProfile.db.search_one("Profile", f"type = '{profile}'")
@@ -74,7 +74,7 @@ class userProfile:
         if not profile_data:
             return False        
 
-    #TODO: 14. Reactivate user profile
+    # 14. Reactivate user profile
     def reactivate_profile(profile) -> bool:
         userProfile.connect_database("SampleDatabase")
         profile_data = userProfile.db.search_one("Profile", f"type = '{profile}'")

@@ -124,61 +124,70 @@
                             {% endif %}
                         </div>
                     </div>
-                    
                 </div>
-                
-            </div>
-            <div class="border p-4 mt-4 ml-2">
-                <form id="mortgage-form">
-                    <div class="flex">
-                        <div>
-                            <span>Mortgage Calculator:</span>
-                            <label for="loan">Loan Amount:</label>
-                            <input type="text" name="loan" id="loan" placeholder="$">
-                            <label for="interest">Interest Rate:</label>
-                            <input type="text" name="interest" id="interest" placeholder="%">
-                            <label for="tenure">Loan Tenure:</label>
-                            <input type="text" name="tenure" id="tenure" placeholder="years">
-                        </div>
-                        <div class="px-2 ml-24 self-center">
-                            <span class="text-nowrap">Your monthly payment is:</span>
-                            <span class="font-bold" id="monthly-payment">$0</span>
-                            <button type="submit">calculate</button>
-                        </div>
-                    </div>
-                </form>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Property Details -->
-<div class="container pb-16 pt-16">
-
+<!-- Mortgage Calculator -->
+<div class="border p-4 mt-4 ml-2">
+    <form id="mortgage-form">
+        <div class="flex">
+            <div>
+                <span>Mortgage Calculator:</span>
+                <label for="loan">Loan Amount:</label>
+                <input type="number" name="loan" id="loan" placeholder="$">
+                <label for="interest">Interest Rate:</label>
+                <input type="number" step="0.1" name="interest" id="interest" placeholder="%">
+                <label for="tenure">Loan Tenure:</label>
+                <input type="number" name="tenure" id="tenure" placeholder="years">
+            </div>
+            <div class="px-2 ml-24 self-center">
+                <span class="text-nowrap">Your monthly payment is:</span>
+                <span class="font-bold" id="monthly-payment">$0</span>
+                <button type="submit">calculate</button>
+            </div>
+        </div>
+    </form>
 </div>
-        
-<script>
-    document.getElementById('mortgage-form').addEventListener('submit', function(event) {
-        event.preventDefault(); // Prevent the form from submitting
-
-        // Get the input values
-        const loanAmount = parseFloat(document.getElementById('loan').value);
-        const interestRate = parseFloat(document.getElementById('interest').value) / 100 / 12;
-        const loanTenure = parseInt(document.getElementById('tenure').value) * 12;
-
-        // Calculate the monthly payment
-        const monthlyPayment = (loanAmount * interestRate) / (1 - Math.pow((1 + interestRate), -loanTenure));
-
-        // Update the monthly payment display
-        document.getElementById('monthly-payment').textContent = `$${monthlyPayment.toFixed(2)}`;
-    });
-</script>
-
 {% endblock content %}
 {% block script %}
 <script type="text/javascript">
     function confirmBuy() {
         return confirm("Are you sure you want to buy this listing?");
     }
+</script>
+
+<script>
+    document.getElementById('mortgage-form').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent the form from submitting
+
+        // Get the input values
+        const loanAmount = document.getElementById('loan').value;
+        const interestRate = document.getElementById('interest').value;
+        const loanTenure = document.getElementById('tenure').value;
+
+        // Validate input fields
+        if (!loanAmount || !interestRate || !loanTenure) {
+            alert("Please fill in all fields");
+            return;
+        }
+
+        if (isNaN(loanAmount) || parseFloat(loanAmount) <= 0 || isNaN(interestRate) || parseFloat(interestRate) <= 0 || isNaN(loanTenure) || parseInt(loanTenure) <= 0) {
+            alert("Please fill in with valid numbers");
+            return;
+        }
+
+        const loanAmountParsed = parseFloat(loanAmount);
+        const interestRateParsed = parseFloat(interestRate) / 100 / 12;
+        const loanTenureParsed = parseInt(loanTenure) * 12;
+
+        // Calculate the monthly payment
+        const monthlyPayment = (loanAmountParsed * interestRateParsed) / (1 - Math.pow((1 + interestRateParsed), -loanTenureParsed));
+
+        // Update the monthly payment display
+        document.getElementById('monthly-payment').textContent = `$${monthlyPayment.toFixed(2)}`;
+    });
 </script>
 {% endblock script %}
