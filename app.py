@@ -821,7 +821,7 @@ class WebApp:
                     flash("Successfully reviewed!", "success")
                     return redirect(url_for('web_app.my_reviews_index'))
                 elif not REA_exist:
-                    flash("Error: REA does not exist.", "error")
+                    flash("Error: Real Estate Agent does not exist!", "error")
                     return redirect(url_for('web_app.my_reviews_create'))
                 else:
                     flash("Error creating review. Please try again.", "error")
