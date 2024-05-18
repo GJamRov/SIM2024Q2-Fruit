@@ -409,7 +409,7 @@ class WebApp:
         """Handles the form submission for property_listings_create"""
         if 'image' in request.files:
             image_file = request.files['image']
-            name = request.form['location']
+            name = request.form['name']
             location = request.form['location']
             price = request.form['price']
             description = request.form['description']

@@ -16,6 +16,7 @@ class REA(User):
             # Sample newPropertyDetails: [name, location, image_filename, price, description, seller]
             seller_id = tagged_seller[0]
             print('SELLER ID', seller_id)
+            print(newPropertyDetails)
             details = f"NULL, '{newPropertyDetails[0]}', '{newPropertyDetails[1]}', '{newPropertyDetails[4]}', '{newPropertyDetails[2]}', {newPropertyDetails[3]}, {self.get_id()}, {seller_id}, -1, 0, 0"
             REA.db.insert_into_table("Property", details)
             return True
