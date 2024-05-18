@@ -152,12 +152,11 @@
         <div class="mt-6 flex gap-3 border-b border-gray-200 pb-5 pt-5">
             {% if bought %}
             <a href="{{url_for('web_app.my_reviews_create')}}"
-                class="opacity-40 pointer-events-none bg-indigo-700 border border-indigo-700 text-white px-8 py-2 font-medium rounded uppercase flex items-center gap-2 hover:bg-transparent hover:text-indigo-700 transition">
-                <i class="fa-regular fa-circle-xmark"></i> Sold
+                class="bg-indigo-700 border border-indigo-700 text-white px-8 py-2 font-medium rounded uppercase flex items-center gap-2 hover:bg-transparent hover:text-indigo-700 transition">
+                <i class="fa-regular fa-star"></i> Rate REA
             </a>
             {% else %}
-            <a href="#"
-                class="bg-indigo-700 border border-indigo-700 text-white px-8 py-2 font-medium rounded uppercase flex items-center gap-2 hover:bg-transparent hover:text-indigo-700 transition">
+            <a class="bg-indigo-700 border border-indigo-700 text-white px-8 py-2 font-medium rounded uppercase flex items-center gap-2 transition">
                 <i class="fa-solid fa-bag-shopping"></i> Available
             </a>
             {% endif %}

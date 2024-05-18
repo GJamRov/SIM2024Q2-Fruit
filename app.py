@@ -129,8 +129,12 @@ class WebApp:
             entered_password = request.form['password']
 
             # Login Controller handles login
-            loginCtl = LoginController()
-            role = loginCtl.validateLogin(entered_username, entered_password)
+            try:
+                loginCtl = LoginController()
+                role = loginCtl.validateLogin(entered_username, entered_password)
+            except TypeError:
+                flash("User profile does not exist. Please create with admin account.")
+                return redirect('/login')
 
             #Session data assignment and page redirect on successful login / error messages on unsuccessful login
             if 0 < role < 5:
@@ -177,7 +181,6 @@ class WebApp:
                     # Send details to controller
                     createAccountCtl = createAccountController()
                     acc_details = [entered_username, entered_password, entered_email, entered_profile]
-                    print(acc_details)
                     created = createAccountCtl.addUserAccount(acc_details)
                     if created:
                         flash("User account created successfully!", "success")
