@@ -13,7 +13,6 @@ class SystemAdmin(User):
         SystemAdmin.db.cursor.execute("SELECT * FROM User")
         users = SystemAdmin.db.cursor.fetchall()
         return users
-    
     #3. Create user accounts
     def addUserAccount(newAccDetails)-> bool: 
         SystemAdmin.connect_database("SampleDatabase")

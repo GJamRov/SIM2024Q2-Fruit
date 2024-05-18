@@ -804,14 +804,25 @@ class WebApp:
                 
                 giveReviewCtl = giveReviewController()
                 giveRatingCtl = giveRatingController()
+                # Checking if REA exists
+                viewAccountCtl = viewAccountController()
+                REAs = viewAccountCtl.viewAllREA()
+                REA_exist = False
+                for r in REAs:
+                    if r[1] == agent_profile:
+                        REA_exist = True
+                        break
 
                 successReview = giveReviewCtl.giveReview(new_review, agent_profile, current_user, current_role)
 
                 successRating = giveRatingCtl.giveRating(new_rating, current_user, agent_profile, current_role, new_review)
 
-                if((successRating == True) and (successReview == True)):
+                if((successRating == True) and (successReview == True) and (REA_exist)):
                     flash("Successfully reviewed!", "success")
                     return redirect(url_for('web_app.my_reviews_index'))
+                elif not REA_exist:
+                    flash("Error: REA does not exist.", "error")
+                    return redirect(url_for('web_app.my_reviews_create'))
                 else:
                     flash("Error creating review. Please try again.", "error")
                     #return redirect("my_reviews_create")

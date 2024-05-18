@@ -11,3 +11,6 @@ class viewAccountController:
     def viewAllUsers(self):
         return SystemAdmin.view_all_user()
     
+    def viewAllREA(self):
+        REAs =  SystemAdmin.db.search_by_keyword("User", "2", ['role'])
+        return REAs
