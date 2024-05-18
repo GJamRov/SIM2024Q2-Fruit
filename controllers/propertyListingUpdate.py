@@ -11,6 +11,10 @@ class updatePLController:
         seller = REA.db.search_one("User", f"id = {seller_id}")
         return seller
     
+    def getAllSellers(self):
+        sellers = REA.db.search_by_keyword("User", "4", ['role'])
+        return sellers
+    
     def update_listing(self, agentName, newDetails):
         found_rea = REA.db.search_one("User", f"username = '{agentName}'")
         if found_rea:

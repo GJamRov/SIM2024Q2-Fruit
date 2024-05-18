@@ -15,13 +15,22 @@ class viewPLController:
             role = found_user[4]
             found_user = found_user[:4] + found_user[5:]
             properties = []
-            # Checks that user is an REA, buyer or seller
+            
+            ## REA
             if role == 2:
                 tREA = REA(*found_user)
                 properties = tREA.viewListing(propertyDetail)
+
+            ## Buyer
+            elif role == 3 and propertyDetail == 'profile':
+                tBuyer = Buyer(*found_user)
+                properties = tBuyer.view_favourites()
+                
             elif role == 3:
                 tBuyer = Buyer(*found_user)
                 properties = tBuyer.viewListing(propertyDetail)
+
+            ## Seller
             elif role == 4:
                 tSeller = Seller(*found_user)
                 properties = tSeller.viewListing(propertyDetail)

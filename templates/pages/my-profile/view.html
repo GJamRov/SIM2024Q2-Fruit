@@ -36,6 +36,124 @@
         <p class="mt-4 text-gray-600">
            {{listing[3]}}
         </p>
+
+        {% if role == 3 %}
+        <div class="mt-6 flex gap-3 border-b border-gray-200 pb-5 pt-5">
+            {% if role == 3 %}
+            <!-- Buy / Sold -->
+            {% if bought %}
+            <a href="#"
+                class="opacity-40 pointer-events-none bg-indigo-700 border border-indigo-700 text-white px-8 py-2 font-medium rounded uppercase flex items-center gap-2 hover:bg-transparent hover:text-indigo-700 transition">
+                <i class="fa-regular fa-circle-xmark"></i> Sold
+            </a>
+            {% else %}
+            <a href="{{ url_for('web_app.property_buy', listing_id=listing[0]) }}"  onclick="return confirmBuy();"
+                class="bg-indigo-700 border border-indigo-700 text-white px-8 py-2 font-medium rounded uppercase flex items-center gap-2 hover:bg-transparent hover:text-indigo-700 transition">
+                <i class="fa-solid fa-bag-shopping"></i> Buy
+            </a>
+            {% endif %}
+
+            <!-- Un-Wishlist-->
+            {% if faved == 'True'%}
+            <a href="{{ url_for('web_app.update_wishlist', listing_id = listing[0], page='my_profile_view')}}"
+                class="border border-gray-300 text-gray-600 px-8 py-2 font-medium rounded uppercase flex items-center gap-2 hover:text-indigo-700 transition">
+                <i class="fa-solid fa-heart-broken"></i> Un-Wishlist
+            </a>
+            {% elif faved == 'False' %}
+            <a href="{{ url_for('web_app.update_wishlist', listing_id = listing[0], page='my_profile_view')}}"
+                class="border border-gray-300 text-gray-600 px-8 py-2 font-medium rounded uppercase flex items-center gap-2 hover:text-indigo-700 transition">
+                <i class="fa-solid fa-heart"></i> Wishlist
+            </a>
+            {% endif %}
+            {% endif %}
+        </div>
+
+        <div class="flex">
+            <div class="mt-4 bg-gray-100 border flex flex-col px-3 py-2 min-w-max h-32">
+                <div class="flex mt-1 mx-2">
+                    <img src="{{ url_for('static', filename='Generic-Profile-Image.png') }}" alt=listing[1] class="self-center w-16 h-16 aspect-square object-cover rounded-full">
+                    <div class="flex flex-col mx-2">
+                        <span class="px-2">{{rea[1]}}</span>
+                        <a class="hover:text-blue-600 max-w-min text-nowrap py-1 px-1 mb-1">
+                            <span class="font-bold italic">@{{rea[3]}}</span>
+                        </a>
+                        <div class="mx-2 flex gap-1 text-sm text-yellow-400">
+                            <span class="text-black mr-1">{{rea_rating}}</span>
+                            <!-- change condition to the rating, rounded to the nearest number -->
+                            {% if rea_rating == 5 %}
+                            <!-- 5 stars -->
+                            <span><i class="fa-solid fa-star"></i></span>
+                            <span><i class="fa-solid fa-star"></i></span>
+                            <span><i class="fa-solid fa-star"></i></span>
+                            <span><i class="fa-solid fa-star"></i></span>
+                            <span><i class="fa-solid fa-star"></i></span>
+                            {% elif rea_rating == 4 %}
+                            <!-- 4 stars -->
+                            <span><i class="fa-solid fa-star"></i></span>
+                            <span><i class="fa-solid fa-star"></i></span>
+                            <span><i class="fa-solid fa-star"></i></span>
+                            <span><i class="fa-solid fa-star"></i></span>
+                            <span><i class="fa-regular fa-star"></i></span>
+                            <!-- <span><i class="fa-regular fa-star-half-stroke"></i></span> -->
+                            {% elif rea_rating == 3 %}
+                            <!-- 3 stars -->
+                            <span><i class="fa-solid fa-star"></i></span>
+                            <span><i class="fa-solid fa-star"></i></span>
+                            <span><i class="fa-solid fa-star"></i></span>
+                            <span><i class="fa-regular fa-star"></i></span>
+                            <span><i class="fa-regular fa-star"></i></span>
+                            {% elif rea_rating == 2 %}
+                            <!-- 2 stars -->
+                            <span><i class="fa-solid fa-star"></i></span>
+                            <span><i class="fa-solid fa-star"></i></span>
+                            <span><i class="fa-regular fa-star"></i></span>
+                            <span><i class="fa-regular fa-star"></i></span>
+                            <span><i class="fa-regular fa-star"></i></span>
+                            {% elif rea_rating == 1 %}
+                            <!-- 1 star -->
+                            <span><i class="fa-solid fa-star"></i></span>
+                            <span><i class="fa-regular fa-star"></i></span>
+                            <span><i class="fa-regular fa-star"></i></span>
+                            <span><i class="fa-regular fa-star"></i></span>
+                            <span><i class="fa-regular fa-star"></i></span>
+                            {% else %}
+                            <!-- 1 star -->
+                            <span><i class="fa-regular fa-star"></i></span>
+                            <span><i class="fa-regular fa-star"></i></span>
+                            <span><i class="fa-regular fa-star"></i></span>
+                            <span><i class="fa-regular fa-star"></i></span>
+                            <span><i class="fa-regular fa-star"></i></span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                </div>
+                
+            </div>
+            <div class="border p-4 mt-4 ml-2">
+                <form id="mortgage-form">
+                    <div class="flex">
+                        <div>
+                            <span>Mortgage Calculator:</span>
+                            <label for="loan">Loan Amount:</label>
+                            <input type="text" name="loan" id="loan" placeholder="$">
+                            <label for="interest">Interest Rate:</label>
+                            <input type="text" name="interest" id="interest" placeholder="%">
+                            <label for="tenure">Loan Tenure:</label>
+                            <input type="text" name="tenure" id="tenure" placeholder="years">
+                        </div>
+                        <div class="px-2 ml-24 self-center">
+                            <span class="text-nowrap">Your monthly payment is:</span>
+                            <span class="font-bold" id="monthly-payment">$0</span>
+                            <button type="submit">calculate</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- REA Buttons -->
         {% if role == 2 %}
         <div class="mt-6 flex gap-3 border-b border-gray-200 pb-5 pt-5">
             <a href="{{ url_for('web_app.property_listings_update', listing_id=listing[0]) }}"
@@ -50,23 +168,11 @@
             </a>
         </div>
         {% endif %}
-    </div>
-</div>
-<!-- ./product-detail -->
-
-<!-- description -->
-<div class="container pb-16 pt-16">
-    <h3 class="border-b border-gray-200 font-roboto text-gray-800 pb-3 font-medium">Property Details</h3>
-    <div class="w-3/5 pt-6">
-        <div class="text-gray-600">
-            <p>
-                {{listing[3]}}
-            </p>
-        </div>
-    </div>
-</div>
-
         
+
+    </div>
+</div>
+      
 {% endblock content %}
 {% block script %}
 <script type="text/javascript">

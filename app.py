@@ -19,8 +19,8 @@ from controllers.viewPropertyListing import viewPLController
 from controllers.propertyListingUpdate import updatePLController
 from controllers.createPropertyListing import createPLController
 from controllers.deletePropertyListing import deletePLController
-from controllers.wishlistView import viewFavouritesController
 from controllers.wishlistUpdate import updateFavouritesController
+from controllers.wishlistView import viewFavouritesController
 from controllers.viewReview import viewReviewController
 from controllers.viewRating import viewRatingController
 from controllers.giveReview import giveReviewController
@@ -95,15 +95,11 @@ class WebApp:
 
         # my profile
         self.blueprint.add_url_rule('/my-profile/', 'my_profile_index', self.my_profile_index)
+        self.blueprint.add_url_rule('/my-profile/sort', 'my_profile_sort', self.my_profile_sort)
         self.blueprint.add_url_rule('/my-profile/view', 'my_profile_view', self.my_profile_view)
 
         # reviews
         self.blueprint.add_url_rule('/reviews/', 'reviews_index', self.reviews_index, methods=['GET', 'POST'])
-
-        # wishlists
-        self.blueprint.add_url_rule('/wishlists/', 'wishlists_index', self.wishlists_index)
-        self.blueprint.add_url_rule('/wishlists/sort', 'wishlists_sort', self.wishlists_sort)
-        self.blueprint.add_url_rule('/wishlists/view', 'wishlists_view', self.wishlists_view)
 
         # my reviews - for buyers and sellers
         self.blueprint.add_url_rule('/my-reviews/', 'my_reviews_index', self.my_reviews_index)
@@ -423,7 +419,6 @@ class WebApp:
         rea_rating = viewPLCtl.getRating(curr_rea)
         faved = request.args.get("faved")
         bought = (listing[8] >= 0)
-        print(bought)
         if listing:
             return render_template("pages/property-listings/view.html", listing=listing, faved=faved, rea=curr_rea, rea_rating = rea_rating, bought=bought, role=session['role'])
         else:
@@ -450,15 +445,24 @@ class WebApp:
             
             createPLCtl = createPLController()
             # Save new property details to database
+            sellers = createPLCtl.getAllSellers()
+            seller_exist = False
+            for s in sellers:
+                if s[1] == seller:
+                    seller_exist = True
+                    break
             image_filename = secure_filename(image_file.filename)
             result = createPLCtl.createPropertyListing(session['username'], [name, location, image_filename, price, description, seller])
-            if result:
+            if result and seller_exist:
                  # Save the image file to UPLOAD_FOLDER
                 image_filepath = os.path.normpath(os.path.join(self.app.config['UPLOAD_FOLDER'], image_filename)) 
                 image_file.save(image_filepath)
 
                 flash('Property listing created successfully!', 'success')
                 return redirect(url_for('web_app.my_profile_index'))
+            elif not seller_exist:
+                flash('Seller does not exist!', 'error')
+                return redirect(url_for('web_app.property_listings_create'))
             else:
                 flash('Property listing created unsuccssfully.', 'error')
                 return redirect(url_for('web_app.property_listings_create'))
@@ -478,17 +482,17 @@ class WebApp:
             if listing[0] == i[0]:
                 faved_update = True
                 break
-        print("RESULT HERE", result)
+        # print("RESULT HERE", result)
         if result:
             if request.args.get("page") == "property_listing":
                 print(request.args.get("page"))
                 return redirect(url_for('web_app.property_listings_index'))
-            elif request.args.get("page") == "wishlist":
-                return redirect(url_for('web_app.wishlists_index'))
             elif request.args.get("page") == "pl_view":
                 return redirect(url_for('web_app.property_listings_view', listing_id = listing_id, faved=faved_update))
-            elif request.args.get("page") == "w_view":
-                return redirect(url_for('web_app.wishlists_index', listing_id = listing_id, faved=faved_update))
+            elif request.args.get("page") == "my_profile":
+                return redirect(url_for('web_app.my_profile_index', listing_id = listing_id, faved=faved_update))
+            elif request.args.get("page") == "my_profile_view":
+                return redirect(url_for('web_app.my_profile_view', listing_id = listing_id, faved=faved_update))
         else:
             flash("Failed to update wishlist.", "error")
             return redirect(url_for('web_app.property_listings_index'))
@@ -532,11 +536,20 @@ class WebApp:
 
             # Save new property details to database
             updatePLCtl = updatePLController()
+            sellers = updatePLCtl.getAllSellers()
+            seller_exist = False
+            for s in sellers:
+                if s[1] == seller_name:
+                    seller_exist = True
+                    break
             result = updatePLCtl.update_listing(session['username'], [id, name, location, image_filename, price, description, seller_name])
             #print("UPDATE:", result)
-            if result:
+            if result and seller_exist:
                 flash('Property listing updated successfully!', 'success')
                 return redirect(url_for('web_app.my_profile_index'))
+            elif not seller_exist:
+                flash('Seller does not exist!', 'error')
+                return redirect(url_for('web_app.property_listings_update', listing_id=id))
             else:
                 flash('Property listing update fail.', 'error')
                 return redirect(url_for('web_app.my_profile_index'))
@@ -567,32 +580,59 @@ class WebApp:
         """Main Page for Individual User Profile"""
         # Checks that the user is an REA, buyer or seller
         while session['role'] in [2,3,4]:
+            sort_option = request.args.get('sort')
             curr_username = session['username']
             viewPLCtl = viewPLController()
             properties = []
+            viewFavCtl = viewFavouritesController()
+            favs = []
             rea_rr = (0, 0)
-            if session['role'] == 2:
+            if session['role'] == 2: # REA
                 properties = viewPLCtl.viewListing(curr_username, propertyDetail="profile")
                 rea_rr = (viewPLCtl.getRating(curr_username), len(viewPLCtl.getReview(curr_username)))
-            elif session['role'] == 4:
+
+            elif session['role'] == 3: # Buyer
+                favourites = viewFavCtl.viewFavourites(curr_username)
+                for i in favourites:
+                    favs.append(i[0])
                 properties = viewPLCtl.viewListing(curr_username, propertyDetail="profile")
-            return render_template("pages/my-profile/index.html", propertyListings = properties, role = session['role'], username=curr_username, rea_rating=rea_rr[0], num_reviews = rea_rr[1])
+
+            elif session['role'] == 4: # Seller
+                properties = viewPLCtl.viewListing(curr_username, propertyDetail="profile")
+
+            return render_template("pages/my-profile/index.html", propertyListings = properties, favs = favs, username=curr_username, role = session['role'],  rea_rating=rea_rr[0], num_reviews = rea_rr[1])
             
         return redirect("/")
+    
+    def my_profile_sort(self):
+        """Handles the sorting drop-down bar for My Profile"""
+        sort_option = request.args.get('sort')
+        # Calls controller to fetch sorted property listings
+        viewPLCtl = viewPLController()
+        viewFavCtl = viewFavouritesController()
+        favourites = viewFavCtl.viewFavourites(session['username'])
+        sorted_properties = viewPLCtl.viewListing(session['username'], propertyDetail="profile", sortOrder=sort_option)
+
+        # Return sorted listings as JSON response
+        return jsonify(sorted_properties)
 
     def my_profile_view(self):
         """View one of my listing"""
         viewPLCtl = viewPLController()
         listing_id = request.args.get("listing_id")
         listing = viewPLCtl.viewListing(session['username'], listing_id)
-        print("PROFILE LISTING:", listing)
+        curr_rea = viewPLCtl.getAgent(session['username'], listing[6])
+        rea_rating = viewPLCtl.getRating(curr_rea)
+        faved = request.args.get("faved")
+        bought = (listing[8] >= 0)
         if listing:
-            return render_template("pages/my-profile/view.html", listing=listing, role = session['role'])
+            return render_template("pages/my-profile/view.html", listing=listing, faved=faved, rea=curr_rea, rea_rating = rea_rating, bought=bought, role=session['role'])
         else:
             flash('Listing not found', 'error')
             return redirect(url_for('web_app.my_profile_index'))
+        
 
-    # reviews
+    # Reviews Functions
     
     def reviews_index(self):
         current_role = session['role']
@@ -674,46 +714,6 @@ class WebApp:
                 flash("No Reviews!", "error")
                 return redirect("/")
 
-    # Wishlist
-    def wishlists_index(self):
-        """My Wishlists page"""
-        while session['role'] > 1 and session['role'] < 5:
-            sort_option = request.args.get('sort')
-            viewFavCtl = viewFavouritesController()
-            favourites = viewFavCtl.viewFavourites(session['username'], sortOrder=sort_option)
-            favs = []
-            for i in favourites:
-                favs.append(i[0])
-            if favourites:
-                return render_template("pages/wishlists/index.html", propertyListings=favourites, favs=favs, role=session['role'])
-            else:
-                flash("No Favourites!", "error")
-                return redirect(url_for("web_app.my_profile_index"))
-            
-    
-    def wishlists_sort(self):
-        """ Handles the sorting drop down bar for My Wishlist"""
-        sort_option = request.args.get('sort')
-        # Calls controller to fetch sorted property listings
-        viewFavCtl = viewFavouritesController()
-        sorted_wishes = viewFavCtl.viewFavourites(session['username'], sort_option)
-        # Return sorted listings as JSON response
-        return jsonify(sorted_wishes)
-
-    def wishlists_view(self):
-        """View a property listing"""
-        viewPLCtl = viewPLController()
-        listing_id = request.args.get("listing_id")
-        listing = viewPLCtl.viewListing(session['username'], listing_id)
-        curr_rea = viewPLCtl.getAgent(session['username'], listing[6])
-        rea_rating = viewPLCtl.getRating(curr_rea)
-        faved = request.args.get("faved")
-        bought = (listing[8] >= 0)
-        if listing:
-            return render_template("pages/wishlists/view.html", listing=listing, faved=faved, rea=curr_rea, rea_rating = rea_rating, bought=bought, role=session['role'])
-        else:
-            flash('Wish not found', 'error')
-            return redirect(url_for('web_app.wishlists_index'))
     
     def my_reviews_rea(self):
         userName = request.args.get("userName")

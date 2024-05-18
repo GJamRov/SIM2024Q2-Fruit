@@ -4,16 +4,6 @@ class Buyer(User):
 
     def __init__(self, userID, username, password, email, active):
         super().__init__(userID, username, password, email, 3, active)
-
-    # 23. Give reviews on an agent
-
-    # 24. Give ratings on an agent
-
-    # 25. Edit ratings on an agent
-
-    # 26. Edit reviews on an agent
-
-    # 27. View ratings on an agent
     
     def viewListing(self, search_param = "") -> list:
         """View Listing by serach_param"""
@@ -26,12 +16,6 @@ class Buyer(User):
             search_result = Buyer.db.search_one("Property", search_param=search_param)
             self.updateViewCount(search_result)
             return list(search_result)
-        
-        # 29. Search property listing
-        # else: 
-        #     search_result = Buyer.db.search_by_keyword("Property", search_param, ["location", "description"])
-        #     return list(search_result)
-    
 
     def updateViewCount(self, pl):
         """ Increments the view count of a property by one when selected """

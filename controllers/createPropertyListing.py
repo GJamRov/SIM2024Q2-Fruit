@@ -13,3 +13,7 @@ class createPLController:
             return tREA.createListing(propertyDetails)
         else:
             return False
+        
+    def getAllSellers(self):
+        sellers = REA.db.search_by_keyword("User", "4", ['role'])
+        return sellers

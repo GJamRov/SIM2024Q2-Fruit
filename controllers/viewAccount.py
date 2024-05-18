@@ -10,3 +10,4 @@ class viewAccountController:
         
     def viewAllUsers(self):
         return SystemAdmin.view_all_user()
+    

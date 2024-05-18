@@ -8,7 +8,7 @@
 
         <div class="flex col-span-1 my-4 border bg-gray-100 rounded-md">
             <div class="">
-                <img src="{{ url_for('static', filename='Generic-Profile-Image.png') }}" alt="product 1" class="w-48 m-4 aspect-square object-cover rounded-full">
+                <img src="{{ url_for('static', filename='Generic-Profile-Image.png') }}" alt="Profile Picture Here" class="w-48 m-4 aspect-square object-cover rounded-full">
             </div>
             <div class="p-8 self-center flex flex-col">
                 <div class="text-3xl font-bold">
@@ -71,18 +71,15 @@
                     </a>
                     {% endif %}
                 </div>
-                {% if role == 3 %}
-                <a href="{{ url_for('web_app.wishlists_index') }}"
-                    class="text-white text-nowrap text-sm px-2 py-1 mt-8 max-w-min rounded-md bg-indigo-700 flex items-center justify-center hover:bg-gray-800 transition"
-                    title="add to wishlist">
-                    <i class="fa-solid fa-heart mx-1"></i>My Wishlist
-                </a>
-                {% endif %}
             </div>
         </div>
         
         {% if role != 3 %}
         <h4 class="text-xl font-bold underline">My Listings</h4>
+        {% else %}
+        <h4 class="text-xl font-bold underline">My Wishlist</h4>
+        {% endif %}
+
         
         <div class="flex flex-row">
           <form class="mt-4" role="search-role" id="form">
@@ -110,11 +107,10 @@
               <select name="sort" id="sort"
                   class="w-44 text-sm text-gray-600 py-3 px-4 border-gray-300 shadow-sm rounded focus:ring-indigo-700 focus:border-indigo-700">
                   <option value="">Default sorting</option>
-                  <option value="price-low-to-high">Price low to high</option>
-                  <option value="price-high-to-low">Price high to low</option>
+                  <option value="asc">Price low to high</option>
+                  <option value="desc">Price high to low</option>
               </select>
           </div>
-        {% endif %}
 
         {% if propertyListings %}
         <div id = "propertyListingsContainer" class="grid lg:grid-cols-5 md:grid-cols-3 grid-cols-2 gap-6">
@@ -125,11 +121,18 @@
                     <img src="{{ url_for('static', filename=listing[4]) }}" alt="{{listing[1]}}" class="w-full aspect-square object-cover">
                     <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center 
                       justify-center gap-2 opacity-0 group-hover:opacity-100 transition">
-                          <a href="{{ url_for('web_app.my_profile_view', listing_id = listing[0]) }}"
+                          <a href="{{ url_for('web_app.my_profile_view', listing_id = listing[0], faved=listing[0] in favs) }}"
                               class="text-white text-lg w-9 h-8 rounded-full bg-indigo-700 flex items-center justify-center hover:bg-gray-800 transition"
                               title="view listing">
                               <i class="fa-solid fa-magnifying-glass"></i>
                           </a>
+                          {% if role == 3 %} 
+                          <a href="{{ url_for('web_app.update_wishlist', listing_id = listing[0], page='my_profile')}}"
+                              class="text-white text-lg w-9 h-8 rounded-full bg-indigo-700 flex items-center justify-center hover:bg-gray-800 transition"
+                              title="add to wishlist">
+                              <i class="fa-solid {{'fa-heart-broken' if listing[0] in favs else 'fa-heart'}}"></i>
+                          </a>
+                          {% endif %}
                       </div>
                   </div>
                   <div class="pt-4 pb-3 px-4">
@@ -138,9 +141,12 @@
                         <h4 class="min-h-24 uppercase font-medium text-xl mb-2 text-gray-800 hover:text-indigo-700 transition">
                             {{ listing[1] }}</h4>
                     </a>
+                    
                     <div class="flex items-baseline mb-1">
-                          <p class="text-xl text-indigo-700 font-semibold">$ {{ listing[5] }}</p>
-                          <span class="text-sm text-gray-400 ml-auto px-2">{{listing[9]}}
+                        
+                        <p class="text-xl text-indigo-700 font-semibold">$ {{ listing[5] }}</p>
+                        {% if role != 3 %}
+                        <span class="text-sm text-gray-400 ml-auto px-2">{{listing[9]}}
                             <!-- change condition below to if wishlisted, change number above to total number views -->
                             <i class="fa-solid fa-eye"></i>
                         </span>
@@ -152,9 +158,11 @@
                             <i class="fa-solid fa-heart"></i>
                             {% endif %}
                         </span>
-                      </div>
-                  </div>
-                  <a href="{{ url_for('web_app.my_profile_view', listing_id = listing[0]) }}"
+                        {% endif %}
+                    </div>
+                </div>
+                    
+                  <a href="{{ url_for('web_app.my_profile_view', listing_id = listing[0], faved=listing[0] in favs) }}"
                       class="block w-full py-1 text-center text-white bg-indigo-700 border border-indigo-700 rounded-b hover:bg-transparent hover:text-indigo-700 transition">
                       View Listing</a>
             </div>
@@ -166,3 +174,123 @@
 
         
 {% endblock content %}
+{% block script %}
+<script>
+    var favs = {{ favs|tojson }};
+    console.log(favs);
+    var role = {{ role|tojson }};
+
+    // Function to sort listings after sort option has been selected
+    function sortListings() {
+        var sortOption = document.getElementById('sort').value;
+
+        // Send AJAX request to update listings based on sort option
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', '/my-profile/sort?sort=' + sortOption, true);
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                var listingsData = JSON.parse(xhr.responseText);
+                updateListings(listingsData);
+            }
+        };
+        xhr.send();
+    }
+
+    function updateListings(listingsData) {
+        var listingsContainer = document.getElementById('propertyListingsContainer');
+        listingsContainer.innerHTML = ''; // Clear existing listings
+
+        listingsData.forEach(function(listing) {
+            var isFav = favs.includes(listing[0]);
+            var listingHtml = `
+            <div class="bg-white shadow rounded overflow-hidden group">
+              <div class="relative">
+                <!-- Listing Image Directory -->
+                <img src="/static/${filename=listing[4]}" alt="${ listing[1] }" class="w-full aspect-square object-cover">
+                      <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center 
+                      justify-center gap-2 opacity-0 group-hover:opacity-100 transition">
+                          <a href="/property-listings/view?listing_id=${listing[0]}&faved=${isFav}"
+                              class="text-white text-lg w-9 h-8 rounded-full bg-indigo-700 flex items-center justify-center hover:bg-gray-800 transition"
+                              title="view listing">
+                              <i class="fa-solid fa-magnifying-glass"></i>
+                          </a>`;
+
+            if (role == 3){ // If Buyer
+              listingHtml += `
+              <a href="/update_wishlist?listing_id=${listing[0]}&page=property_listing"
+                              class="text-white text-lg w-9 h-8 rounded-full bg-indigo-700 flex items-center justify-center hover:bg-gray-800 transition"
+                              title="add to wishlist">
+                              <i class="fa-solid ${isFav ? 'fa-heart-broken' : 'fa-heart'}"></i>
+                          </a>
+                      </div>
+                  </div>
+                  <div class="pt-4 pb-3 px-4">
+                      <!-- Listing Name -->
+                      <a href="#">
+                          <h4 class="min-h-24 uppercase font-medium text-xl mb-2 text-gray-800 hover:text-indigo-700 transition">${ listing[1] }</h4>
+                      </a>
+                      <div class="flex items-baseline mb-1">
+                        <!-- Listing Price -->
+                          <p class="text-xl text-indigo-700 font-semibold">$ ${ listing[5] }</p>
+                      </div>
+                  </div>
+                  <a href="/property-listings/view?listing_id=${listing[0]}&faved=${isFav}"
+                      class="block w-full py-1 text-center text-white bg-indigo-700 border border-indigo-700 rounded-b hover:bg-transparent hover:text-indigo-700 transition">
+                      View Listing</a>
+              </div>
+              `;
+
+            } else { // If not Buyer
+              listingHtml += `
+                      </div>
+                  </div>
+                  <div class="pt-4 pb-3 px-4">
+                      <!-- Listing Name -->
+                      <a href="#">
+                          <h4 class="min-h-24 uppercase font-medium text-xl mb-2 text-gray-800 hover:text-indigo-700 transition">${ listing[1] }</h4>
+                      </a>
+                      <div class="flex items-baseline mb-1">
+                        <!-- Listing Price -->
+                          <p class="text-xl text-indigo-700 font-semibold">$ ${ listing[5] }</p>
+                      </div>
+                  </div>
+                  <a href="/property-listings/view?listing_id=${listing[0]}"
+                      class="block w-full py-1 text-center text-white bg-indigo-700 border border-indigo-700 rounded-b hover:bg-transparent hover:text-indigo-700 transition">
+                      View Listing</a>
+              </div>
+              `;
+
+            }
+            listingsContainer.innerHTML += listingHtml;
+        });
+    }
+
+    // Attach event listener to input field
+    document.getElementById('sort').addEventListener('change', sortListings);
+
+  function searchListings() {
+    // Declare variables
+    var input, filter, cards, cardTitle, i, txtValue;
+    input = document.getElementById('query-details');
+    filter = input.value.toUpperCase();
+    cards = document.querySelectorAll('.grid .bg-white');
+
+    // Loop through all cards, and hide those that don't match the search query
+    cards.forEach(function(card) {
+      cardTitle = card.querySelector('.uppercase');
+      if (cardTitle) {
+        txtValue = cardTitle.textContent || cardTitle.innerText;
+        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+          card.style.display = '';
+        } else {
+          card.style.display = 'none';
+        }
+      }
+    });
+  }
+
+  // Attach event listener to input field
+  document.getElementById('query-details').addEventListener('input', searchListings);
+
+</script>
+{% endblock script %}
