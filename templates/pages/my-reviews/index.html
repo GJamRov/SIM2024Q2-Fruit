@@ -5,16 +5,6 @@
 {% block content %}
     <h3 class="text-3xl font-bold underline mt-4">My Reviews</h3>
         <div class="flex flex-row">
-          <!-- <form class="mt-4" role="search-role" id="form">
-            <input
-              class="border"
-              type="search"
-              id="query-details"
-              name="h"
-              placeholder="Search username ..."
-              aria-label="Search through content of the site"
-            />
-          </form> -->
           <a
             href="{{ url_for('web_app.my_reviews_create') }}"
             class="flex self-center ml-auto mx-4 bg-transparent hover:bg-indigo-900 text-indigo-700 font-semibold hover:text-white py-2 px-4 border border-indigo-500 hover:border-transparent rounded"
@@ -22,7 +12,7 @@
             Create Reviews +
           </a>
         </div>
-        <table class="mt-6">
+        <table class="mt-6 w-full">
           <thead>
             <tr>
               <th class="w-20"></th>
@@ -37,16 +27,15 @@
             <tr class="border-b pb-4">
               <td class="">
                   <div class="flex flex-col items-center">
-                    <img src="{{ url_for('static', filename='house4.jpeg') }}" alt="product 1" class="w-12 m-4 aspect-square object-cover rounded-full">
+                    <img src="{{ url_for('static', filename='Generic-Profile-Image.png') }}" alt="product 1" class="w-12 m-4 aspect-square object-cover rounded-full">
                     {% if role == 2 %}
                     <span class="text-xs mb-3 px-2 font-semibold">{{review[2]}}</span>
-                    
                     {% else %}
                     <span class="text-xs mb-3 px-2 font-semibold">{{review[3]}}</span>  
                     {% endif %}
-                    
                   </div>
               </td>
+
               <td>
                   <div class="flex flex-col self-center mx-2 mt-3">
                     <div class="mx-2 flex gap-1 text-sm text-yellow-400">
@@ -54,13 +43,14 @@
                         {% for _ in range(ratingListing[loop.index0][1]) %}
                         <span><i class="fa-solid fa-star"></i></span>
                         {% endfor %}
-                        
                     </div>
+
                     <div class="mx-2 my-2 text-sm">
                       {{review[1]}}
                     </div>
                   </div>
               </td>
+
               <td>
                 <a
                   href="{{ url_for('web_app.my_reviews_update', review_id = review[0])}}"
@@ -75,36 +65,3 @@
           </tbody>
         </table>
 {% endblock content %}
-
-{% block script %}
-<script>
-  function searchProfiles() {
-    // Declare variables
-    var input, filter, table, tr, tdId, tdName, tdDesc, i, txtValue;
-    input = document.getElementById('query-details');
-    filter = input.value.toUpperCase();
-    table = document.querySelector('.table-auto');
-    tr = table.getElementsByTagName('tr');
-
-    // Loop through all table rows, and hide those that don't match the search query
-    for (i = 0; i < tr.length; i++) {
-      tdId = tr[i].querySelector('#id');
-      tdName = tr[i].querySelector('#name');
-      tdDesc = tr[i].querySelector('#desc');
-      if (tdId || tdName || tdDesc) {
-        txtValueId = tdId.textContent || tdId.innerText;
-        txtValueName = tdName.textContent || tdName.innerText;
-        txtValueDesc = tdDesc.textContent || tdDesc.innerText;
-        if (txtValueId.toUpperCase().indexOf(filter) > -1 || txtValueName.toUpperCase().indexOf(filter) > -1 || txtValueDesc.toUpperCase().indexOf(filter) > -1) {
-          tr[i].style.display = '';
-        } else {
-          tr[i].style.display = 'none';
-        }
-      }
-    }
-  }
-
-  // Attach event listener to input field
-  document.getElementById('query-details').addEventListener('input', searchProfiles);
-</script>
-{% endblock script %}

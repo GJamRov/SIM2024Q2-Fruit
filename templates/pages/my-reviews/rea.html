@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
 
-{% block title %}My Reviews{% endblock title %}
+{% block title %}Real Estate Agents{% endblock title %}
 
 {% block content %}
-    <h3 class="text-3xl font-bold underline">My Reviews</h3>
+    <h3 class="text-3xl font-bold underline">Real Estate Agents</h3>
         <div class="flex flex-row">
           <form class="mt-4" role="search-role" id="form">
             <input
@@ -15,7 +15,6 @@
               aria-label="Search through content of the site"
             />
           </form>
-          
         </div>
 
         <table class="my-4 w-full min-w-max table-auto text-left">
@@ -24,9 +23,6 @@
               <th>ID</th>
               <th>Agent's ID</th>
               <th>Average Rating</th>
-              <!-- <th>
-                    created_on
-                </th> -->
               <th>Actions</th>
             </tr>
           </thead>
@@ -34,23 +30,19 @@
             {% if rating_table %}
             {% for rating in rating_table %}
             <tr class="">
-              <td id="id">{{rating[0]}}</td>
-              <td id="agent_id">{{ rating[1] }}</td>
+              <td class="id">{{rating[0]}}</td>
+              <td class="agent_id">{{ rating[1] }}</td>
 
-              <td>
+              <td class="average_rating">
                 <div class="flex flex-col self-center mx-2 mt-3">
                   <div class="mx-2 flex gap-1 text-sm text-yellow-400">
-                      <!-- change condition to the rating, rounded to the nearest number -->
-                      {% for _ in range(rating_table[loop.index0][2]) %}
-                      <span><i class="fa-solid fa-star"></i></span>
-                      {% endfor %}
-                      
+                    {% for _ in range(rating_table[loop.index0][2]) %}
+                    <span><i class="fa-solid fa-star"></i></span>
+                    {% endfor %}
                   </div>
                 </div>
-            </td>
-              <!-- <td>
-                    22/04/24 12:57AM
-                </td> -->
+              </td>
+
               <td class="">
                 <a
                   href="{{ url_for('web_app.my_reviews_rea', userName = rating[1])}}"
@@ -68,24 +60,30 @@
 
 {% block script %}
 <script>
-  function searchProfiles() {
+  function searchREA() {
     // Declare variables
-    var input, filter, table, tr, tdId, tdName, tdDesc, i, txtValue;
+    var input, filter, table, tr, tdId, tdAgentId, tdRating, i, txtValue;
     input = document.getElementById('query-details');
     filter = input.value.toUpperCase();
     table = document.querySelector('.table-auto');
     tr = table.getElementsByTagName('tr');
 
     // Loop through all table rows, and hide those that don't match the search query
-    for (i = 0; i < tr.length; i++) {
-      tdId = tr[i].querySelector('#id');
-      tdName = tr[i].querySelector('#name');
-      tdDesc = tr[i].querySelector('#desc');
-      if (tdId || tdName || tdDesc) {
+    for (i = 1; i < tr.length; i++) {  // Start from 1 to skip the table header
+      tdId = tr[i].getElementsByClassName('id')[0];
+      tdAgentId = tr[i].getElementsByClassName('agent_id')[0];
+      tdRating = tr[i].getElementsByClassName('average_rating')[0];
+      
+      if (tdId || tdAgentId || tdRating) {
         txtValueId = tdId.textContent || tdId.innerText;
-        txtValueName = tdName.textContent || tdName.innerText;
-        txtValueDesc = tdDesc.textContent || tdDesc.innerText;
-        if (txtValueId.toUpperCase().indexOf(filter) > -1 || txtValueName.toUpperCase().indexOf(filter) > -1 || txtValueDesc.toUpperCase().indexOf(filter) > -1) {
+        txtValueAgentId = tdAgentId.textContent || tdAgentId.innerText;
+        txtValueRating = tdRating ? tdRating.textContent || tdRating.innerText : '';
+
+        if (
+          txtValueId.toUpperCase().indexOf(filter) > -1 ||
+          txtValueAgentId.toUpperCase().indexOf(filter) > -1 ||
+          txtValueRating.toUpperCase().indexOf(filter) > -1
+        ) {
           tr[i].style.display = '';
         } else {
           tr[i].style.display = 'none';
@@ -95,6 +93,6 @@
   }
 
   // Attach event listener to input field
-  document.getElementById('query-details').addEventListener('input', searchProfiles);
+  document.getElementById('query-details').addEventListener('input', searchREA);
 </script>
 {% endblock script %}

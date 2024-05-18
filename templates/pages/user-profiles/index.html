@@ -28,9 +28,6 @@
               <th>id</th>
               <th>Name</th>
               <th>Description</th>
-              <!-- <th>
-                    created_on
-                </th> -->
               <th>Actions</th>
             </tr>
           </thead>
@@ -40,9 +37,6 @@
               <td id="id">{{ profile[0] }}</td>
               <td id="name">{{ profile[1] }}</td>
               <td id="desc">{{ profile[2] }}</td>
-              <!-- <td>
-                    22/04/24 12:57AM
-                </td> -->
               <td class="">
                 <a
                   href="{{ url_for('web_app.view_profile', profile=profile[1]) }}"

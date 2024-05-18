@@ -2,10 +2,6 @@
 
 {% block title %}View User{% endblock title %}
 
-{% block style %}
-<!-- <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"> -->
-{% endblock style %}
-
 {% block content %}
 <a
       href="{{url_for('web_app.users_index')}}"
@@ -34,9 +30,9 @@
             {% elif account[4] == 2 %}
             <td class="pl-3">Real Estate Agent</td>
             {% elif account[4] == 3 %}
-            <td class="pl-3">Seller</td>
-            {% elif account[4] == 4 %}
             <td class="pl-3">Buyer</td>
+            {% elif account[4] == 4 %}
+            <td class="pl-3">Seller</td>
             {% endif %}
         </tr>
         <tr class="h-14">

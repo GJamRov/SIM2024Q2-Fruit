@@ -10,16 +10,8 @@
   </head>
 
   <body>
-    <!-- Header Section -->
-    <!-- <header>
-      <div class="flex flex-row">
-        <img class="h-28" src="../Fruit.jpg" alt="logo" />
-        <div class="head1 self-center">FruitRealEstate</div>
-      </div>
-    </header> -->
-
     <!-- Menu Navigation Bar -->
-    <!-- check role here and include the respective navigation bar -->
+    <!-- Checks session role and assigns respective profile navigation bar -->
     {% if 'role' in session %}
       {% if session['role'] == 1 %}
         {% include("_navigation_sysadmin.html") %}
@@ -34,11 +26,6 @@
         {% include("_navigation_seller.html") %}
       {% endif %}
     {% endif %}
-    <!-- {% include("_navigation.html") %} -->
-    <!-- {% include("_navigation_sysadmin.html") %} -->
-    <!-- {% include("_navigation_rea.html") %} -->
-    <!-- {% include("_navigation_buyer.html") %} -->
-    <!-- {% include("_navigation_seller.html") %} -->
 
     <!-- Body section -->
     <main class="body_sec p-4 overflow-y-auto h-screen">
@@ -47,8 +34,6 @@
       </section>
     </main>
 
-    <!-- Footer Section -->
-    <!-- <footer class="bottom-0 sticky">Footer Section</footer> -->
     {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
         {% set latest_message = messages[-1] %}

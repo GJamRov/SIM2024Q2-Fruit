@@ -11,18 +11,14 @@
     >
     <h3 class="text-xl font-bold underline mt-4">Create Review</h3>
     <form action="/my-reviews/create" method = "POST">
-      <input type="hidden" id="profile_name" name="profile_name" value="{{ profile }}">
 
-       <!-- Real Estate Agent Username -->
-       <label for="userNameREA">Real Estate Agent Username:</label>
-       <input type="text" id="userNameREA" name="userNameREA" class="border p-2" required />
+      <!-- Real Estate Agent Username -->
+      <label for="userNameREA">Real Estate Agent Username:</label>
+      <input type="text" id="userNameREA" name="userNameREA" class="border p-2" required />
 
-      <label for="first"> Rating: </label>
-      <!-- <div id="profile_display" class="w-full md:w-[50%] xl:w-[30%] border p-2">
-        <span>{{profile}}</span>
-      </div> -->
+      <!-- Real Estate Agent rating selection -->
       <div>
-        <select name="sort" id="sort"
+        <select name="rating" id="rating"
                   class="w-44 text-sm text-gray-600 py-3 px-4 border-gray-300 shadow-sm rounded focus:ring-indigo-700 focus:border-indigo-700">
                   <option value="5">5</option>
                   <option value="4">4</option>
@@ -32,22 +28,14 @@
               </select>
       </div>
 
-      <label for="profile_desc"> Review description: </label>
+      <label for="review"> Review description: </label>
       <textarea
-        id="profile_desc"
-        name="profile_desc"
+        id="review"
+        name="review"
         rows="4"
         cols="50"
         class="border p-2"
-      >{{profile_desc}}</textarea>
-      <!-- <input
-        type="text"
-        id="profile_desc"
-        name="first"
-        class="w-full md:w-[50%] xl:w-[30%]"
-        placeholder="Enter your Username"
-        required
-      /> -->
+      ></textarea>
 
       <div class="wrap">
         <button type="submit" id="submit-button">
@@ -57,9 +45,3 @@
     </form>
   </div>
 {% endblock content %}
-
-{% block script %}
-<script>
-
-</script>
-{% endblock script %}
