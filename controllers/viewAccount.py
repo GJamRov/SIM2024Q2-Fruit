@@ -14,3 +14,6 @@ class viewAccountController:
     def viewAllREA(self):
         REAs =  SystemAdmin.db.search_by_keyword("User", "2", ['role'])
         return REAs
+    
+    def viewOneREA(self, rea_id):
+        return SystemAdmin.db.search_one("User", f"id = {rea_id}")

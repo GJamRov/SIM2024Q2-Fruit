@@ -39,12 +39,12 @@
             {% if role == 3 %}
             <!-- Buy / Sold -->
             {% if bought %}
-            <a href="{{url_for('web_app.my_reviews_create')}}"
+            <a href="{{url_for('web_app.my_reviews_create', rea_id = listing[6])}}"
                 class="opacity-40 pointer-events-none bg-indigo-700 border border-indigo-700 text-white px-8 py-2 font-medium rounded uppercase flex items-center gap-2 hover:bg-transparent hover:text-indigo-700 transition">
                 <i class="fa-regular fa-circle-xmark"></i> Sold
             </a>
             {% else %}
-            <a href="{{ url_for('web_app.property_buy', listing_id=listing[0]) }}"  onclick="return confirmBuy();"
+            <a href="{{ url_for('web_app.property_buy', listing_id=listing[0], rea_id = listing[6]) }}"  onclick="return confirmBuy();"
                 class="bg-indigo-700 border border-indigo-700 text-white px-8 py-2 font-medium rounded uppercase flex items-center gap-2 hover:bg-transparent hover:text-indigo-700 transition">
                 <i class="fa-solid fa-bag-shopping"></i> Buy
             </a>

@@ -542,8 +542,12 @@ class WebApp:
         updatePLCtl = updatePLController()
         buyer_name = session['username']
         listing_id = request.args.get("listing_id")
+        rea_id = request.args.get("rea_id")
+        viewAccountCtl = viewAccountController()
+        rea_username = viewAccountCtl.viewOneREA(rea_id)[1]
+        print(rea_username)
         if updatePLCtl.buy_property(buyer_name, listing_id):
-            return redirect(url_for('web_app.my_reviews_create'))
+            return redirect(url_for('web_app.my_reviews_create', rea_username = rea_username))
         else:
             flash("Purchase could not be made.", "error")
 
@@ -743,7 +747,12 @@ class WebApp:
         
         while current_role == 3 or current_role == 4:
             current_user = session['username']
-
+            current_rea = request.args.get("rea_username")
+            current_rea_id = request.args.get("rea_id")
+            if current_rea_id:
+                viewAccountCtl = viewAccountController()
+                current_rea = viewAccountCtl.viewOneREA(current_rea_id)[1]
+                
             if request.method == 'POST':
                 new_review = request.form['review']
                 new_rating = request.form['rating']
@@ -775,5 +784,5 @@ class WebApp:
                     #return redirect("my_reviews_create")
                     return redirect(url_for('web_app.my_reviews_create'))
 
-            return render_template("pages/my-reviews/create.html", username=session['username'])
+            return render_template("pages/my-reviews/create.html", username=session['username'], rea_username=current_rea)
         return redirect("/")
